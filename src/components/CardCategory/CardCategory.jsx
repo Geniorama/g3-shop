@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Typography, Card, Stack, Link } from '@mui/material';
 import Image from 'next/image';
-import ExampleImage from '../../../public/img/Group 4.png';
+import ExampleImage from '../../../public/img/example-cat.png';
 
 export default function CardCategory() {
   return (

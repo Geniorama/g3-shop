@@ -2,7 +2,7 @@ import React from 'react';
 import Banner from '../../../public/img/desktop-product-cards-25.webp';
 import { Box, Grid, Container, Typography, Button } from '@mui/material';
 import Image from 'next/image';
-import Astro from '../../../public/img/astro 3d 1.webp';
+import Astro from '../../../public/img/astro-3d.webp';
 import Link from '@mui/material';
 
 export default function BannerPromo() {
