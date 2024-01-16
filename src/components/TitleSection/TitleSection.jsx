@@ -5,16 +5,15 @@ import Image from 'next/image';
 
 export default function TitleSection({image, title, textAlign}) {
   const theme = useTheme()
-  console.log(textAlign)
   return (
     <Box sx={{textAlign: textAlign ? textAlign : 'center', margin: 'auto'}}>
         {image && (
             <Image width={70} height={70} src={image} alt=''/>
         )}
         
-        <Stack sx={{justifyContent: 'center'}} direction={'horizontal'}>
+        <Stack sx={{justifyContent: 'center'}} direction={'row'}>
             {(textAlign == 'left' || textAlign == undefined) && (
-                <Stack direction={'horizontal'}>
+                <Stack direction={'row'}>
                     <Box 
                         sx={{
                             display: 'inline-block',
@@ -38,7 +37,7 @@ export default function TitleSection({image, title, textAlign}) {
             </Typography>
 
             {(textAlign == 'right' || textAlign == undefined) && (
-                <Stack direction={'horizontal'}>
+                <Stack direction={'row'}>
                     <Box 
                         sx={{
                             display: 'inline-block',

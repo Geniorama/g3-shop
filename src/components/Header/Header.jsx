@@ -15,11 +15,11 @@ import AdbIcon from '@mui/icons-material/Adb';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import SearchIcon from '@mui/icons-material/Search';
 import ShoppingCartCheckoutIcon from '@mui/icons-material/ShoppingCartCheckout';
-import Link from 'next/link';
 import { useState } from 'react';
+import Logo from '../../../public/img/g3-logoRecurso 1.svg';
+import Image from 'next/image';
+import { Link, useTheme } from '@mui/material';
 
-const pages = ['Products', 'Pricing', 'Blog'];
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
 const menuItems = [
   {
@@ -68,6 +68,7 @@ const auxMenuItems = [
 function ResponsiveAppBar() {
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
+  const theme = useTheme()
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -85,27 +86,10 @@ function ResponsiveAppBar() {
   };
 
   return (
-    <AppBar position="static">
+    <AppBar sx={{background: 'white'}} position="fixed">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
-          <Typography
-            variant="h6"
-            noWrap
-            component="a"
-            href="#app-bar-with-responsive-menu"
-            sx={{
-              mr: 2,
-              display: { xs: 'none', md: 'flex' },
-              fontFamily: 'monospace',
-              fontWeight: 700,
-              letterSpacing: '.3rem',
-              color: 'inherit',
-              textDecoration: 'none',
-            }}
-          >
-            LOGO
-          </Typography>
+          <Image alt='log-g3' src={Logo} />
 
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
             <IconButton
@@ -136,9 +120,9 @@ function ResponsiveAppBar() {
                 display: { xs: 'block', md: 'none' },
               }}
             >
-              {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page}</Typography>
+              {auxMenuItems.map((item, index) => (
+                <MenuItem key={index} onClick={handleCloseNavMenu}>
+                  <Typography textAlign="center">{item.title}</Typography>
                 </MenuItem>
               ))}
             </Menu>
@@ -162,15 +146,34 @@ function ResponsiveAppBar() {
           >
             LOGO
           </Typography>
-          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }} justifyContent={'center'}>
             {menuItems.map((item, index) => (
               <Link 
                 key={index} 
                 href={item.path}
-                style={{
-                  color: 'white',
-                  margin: '1rem',
-                  textDecoration: 'none'
+                underline='none'
+                sx={{
+                  padding: '1em',
+                  margin: '0 1em',
+                  fontWeight: '600',
+                  position: 'relative',
+                  '&:before':{
+                    content: '""',
+                    position: 'absolute',
+                    width: '0',
+                    height: '3px',
+                    background: theme.palette.secondary.main,
+                    bottom: '0',
+                    left: '50%',
+                    transition: '.5s'
+                  },
+                  '&:hover:before':{
+                    width: '100%',
+                    left: '0',
+                  },
+                  '&:hover':{
+                    color: theme.palette.secondary.main
+                  }
                 }}
                 >
                 {item.title}
@@ -181,7 +184,7 @@ function ResponsiveAppBar() {
           <Box sx={{ flexGrow: 0 }}>
             {auxMenuItems.map((item, index) => {
               return(
-                <IconButton sx={{color: 'white'}} key={index}>
+                <IconButton color='secondary' key={index}>
                   {item.icon}
                 </IconButton>
               )
