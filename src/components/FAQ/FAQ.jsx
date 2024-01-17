@@ -9,23 +9,33 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 const faqs = [
     {
-        title: "Question 1",
-        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ultrices sit amet nulla eget elementum. Aliquam pulvinar pulvinar enim ac venenatis. Fusce eget auctor nisi. Nulla facilisi. Suspendisse accumsan sagittis pellentesque. Nunc volutpat euismod libero, non maximus metus suscipit ut. Quisque faucibus pulvinar urna convallis vestibulum. Suspendisse potenti."
+        title: "What payment methods do you accept?",
+        description: "We accept credit/debit cards (Visa, MasterCard, American Express) and secure methods like PayPal. We ensure secure transactions for your peace of mind."
     },
 
     {
-        title: "Question 2",
-        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ultrices sit amet nulla eget elementum. Aliquam pulvinar pulvinar enim ac venenatis. Fusce eget auctor nisi. Nulla facilisi. Suspendisse accumsan sagittis pellentesque. Nunc volutpat euismod libero, non maximus metus suscipit ut. Quisque faucibus pulvinar urna convallis vestibulum. Suspendisse potenti."
+        title: "How long does it take for my order to arrive?",
+        description: "The delivery time varies based on your location. Typically, orders are processed within 1-2 business days, and shipping time can range from 3-7 business days. We'll provide you with a tracking number so you can monitor your package."
     },
 
     {
-        title: "Question 3",
-        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ultrices sit amet nulla eget elementum. Aliquam pulvinar pulvinar enim ac venenatis. Fusce eget auctor nisi. Nulla facilisi. Suspendisse accumsan sagittis pellentesque. Nunc volutpat euismod libero, non maximus metus suscipit ut. Quisque faucibus pulvinar urna convallis vestibulum. Suspendisse potenti."
+        title: "Can I make changes or returns?",
+        description: "Yes, we accept changes and returns for non-customized products. Please check our return policy for more details and follow the instructions to initiate the process."
     },
 
     {
-        title: "Question 4",
-        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ultrices sit amet nulla eget elementum. Aliquam pulvinar pulvinar enim ac venenatis. Fusce eget auctor nisi. Nulla facilisi. Suspendisse accumsan sagittis pellentesque. Nunc volutpat euismod libero, non maximus metus suscipit ut. Quisque faucibus pulvinar urna convallis vestibulum. Suspendisse potenti."
+        title: "Do you offer international shipping?",
+        description: "Yes! We offer international shipping to various countries. When making payment, select your country to find out shipping costs and estimated delivery times."
+    },
+
+    {
+        title: "How can I track my order?",
+        description: "Once your order is shipped, you will receive an email with a tracking link. You can click on that link or enter the tracking number on our tracking page to get real-time updates."
+    },
+
+    {
+        title: "Can I personalize my products?",
+        description: "Absolutely! We provide customization options for many of our products. Simply select the customization option when making your purchase and follow the provided instructions. Make sure to review the preview before confirming your order."
     }
 ];
 
@@ -56,8 +66,7 @@ export default function FAQ() {
                                     {item.title}
                                     </AccordionSummary>
                                     <AccordionDetails>
-                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
-                                    malesuada lacus ex, sit amet blandit leo lobortis eget.
+                                    {item.description}
                                     </AccordionDetails>
                                 </Accordion>
                             )

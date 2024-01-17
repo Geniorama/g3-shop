@@ -117,7 +117,7 @@ export default function Footer() {
                 </Grid>
 
                 <Grid item>
-                   <Stack direction={'horizontal'}>
+                   <Stack direction={'row'}>
                      <IconButton color='secondary'>
                         <FacebookOutlinedIcon />
                      </IconButton>

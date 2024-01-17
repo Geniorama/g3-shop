@@ -1,9 +1,10 @@
 import React from 'react';
-import { Box, Grid, Container } from '@mui/material';
+import { Box, Grid, Container, useTheme } from '@mui/material';
 import TitleSection from '@/components/TitleSection/TitleSection';
 import CircleTechnique from '@/components/CircleTechnique/CircleTechnique';
 
 export default function Techniques() {
+  const theme = useTheme()
   return (
     <Box component={'section'} sx={{padding: '3rem 1rem', backgroundColor: '#fafafa'}}>
         <Container>
@@ -14,16 +15,28 @@ export default function Techniques() {
                     />
                 </Grid>
                 <Grid item xs={6} md={3}>
-                    <CircleTechnique />
+                    <CircleTechnique 
+                        title={'Embroidery'} 
+                        color={theme.palette.secondary.main}
+                    />
                 </Grid>
                 <Grid item xs={6} md={3}>
-                    <CircleTechnique />
+                    <CircleTechnique 
+                        title={'Heat Transfer Vinyl'} 
+                        color={theme.palette.primary.main}
+                    />
                 </Grid>
                 <Grid item xs={6} md={3}>
-                    <CircleTechnique />
+                    <CircleTechnique 
+                        title={'Sublimation'} 
+                        color={theme.palette.secondary.main}
+                    />
                 </Grid>
                 <Grid item xs={6} md={3}>
-                    <CircleTechnique />
+                    <CircleTechnique 
+                        title={'DTF Transfrers'} 
+                        color={theme.palette.primary.main}
+                    />
                 </Grid>
             </Grid>
         </Container>
