@@ -18,14 +18,14 @@ export default function PageHeading({title}) {
                         component={'h1'} 
                         variant='h2'
                         fontWeight={'bold'}
-                        color={'gray'}
+                        color={'#252525'}
                         >
                         {title}
                     </Typography>
                 </Grid>
             </Grid>
         </Container>
-        <Divider sx={{marginTop: "60px", marginBottom: '30px'}}/>
+        <Divider sx={{marginTop: "60px", marginBottom: '10px'}}/>
     </Box>
   )
 }

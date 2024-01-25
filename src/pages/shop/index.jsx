@@ -1,12 +1,10 @@
 import React from 'react';
 import Layout from '@/components/Layout/Layout';
 import PageHeading from '@/components/PageHeading/PageHeading';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
 import { Box, Container, Grid, Typography, Breadcrumbs, Link} from '@mui/material';
 import FilterBar from '@/components/Shop/FilterBar/FilterBar';
 import GridProducts from '@/components/GridProducts/GridProducts';
+import SidebarShop from '@/components/Shop/SidebarShop/SidebarShop';
 
 const metadata = {
     title: 'Shop',
@@ -35,9 +33,9 @@ export default function Shop() {
             <Box margin={3} />
             <FilterBar />
             <Box margin={3} />
-            <Grid container>
+            <Grid container spacing={5}>
                 <Grid item xs={12} lg={3}>
-                    
+                    <SidebarShop />
                 </Grid>
                 <Grid item xs={12} lg={9}>
                     <GridProducts />

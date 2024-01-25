@@ -1,11 +1,10 @@
 import React from 'react';
 import { Container, Grid, Box, Typography, Button } from '@mui/material';
 import TitleSection from '@/components/TitleSection/TitleSection';
-import ExampleImage from '../../../public/img/Layer_1.svg';
+import ExampleImage from '@/assets/img/Layer_1.svg';
 import PropTypes from 'prop-types';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
-import CardProduct from '@/components/Shop/CardProduct/CardProduct';
 import GridProducts from '@/components/GridProducts/GridProducts';
 
 function CustomTabPanel(props) {
