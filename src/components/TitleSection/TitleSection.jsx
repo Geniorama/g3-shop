@@ -2,16 +2,19 @@ import React from 'react'
 import { Box, Typography, Stack, useTheme } from '@mui/material';
 import Image from 'next/image';
 
-
 export default function TitleSection({image, title, textAlign}) {
   const theme = useTheme()
+
   return (
     <Box sx={{textAlign: textAlign ? textAlign : 'center', margin: 'auto'}}>
         {image && (
-            <Image width={70} height={70} src={image} alt=''/>
+            <Box data-aos="fade-down">
+                <Image width={70} height={70} src={image} alt=''/>
+            </Box>
+            
         )}
         
-        <Stack sx={{justifyContent: 'center'}} direction={'row'}>
+        <Stack data-aos="fade-up" sx={{justifyContent: 'center'}} direction={'row'}>
             {(textAlign == 'left' || textAlign == undefined) && (
                 <Stack direction={'row'}>
                     <Box 

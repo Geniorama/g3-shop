@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, Grid, Container, Typography } from "@mui/material";
-import CardProduct from "@/components/CardProduct/CardProduct";
+import CardProduct from "@/components/Shop/CardProduct/CardProduct";
 import Image from "next/image";
 import HeadIcon from "../../../public/img/most_popular_icon.svg";
 

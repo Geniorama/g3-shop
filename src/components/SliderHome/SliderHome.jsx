@@ -26,7 +26,7 @@ export default function SliderHome() {
           <Container>
             <Grid container spacing={5} alignItems={'center'}>
               <Grid display={'flex'} flexDirection={'column'} justifyContent={'center'} xs={12} lg={6} sx={{padding: '3rem 0', minHeight: '80vh'}} item>
-                <Image src={Astronaut} alt='' width={200} height={200} />
+                <Image data-aos="fade-left" src={Astronaut} alt='' width={200} height={200} />
                 <Typography fontSize={'20px'} fontWeight={'bold'} color={'secondary'}> New promo</Typography>
                 <Typography fontSize={'80px'} fontWeight={'bold'} lineHeight={'1em'} color={'white'}> BUSINESS CARDS</Typography>
                 <Typography fontSize={'15px'} color={'#f4f4f4'} mt={3}>

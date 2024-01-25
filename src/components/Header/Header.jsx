@@ -20,7 +20,6 @@ import Logo from '../../../public/img/g3-logoRecurso 1.svg';
 import Image from 'next/image';
 import { Link, useTheme } from '@mui/material';
 
-
 const menuItems = [
   {
     title: 'Home',
@@ -28,7 +27,7 @@ const menuItems = [
   },
   {
     title: 'Shop',
-    path: '/',
+    path: '/shop',
     list: [
       {
         title: '',

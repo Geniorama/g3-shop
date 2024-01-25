@@ -1,12 +1,12 @@
 import React from 'react';
 import { Container, Grid, Box, Typography, Button } from '@mui/material';
-import Image from 'next/image';
 import TitleSection from '@/components/TitleSection/TitleSection';
 import ExampleImage from '../../../public/img/Layer_1.svg';
 import PropTypes from 'prop-types';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
-import CardProduct from '@/components/CardProduct/CardProduct';
+import CardProduct from '@/components/Shop/CardProduct/CardProduct';
+import GridProducts from '@/components/GridProducts/GridProducts';
 
 function CustomTabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -66,32 +66,7 @@ export default function ExploreOurProducts() {
                         </Tabs>
                     </Box>
                     <CustomTabPanel value={value} index={0}>
-                        <Grid container spacing={3}>
-                          <Grid item xs={12} md={4} lg={3}>
-                            <CardProduct />
-                          </Grid>
-                          <Grid item xs={12} md={4} lg={3}>
-                            <CardProduct />
-                          </Grid>
-                          <Grid item xs={12} md={4} lg={3}>
-                            <CardProduct />
-                          </Grid>
-                          <Grid item xs={12} md={4} lg={3}>
-                            <CardProduct />
-                          </Grid>
-                          <Grid item xs={12} md={4} lg={3}>
-                            <CardProduct />
-                          </Grid>
-                          <Grid item xs={12} md={4} lg={3}>
-                            <CardProduct />
-                          </Grid>
-                          <Grid item xs={12} md={4} lg={3}>
-                            <CardProduct />
-                          </Grid>
-                          <Grid item xs={12} md={4} lg={3}>
-                            <CardProduct />
-                          </Grid>
-                        </Grid>
+                        <GridProducts />
 
                         <Button variant='contained' color='secondary'>
                           View All Products
