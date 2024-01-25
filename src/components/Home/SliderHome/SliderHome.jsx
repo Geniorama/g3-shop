@@ -3,9 +3,9 @@ import { Box, Grid, Container, Typography, Card, useTheme } from '@mui/material'
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-import Cards from '../../../public/img/25415479_3.png';
+import Cards from '@/assets/img/25415479_3.png';
 import Image from 'next/image';
-import Astronaut from '../../../public/img/astronauta-banner.svg';
+import Astronaut from '@/assets/img/astronauta-banner.svg';
 
 
 export default function SliderHome() {
