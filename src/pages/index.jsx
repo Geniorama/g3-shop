@@ -1,5 +1,5 @@
 import Layout from '@/components/Layout/Layout';
-import SliderHome from '@/components/SliderHome/SliderHome';
+import SliderHome from '@/components/Home/SliderHome/SliderHome';
 import Features from '@/components/Home/Features/Features';
 import ExploreOurProducts from '@/components/Home/ExploreOurProducts/ExploreOurProducts';
 import ProductCategories from '@/components/Shop/ProductCategories/ProductCategories';
