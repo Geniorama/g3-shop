@@ -15,7 +15,7 @@ export default function BannerPromo() {
         <Container sx={{position: 'relative', zIndex: '2'}}>
             <Grid container spacing={15} justifyContent={'center'} alignItems={'center'}>
                 <Grid item xs={12} lg={6}>
-                    <Image alt='' width={'100%'} height={'100%'} style={{objectFit: 'contain'}} src={Astro} />
+                    <Image unoptimized alt='' width={'100%'} height={'100%'} style={{objectFit: 'contain'}} src={Astro} />
                 </Grid>
 
                 <Grid item xs={12} md={6}>

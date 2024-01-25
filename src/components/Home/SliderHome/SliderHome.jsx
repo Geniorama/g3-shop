@@ -34,7 +34,7 @@ export default function SliderHome() {
                 </Typography>
               </Grid>
               <Grid item>
-                <Image src={Cards} alt='' width={'500'} style={{maxWidth:'100%'}} />
+                <Image unoptimized src={Cards} alt='' width={'500'} style={{maxWidth:'100%'}} />
               </Grid>
             </Grid>
           </Container>

@@ -3,7 +3,6 @@ import { Box, Stack, Typography, useTheme } from '@mui/material';
 import Image from 'next/image';
 
 export default function CircleTechnique({title, color, image}) {
-  const theme = useTheme()
   const imageExample = 'https://images.unsplash.com/photo-1495846414472-6696652d955f?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D';
   return (
     <Box sx={{textAlign: 'center'}}>
@@ -18,7 +17,7 @@ export default function CircleTechnique({title, color, image}) {
             borderColor: color, 
             boxSizing: 'border-box'
             }}>
-            <Image alt='' fill style={{objectFit: 'cover', transform: 'scale(.9)', borderRadius: '50%'}} src={image ? image : imageExample} />
+            <Image unoptimized alt='' fill style={{objectFit: 'cover', transform: 'scale(.9)', borderRadius: '50%'}} src={image ? image : imageExample} />
         </Box>
         <Stack spacing={1} marginTop={'10px'} direction={'row'} justifyContent={'center'} alignItems={'center'}>
           <Box 

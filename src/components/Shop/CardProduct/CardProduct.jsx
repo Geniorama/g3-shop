@@ -7,8 +7,6 @@ import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 
 export default function CardProduct({dataProduct}) {
-  const theme = useTheme()
-  const imageExample = 'https://images.unsplash.com/photo-1525299374597-911581e1bdef?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D';
 
   const dataExample = {
     image: 'https://images.unsplash.com/photo-1525299374597-911581e1bdef?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
@@ -33,7 +31,7 @@ export default function CardProduct({dataProduct}) {
                 <Chip color='primary' label="Sale" />
             </Stack>
             <Link href={'#'}>
-                <Image fill style={{objectFit: 'cover'}} alt='' src={dataProduct ? dataProduct.image : dataExample.image} />
+                <Image unoptimized fill style={{objectFit: 'cover'}} alt='' src={dataProduct ? dataProduct.image : dataExample.image} />
             </Link>
         </Box>
         <Box sx={{textAlign: 'center', padding: '1.5em'}}>

@@ -19,7 +19,7 @@ export default function CardCategory() {
                 </Link>
             </Box>
             <Box sx={{width: '50%', height: '200px', position: 'relative'}}>
-                <Image style={{objectFit: 'contain'}} fill src={ExampleImage} alt='' />
+                <Image unoptimized style={{objectFit: 'contain'}} fill src={ExampleImage} alt='' />
             </Box>
         </Stack>
     </Card>
