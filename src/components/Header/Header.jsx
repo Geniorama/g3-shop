@@ -88,7 +88,9 @@ function ResponsiveAppBar() {
     <AppBar sx={{background: 'white'}} position="fixed">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          <Image alt='log-g3' src={Logo} />
+          <Link href="/">
+            <Image alt='log-g3' src={Logo} />
+          </Link>
 
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
             <IconButton

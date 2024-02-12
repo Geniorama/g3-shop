@@ -9,4 +9,5 @@
 
 body, html{
   overflow-x: hidden;
+  padding: 0px !important;
 }

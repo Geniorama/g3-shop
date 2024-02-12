@@ -30,12 +30,12 @@ export default function CardProduct({dataProduct}) {
                 <Chip color='primary' label="Sale" />
                 <Chip color='primary' label="Sale" />
             </Stack>
-            <Link href={'#'}>
+            <Link href={'/product'}>
                 <Image unoptimized fill style={{objectFit: 'cover'}} alt='' src={dataProduct ? dataProduct.image : dataExample.image} />
             </Link>
         </Box>
         <Box sx={{textAlign: 'center', padding: '1.5em'}}>
-            <Link href={'#'} style={{textDecoration: 'none', color: 'unset'}}>
+            <Link href={'/product'} style={{textDecoration: 'none', color: 'unset'}}>
                 <Typography sx={{fontWeight: 'bold', fontSize: '20px'}} component={'h3'}>
                     {dataProduct ? dataProduct.title :  dataExample.title}
                 </Typography>
