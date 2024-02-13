@@ -57,7 +57,7 @@ const auxMenuItems = [
     icon: <SearchIcon />
   },
   {
-    path: '/',
+    path: '/cart',
     icon: <ShoppingCartCheckoutIcon />
   }
 ];
@@ -185,7 +185,7 @@ function ResponsiveAppBar() {
           <Box sx={{ flexGrow: 0 }}>
             {auxMenuItems.map((item, index) => {
               return(
-                <IconButton color='secondary' key={index}>
+                <IconButton href={item.path} color='secondary' key={index}>
                   {item.icon}
                 </IconButton>
               )

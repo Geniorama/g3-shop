@@ -10,7 +10,7 @@ export default function PageHeading({title}) {
   
 
   return (
-    <Box component={'section'} sx={{padding: '3rem 0', marginTop: '60px'}}>
+    <Box component={'section'} mt={{xs: 14, md:10}} py={{xs: 2, md: 5}}>
         <Container>
             <Grid container>
                 <Grid textAlign={'center'} item xs={12}>

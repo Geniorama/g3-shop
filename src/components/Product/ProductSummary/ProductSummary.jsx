@@ -37,7 +37,7 @@ export default function ProductSummary({dataProduct}) {
       </Typography>
 
       <Stack direction={"row"}>
-        <Button variant="contained">Add to Cart</Button>
+        <Button variant="contained" color="secondary">Add to Cart</Button>
       </Stack>
 
       {/* METADATA */}
