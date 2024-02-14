@@ -17,8 +17,8 @@ function CustomTabPanel(props) {
       {...other}
     >
       {value === index && (
-        <Box sx={{ p: 3 }}>
-          <Typography>{children}</Typography>
+        <Box sx={{ py: 3 }}>
+          <Typography fontSize={{xs: '13px'}}>{children}</Typography>
         </Box>
       )}
     </div>
@@ -57,8 +57,7 @@ export default function ProductTabs() {
           <Tab label="Reviews" {...a11yProps(1)} />
         </Tabs>
       </Box>
-      <CustomTabPanel value={value} index={0}>
-        <Typography fontSize={{xs: '15px'}}>
+      <CustomTabPanel sx={{fontSize: '12px'}} value={value} index={0}>
         Quisque euismod egestas mi, id consectetur lacus dictum eu. Nullam eget
         nibh nec sem pellentesque cursus. Interdum et malesuada fames ac ante
         ipsum primis in faucibus. Nunc arcu augue, egestas in imperdiet sit
@@ -71,7 +70,6 @@ export default function ProductTabs() {
         scelerisque, consequat velit vitae, dictum massa. Donec fermentum
         sagittis tristique. Nunc in dolor id massa vehicula fringilla. Curabitur
         sit amet finibus eros, vel mollis lacus.
-        </Typography>
       </CustomTabPanel>
       <CustomTabPanel value={value} index={1}>
         Item Two

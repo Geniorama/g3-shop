@@ -13,20 +13,20 @@ export default function BannerPromo() {
         padding: '3rem 0'
         }}>
         <Container sx={{position: 'relative', zIndex: '2'}}>
-            <Grid container spacing={15} justifyContent={'center'} alignItems={'center'}>
+            <Grid container spacing={{xs:3, lg:15}} justifyContent={'center'} alignItems={'center'}>
                 <Grid item xs={12} lg={6}>
-                    <Image unoptimized alt='' width={'100%'} height={'100%'} style={{objectFit: 'contain'}} src={Astro} />
+                   <img src={Astro.src} alt="" style={{width: '100%'}} />
                 </Grid>
 
                 <Grid item xs={12} md={6}>
-                    <Box sx={{color: 'white'}}>
+                    <Box sx={{color: 'white'}} textAlign={{xs: 'center', lg: 'left'}}>
                         <Typography
                             sx={{
-                                fontSize: '120px',
                                 fontStyle: 'italic',
                                 fontWeight: 'bold',
                                 lineHeight: '1em'
                             }}
+                            fontSize={{xs: '90px', lg: '120px'}}
                             >
                             READY
                         </Typography>

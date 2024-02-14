@@ -52,7 +52,6 @@ const menuItems = [
 
 const auxMenuItems = [
   {
-    title: 'Login / Register',
     path: '/',
     icon: <PersonOutlineIcon />
   },
@@ -96,14 +95,14 @@ function ResponsiveAppBar() {
             <Image alt='log-g3' src={Logo} />
           </Link>
 
-          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }} justifyContent={'flex-end'}>
             <IconButton
               size="large"
               aria-label="account of current user"
               aria-controls="menu-appbar"
               aria-haspopup="true"
               onClick={handleOpenNavMenu}
-              color="inherit"
+              color="primary"
             >
               <MenuIcon />
             </IconButton>
@@ -125,32 +124,14 @@ function ResponsiveAppBar() {
                 display: { xs: 'block', md: 'none' },
               }}
             >
-              {auxMenuItems.map((item, index) => (
+              {menuItems.map((item, index) => (
                 <MenuItem key={index} onClick={handleCloseNavMenu}>
                   <Typography textAlign="center">{item.title}</Typography>
                 </MenuItem>
               ))}
             </Menu>
           </Box>
-          <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
-          <Typography
-            variant="h5"
-            noWrap
-            component="a"
-            href="#app-bar-with-responsive-menu"
-            sx={{
-              mr: 2,
-              display: { xs: 'flex', md: 'none' },
-              flexGrow: 1,
-              fontFamily: 'monospace',
-              fontWeight: 700,
-              letterSpacing: '.3rem',
-              color: 'inherit',
-              textDecoration: 'none',
-            }}
-          >
-            LOGO
-          </Typography>
+
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }} justifyContent={'center'}>
             {menuItems.map((item, index) => (
               <Link 
@@ -186,7 +167,8 @@ function ResponsiveAppBar() {
             ))}
           </Box>
 
-          <Box sx={{ flexGrow: 0 }}>
+          {/* Menu icons desktop */}
+          <Box display={{xs: 'none', md: 'flex'}} sx={{flexGrow: 0 }}>
             {auxMenuItems.map((item, index) => {
               return(
                 <IconButton href={item.path} color='secondary' key={index}>
@@ -194,7 +176,6 @@ function ResponsiveAppBar() {
                 </IconButton>
               )
             })}
-            
           </Box>
         </Toolbar>
       </Container>

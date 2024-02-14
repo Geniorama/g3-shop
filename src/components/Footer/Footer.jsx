@@ -119,8 +119,8 @@ export default function Footer() {
                     </Typography> 
                 </Grid>
 
-                <Grid item>
-                   <Stack direction={'row'}>
+                <Grid item xs={12} lg={'auto'}>
+                   <Stack direction={'row'} justifyContent={{xs: 'center'}}>
                      <IconButton color='secondary'>
                         <FacebookOutlinedIcon />
                      </IconButton>

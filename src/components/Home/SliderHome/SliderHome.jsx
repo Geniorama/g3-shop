@@ -1,11 +1,12 @@
 import React from 'react'
-import { Box, Grid, Container, Typography, Card, useTheme } from '@mui/material';
+import { Box, Grid, Container, Typography, Card, useTheme, Button } from '@mui/material';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import Cards from '@/assets/img/25415479_3.png';
 import Image from 'next/image';
 import Astronaut from '@/assets/img/astronauta-banner.svg';
+
 
 
 export default function SliderHome() {
@@ -19,40 +20,29 @@ export default function SliderHome() {
 
   const theme = useTheme();
 
+  const defaultImage = Cards.src;
+
   return (
     <>
-      <Slider {...settings}>
+      <Slider style={{marginTop: '60px'}} {...settings}>
         <Box sx={{backgroundColor: theme.palette.primary.main}}>
           <Container>
-            <Grid container spacing={5} alignItems={'center'}>
-              <Grid display={'flex'} flexDirection={'column'} justifyContent={'center'} xs={12} lg={6} sx={{padding: '3rem 0', minHeight: '80vh'}} item>
+            <Grid container spacing={{xs:0, md:5}} alignItems={'center'}>
+              <Grid display={'flex'} flexDirection={'column'} justifyContent={'center'} xs={12} lg={6} sx={{minHeight: '80vh'}} item>
                 <Image data-aos="fade-left" src={Astronaut} alt='' width={200} height={200} />
                 <Typography fontSize={'20px'} fontWeight={'bold'} color={'secondary'}> New promo</Typography>
-                <Typography fontSize={'80px'} fontWeight={'bold'} lineHeight={'1em'} color={'white'}> BUSINESS CARDS</Typography>
+                <Typography fontSize={{xs: '50px', md: '80px'}} fontWeight={'bold'} lineHeight={'1em'} color={'white'}> BUSINESS CARDS</Typography>
                 <Typography fontSize={'15px'} color={'#f4f4f4'} mt={3}>
                   Lorem ipsum dolor sit amet consectetur adipisicing elit. Itaque id excepturi neque eos fuga sunt rerum nemo perspiciatis iste? Fugiat libero ullam recusandae nisi quam corrupti in odit praesentium repellat.
                 </Typography>
+                <Box mt={{xs: 3}}>
+                  <Button href='/product' variant='contained' color='secondary'>
+                      BUY NOW
+                  </Button>
+                </Box>
               </Grid>
-              <Grid item>
-                <Image unoptimized src={Cards} alt='' width={'500'} style={{maxWidth:'100%'}} />
-              </Grid>
-            </Grid>
-          </Container>
-        </Box>
-        
-        <Box>
-          <Container>
-            <Grid container spacing={5} alignItems={'center'}>
-              <Grid display={'flex'} flexDirection={'column'} justifyContent={'center'} xs={12} lg={6} sx={{padding: '3rem 0', minHeight: '80vh'}} item>
-                <Image src={Astronaut} alt='' width={200} height={200} />
-                <Typography fontSize={'20px'} fontWeight={'bold'} color={'secondary'}> New promo</Typography>
-                <Typography fontSize={'80px'} fontWeight={'bold'} lineHeight={'1em'} color={'primary'}> BUSINESS CARDS</Typography>
-                <Typography fontSize={'15px'} color={'gray'} mt={3}>
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Itaque id excepturi neque eos fuga sunt rerum nemo perspiciatis iste? Fugiat libero ullam recusandae nisi quam corrupti in odit praesentium repellat.
-                </Typography>
-              </Grid>
-              <Grid item>
-                <Image src={Cards} alt='' width={'500'} style={{maxWidth:'100%'}} />
+              <Grid item xs={12} lg={6}>
+                <img src={defaultImage} alt="" style={{width: '100%'}}/>
               </Grid>
             </Grid>
           </Container>

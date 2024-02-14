@@ -45,18 +45,18 @@ export default function ProductSummary({dataProduct}) {
         <Typography fontSize={{ xs: "13px" }} fontWeight={"bold"}>
           Categories:
         </Typography>
-        <Typography fontSize={{ xs: "13px" }} ml={{ xs: 1 }}>
+        <Box fontSize={{ xs: "13px" }} ml={{ xs: 1 }}>
           <Link href="/">Cat1</Link> , <Link>Cat2</Link>, <Link>Cat3</Link>
-        </Typography>
+        </Box>
       </Stack>
 
       <Stack mt={{ xs: 1 }} direction={"row"}>
         <Typography fontSize={{ xs: "13px" }} fontWeight={"bold"}>
           Tags:
         </Typography>
-        <Typography fontSize={{ xs: "13px" }} ml={{ xs: 1 }}>
+        <Box fontSize={{ xs: "13px" }} ml={{ xs: 1 }}>
           <Link>Tag1</Link> , <Link>Tag2</Link>, <Link>Tag3</Link>
-        </Typography>
+        </Box>
       </Stack>
 
       <Stack mt={{ xs: 1 }} direction={"row"} alignItems={"center"}>

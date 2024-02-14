@@ -3,6 +3,8 @@ import { Box, Grid, Container } from '@mui/material';
 import TitleSection from '@/components/TitleSection/TitleSection';
 import IconSection from '@/assets/img/Modo_de_aislamiento.svg';
 import CardCategory from '@/components/Shop/CardCategory/CardCategory';
+import tshirt from '@/assets/img/t-shirt.png';
+import mkting from '@/assets/img/mkting-material.png';
 
 export default function ProductCategories() {
   return (
@@ -16,16 +18,16 @@ export default function ProductCategories() {
                     />
                 </Grid>
                 <Grid item xs={12} md={6}>
-                    <CardCategory />
+                    <CardCategory href={'/category/signs-and-banners'} name={'Signs and banners'} />
                 </Grid>
                 <Grid item xs={12} md={6}>
-                    <CardCategory />
+                    <CardCategory image={tshirt} name={'Custom T-Shirts'} />
                 </Grid>
                 <Grid item xs={12} md={6}>
-                    <CardCategory />
+                    <CardCategory image={mkting} name={'Marketing material'}/>
                 </Grid>
                 <Grid item xs={12} md={6}>
-                    <CardCategory />
+                    <CardCategory name={'Design'} />
                 </Grid>
             </Grid>
         </Container>

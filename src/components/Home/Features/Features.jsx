@@ -13,31 +13,31 @@ export default function Features() {
                 container
                 direction="row"
                 justifyContent="center"
-                alignItems="center"
+                alignItems={{xs: "flex-start", lg: "center"}}
                 spacing={3}
                 >
-                <Grid item xs={12} md={4}>
+                <Grid item xs={4}>
                     <Box textAlign={'center'}>
                         <RocketLaunchOutlinedIcon style={{marginBottom: '5px'}} fontSize='large' color='secondary' />
-                        <Typography color={'primary'} component={'p'} variant='h6' sx={{fontWeight: '600'}} fontSize={'15px'}>
+                        <Typography color={'primary'} component={'p'} variant='h6' sx={{fontWeight: '600'}} fontSize={{xs: '12px', md: '15px'}}>
                             Fast Service
                         </Typography>
                     </Box>
                 </Grid>
 
-                <Grid item xs={12} md={4}>
+                <Grid item xs={4}>
                    <Box textAlign={'center'}>
                         <ShieldOutlinedIcon style={{marginBottom: '5px'}} fontSize='large' color='secondary' />
-                        <Typography color={'primary'} component={'p'} variant='h6' sx={{fontWeight: '600'}} fontSize={'15px'}>
+                        <Typography color={'primary'} component={'p'} variant='h6' sx={{fontWeight: '600'}} fontSize={{xs: '12px', md: '15px'}}>
                             Secure Payment
                         </Typography>
                    </Box>
                 </Grid>
 
-                <Grid item xs={12} md={4}>
+                <Grid item xs={4}>
                     <Box textAlign={'center'}>
                         <InsertEmoticonOutlinedIcon style={{marginBottom: '5px'}} fontSize='large' color='secondary' />
-                        <Typography color={'primary'} component={'p'} variant='h6' sx={{fontWeight: '600'}} fontSize={'15px'}>
+                        <Typography color={'primary'} component={'p'} variant='h6' sx={{fontWeight: '600'}} fontSize={{xs: '12px', md: '15px'}}>
                             Personalized Attention
                         </Typography>
                     </Box>

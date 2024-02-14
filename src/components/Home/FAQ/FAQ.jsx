@@ -45,7 +45,7 @@ export default function FAQ() {
         <Container>
             <Grid container>
                 <Grid item xs={12} md={6}>
-                    <Box sx={{maxWidth: '300px'}}>
+                    <Box mb={{xs: 3}} sx={{maxWidth: '300px'}}>
                         <TitleSection 
                             title={'General Frequently Asked Questions'}
                             textAlign={'left'}
@@ -66,7 +66,9 @@ export default function FAQ() {
                                     {item.title}
                                     </AccordionSummary>
                                     <AccordionDetails>
-                                    {item.description}
+                                        <Typography fontSize={{xs: '13px', lg: '15px'}}>
+                                            {item.description}
+                                        </Typography>
                                     </AccordionDetails>
                                 </Accordion>
                             )
