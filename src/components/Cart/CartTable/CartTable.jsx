@@ -91,7 +91,7 @@ export default function CartTable() {
         </Table>
       </TableContainer>
 
-      <Grid container mt={{ xs: 3 }} >
+      {/* <Grid container mt={{ xs: 3 }} >
         <Grid item xs={12} md={6}>
           <Stack direction={{xs: "column", md: "row"}}>
             <TextField
@@ -134,7 +134,7 @@ export default function CartTable() {
                 UPDATE CART
             </Button>
         </Grid>
-      </Grid>
+      </Grid> */}
     </Box>
   );
 }
