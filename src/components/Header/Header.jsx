@@ -26,8 +26,8 @@ const menuItems = [
     path: '/'
   },
   {
-    title: 'Shop',
-    path: '/shop',
+    title: 'Signs & Banners',
+    path: '/category/signs-and-banners',
     list: [
       {
         title: '',
@@ -36,12 +36,16 @@ const menuItems = [
     ]
   },
   {
-    title: 'About',
-    path: '/about'
+    title: 'Custom T-Shirts',
+    path: '/'
   },
   {
-    title: 'Contact',
-    path: '/contact'
+    title: 'Marketing material',
+    path: '/'
+  },
+  {
+    title: 'Design',
+    path: '/'
   }
 ];
 

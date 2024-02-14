@@ -7,103 +7,106 @@ export default function Footer() {
   return (
     <Box component={'footer'} sx={{padding: '2rem', backgroundColor: '#252B42'}}>
         <Container>
-            <Grid container spacing={8} justifyContent={'flex-start'}>
+            <Grid container spacing={{xs: 3, sm: 5, lg: 18}} justifyContent={'flex-start'}>
                 {/* Widget */}
-                <Grid sx={{color: 'white'}} item>
+                <Grid sx={{color: 'white'}} item xs={6} sm={'auto'}>
                     <Typography sx={{fontSize: '12px', marginBottom: '10px'}}>
-                        Company info
+                        Navigation
                     </Typography>
                     <Box component={'ul'} sx={{fontSize: '10px', listStyle: 'none', lineHeight: '2em'}}>
                         <Box component={'li'}>
-                            <Link sx={{color: 'white'}}>About Us</Link>
+                            <Link href="/" sx={{color: 'white'}}>Home</Link>
                         </Box>
 
                         <Box component={'li'}>
-                            <Link sx={{color: 'white'}}>Carrier</Link>
+                            <Link href="/shop" sx={{color: 'white'}}>Shop</Link>
                         </Box>
 
                         <Box component={'li'}>
-                            <Link sx={{color: 'white'}}>Blog</Link>
+                            <Link href="/about" sx={{color: 'white'}}>About</Link>
+                        </Box>
+                        <Box component={'li'}>
+                            <Link href="/contact" sx={{color: 'white'}}>Contact</Link>
                         </Box>
                     </Box>
                 </Grid>
 
                 {/* Widget */}
-                <Grid sx={{color: 'white'}} item>
+                <Grid sx={{color: 'white'}} item xs={6} sm={'auto'}>
                     <Typography sx={{fontSize: '12px', marginBottom: '10px'}}>
                         Legal
                     </Typography>
                     <Box component={'ul'} sx={{fontSize: '10px', listStyle: 'none', lineHeight: '2em'}}>
                         <Box component={'li'}>
-                            <Link sx={{color: 'white'}}>Privacy policy</Link>
+                            <Link href="/privacy-policy" sx={{color: 'white'}}>Privacy policy</Link>
                         </Box>
 
                         <Box component={'li'}>
-                            <Link sx={{color: 'white'}}>Terms & conditions</Link>
-                        </Box>
-
-                        <Box component={'li'}>
-                            <Link sx={{color: 'white'}}>Warranty</Link>
+                            <Link href="/terms-and-conditions" sx={{color: 'white'}}>Terms & conditions</Link>
                         </Box>
                     </Box>
                 </Grid>
 
                 {/* Widget */}
-                <Grid sx={{color: 'white'}} item>
+                <Grid sx={{color: 'white'}} item xs={6} sm={'auto'}>
                     <Typography sx={{fontSize: '12px', marginBottom: '10px'}}>
                         Categories
                     </Typography>
                     <Box component={'ul'} sx={{fontSize: '10px', listStyle: 'none', lineHeight: '2em'}}>
                         <Box component={'li'}>
-                            <Link sx={{color: 'white'}}>Signs & Banner</Link>
+                            <Link sx={{color: 'white'}}>Signs & Banners</Link>
                         </Box>
 
                         <Box component={'li'}>
-                            <Link sx={{color: 'white'}}>Carrier</Link>
+                            <Link sx={{color: 'white'}}>Custom T-Shirts</Link>
                         </Box>
 
                         <Box component={'li'}>
-                            <Link sx={{color: 'white'}}>Blog</Link>
-                        </Box>
-                    </Box>
-                </Grid>
-
-                {/* Widget */}
-                <Grid sx={{color: 'white'}} item>
-                    <Typography sx={{fontSize: '12px', marginBottom: '10px'}}>
-                        Company info
-                    </Typography>
-                    <Box component={'ul'} sx={{fontSize: '10px', listStyle: 'none', lineHeight: '2em'}}>
-                        <Box component={'li'}>
-                            <Link sx={{color: 'white'}}>About Us</Link>
+                            <Link sx={{color: 'white'}}>Marketing material</Link>
                         </Box>
 
                         <Box component={'li'}>
-                            <Link sx={{color: 'white'}}>Carrier</Link>
-                        </Box>
-
-                        <Box component={'li'}>
-                            <Link sx={{color: 'white'}}>Blog</Link>
+                            <Link sx={{color: 'white'}}>Design</Link>
                         </Box>
                     </Box>
                 </Grid>
 
                 {/* Widget */}
-                <Grid sx={{color: 'white'}} item>
+                <Grid sx={{color: 'white'}} item xs={6} sm={'auto'}>
                     <Typography sx={{fontSize: '12px', marginBottom: '10px'}}>
                         Company info
                     </Typography>
                     <Box component={'ul'} sx={{fontSize: '10px', listStyle: 'none', lineHeight: '2em'}}>
                         <Box component={'li'}>
-                            <Link sx={{color: 'white'}}>About Us</Link>
+                            <Link sx={{color: 'white'}}>Phone: (123) 456 789</Link>
                         </Box>
 
                         <Box component={'li'}>
-                            <Link sx={{color: 'white'}}>Carrier</Link>
+                            <Link sx={{color: 'white'}}>Address: Street 123</Link>
                         </Box>
 
                         <Box component={'li'}>
-                            <Link sx={{color: 'white'}}>Blog</Link>
+                            <Link sx={{color: 'white'}}>Email: info@g3print.com</Link>
+                        </Box>
+                    </Box>
+                </Grid>
+
+                {/* Widget */}
+                <Grid sx={{color: 'white'}} item xs={6} sm={'auto'}>
+                    <Typography sx={{fontSize: '12px', marginBottom: '10px'}}>
+                        Follow Us
+                    </Typography>
+                    <Box component={'ul'} sx={{fontSize: '10px', listStyle: 'none', lineHeight: '2em'}}>
+                        <Box component={'li'}>
+                            <Link sx={{color: 'white'}}>Facebook</Link>
+                        </Box>
+
+                        <Box component={'li'}>
+                            <Link sx={{color: 'white'}}>Instagram</Link>
+                        </Box>
+
+                        <Box component={'li'}>
+                            <Link sx={{color: 'white'}}>Pinterest</Link>
                         </Box>
                     </Box>
                 </Grid>
@@ -112,7 +115,7 @@ export default function Footer() {
             <Grid container alignItems={'center'} justifyContent={'space-between'}>
                 <Grid item>
                    <Typography color={'white'} fontSize={'10px'}>
-                     Made with love by <Link sx={{color: 'white'}}>G3 Digital Marketing</Link> | {new Date().getFullYear()} © All rights reserved
+                     Made with love ❤ by <Link sx={{color: 'white'}}>G3 Digital Marketing</Link> | {new Date().getFullYear()} © All rights reserved
                     </Typography> 
                 </Grid>
 

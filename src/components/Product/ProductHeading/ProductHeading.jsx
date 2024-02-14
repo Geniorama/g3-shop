@@ -7,12 +7,13 @@ import {
   Link,
 } from "@mui/material";
 
-export default function ProductHeading({title}) {
+
+export default function ProductHeading({title, cover}) {
+  const defaultImage = 'https://plus.unsplash.com/premium_photo-1661768208245-14edc8f71585?q=80&w=2072&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
   return (
     <Box
       sx={{
-        backgroundImage:
-          "url(https://plus.unsplash.com/premium_photo-1661768208245-14edc8f71585?q=80&w=2072&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)",
+        backgroundImage: `url(${cover ? cover : defaultImage})`,
         minHeight: "20vh",
         backgroundSize: "cover",
         backgroundRepeat: "no-repeat",
