@@ -1,9 +1,10 @@
 import Layout from "@/components/Layout/Layout";
 import PageHeading from "@/components/PageHeading/PageHeading";
 import { useState } from "react";
-import { Typography, Box, Container, Button, Breadcrumbs, Link} from "@mui/material";
+import { Typography, Box, Container, Button, Breadcrumbs, Link, Grid} from "@mui/material";
 import ProductionQuantityLimitsIcon from '@mui/icons-material/ProductionQuantityLimits';
 import CartTable from "../../components/Cart/CartTable/CartTable";
+import CartTotals from "../../components/Cart/CartTotals/CartTotals";
 
 export default function Cart() {
   const [isEmpty, setIsEmpty] = useState(false)
@@ -45,6 +46,7 @@ export default function Cart() {
         <Box py={{xs:8}}>
           <Container>
             <CartTable />
+            <CartTotals />
           </Container>
         </Box>
       )

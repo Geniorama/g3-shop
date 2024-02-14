@@ -52,8 +52,8 @@ export default function CartTable() {
               >
                 <TableCell component="th" scope="row">
                   <Image
-                    width={40}
-                    height={40}
+                    width={70}
+                    height={70}
                     alt=""
                     src={
                       "https://images.unsplash.com/photo-1495846414472-6696652d955f?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
@@ -93,7 +93,7 @@ export default function CartTable() {
 
       <Grid container mt={{ xs: 3 }} >
         <Grid item xs={12} md={6}>
-          <Stack direction={"row"}>
+          <Stack direction={{xs: "column", md: "row"}}>
             <TextField
               size="small"
               label="Coupon code"
@@ -124,7 +124,13 @@ export default function CartTable() {
         </Grid>
 
         <Grid item xs={12} md={6} sx={{textAlign: 'right'}}>
-            <Button size="large" variant="contained" sx={{borderRadius: '5px !important', fontSize: "12px !important", background: '#ccc'}}>
+            <Button size="large" variant="contained" sx={{borderRadius: '5px !important', fontSize: "12px !important", background: '#ccc', 
+              '@media screen and (max-width: 600px)':{
+                width: '100%',
+                marginTop: '20px'
+              }
+              
+              }}>
                 UPDATE CART
             </Button>
         </Grid>

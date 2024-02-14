@@ -40,8 +40,7 @@ const theme = createTheme({
                     letterSpacing: '0.1px',
                     fontFamily: themePalette.FONT_BUTTON,
                     borderRadius: '50px',
-                    fontWeight: '700',
-                    fontSize: '20px'
+                    fontWeight: '700'
                 }
             }
         }
