@@ -14,6 +14,9 @@ export default function Layout({children, metadata}) {
         </Head>
 
         <Header />
+        <Box id="top">
+          {/* Ancle top */}
+        </Box>
         <Box component={'main'}>
             
             {children}

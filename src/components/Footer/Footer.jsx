@@ -1,11 +1,25 @@
 import React from 'react';
-import { Box, Container, Grid, Typography, Link, Stack, IconButton } from '@mui/material';
+import { Box, Container, Grid, Typography, Link, Stack, IconButton, useTheme } from '@mui/material';
 import FacebookOutlinedIcon from '@mui/icons-material/FacebookOutlined';
 import InstagramIcon from '@mui/icons-material/Instagram';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 
 export default function Footer() {
+  const theme = useTheme();
   return (
     <Box component={'footer'} sx={{padding: '2rem', backgroundColor: '#252B42'}}>
+        <Box
+            sx={{
+                position: 'fixed',
+                bottom: '20px',
+                right: '20px'
+            }}
+            >
+            <IconButton href='/#top' sx={{background: `${theme.palette.secondary.light}`, color: 'white'}} >
+                <ArrowUpwardIcon />
+            </IconButton>
+        </Box>
+
         <Container>
             <Grid container spacing={{xs: 3, sm: 5, lg: 18}} justifyContent={'flex-start'}>
                 {/* Widget */}
