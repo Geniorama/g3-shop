@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 
 import FormBilling from "../../components/Checkout/FormBilling/FormBilling";
+import OrderSummary from "../../components/Checkout/FormBilling/OrderSummary";
 
 const metadata = {
   title: "Checkout",
@@ -29,9 +30,12 @@ export default function index() {
           <Typography color="text.primary">{"Checkout"}</Typography>
         </Breadcrumbs>
 
-        <Grid sx={{py:{xs: 7}}} container>
+        <Grid sx={{py:{xs: 7}}} container spacing={5}>
             <Grid item xs={12} md={8}>
                 <FormBilling />
+            </Grid>
+            <Grid item xs={12} md={4}>
+                <OrderSummary />
             </Grid>
         </Grid>
       </Container>

@@ -15,7 +15,7 @@ export default function Footer() {
                 right: '20px'
             }}
             >
-            <IconButton href='/#top' sx={{background: `${theme.palette.secondary.light}`, color: 'white'}} >
+            <IconButton href='#top' sx={{background: `${theme.palette.secondary.light}`, color: 'white'}} >
                 <ArrowUpwardIcon />
             </IconButton>
         </Box>
