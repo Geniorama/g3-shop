@@ -2,28 +2,37 @@ import { Box, Typography, Badge, Stack, Divider } from '@mui/material';
 import { numberToPrice } from '../../../helpers/helpers';
 import Image from 'next/image';
 import { useEffect } from 'react';
+import { useRouter } from 'next/router';
 
 export default function OrderSummary() {
+  const router = useRouter()
   useEffect(() => {
-    console.log(window.screen.width)
-    if(window.screen.width > 900){
-        const orderSummary = document.getElementById('order-summary')
-        window.onload = function(){
-            const topSummary = orderSummary.getBoundingClientRect().top
-            window.onscroll = function(){
-                if(window.scrollY >= topSummary){
-                    orderSummary.style.position = 'fixed'
-                    orderSummary.style.top = '100px'
-                } else {
-                    orderSummary.style.position = 'relative'
-                    orderSummary.style.top = '0px'
-                }
-            }
+    const handleScroll = () => {
+      if (window.screen.width > 900) {
+        const orderSummary = document.getElementById('order-summary');
+        const topSummary = orderSummary.getBoundingClientRect().top;
+
+        if (window.scrollY >= topSummary) {
+          orderSummary.style.position = 'fixed';
+          orderSummary.style.top = '100px';
+        } else {
+          orderSummary.style.position = 'relative';
+          orderSummary.style.top = '0px';
         }
-    }
-    
-    
-  },[])
+      }
+    };
+
+    // Ejecutar la función cuando cambia la ruta
+    handleScroll();
+
+    // Agregar el evento de scroll al cargar la página
+    window.addEventListener('scroll', handleScroll);
+
+    // Limpiar el listener cuando el componente se desmonta
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [router.route]);
 
   return (
     <Box id="order-summary" sx={{transition: '.3s'}}>
