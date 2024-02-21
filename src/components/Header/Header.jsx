@@ -22,7 +22,19 @@ import { Link, useTheme } from '@mui/material';
 
 const menuItems = [
   {
-    title: 'Home',
+    title: 'Business Cards',
+    path: '/'
+  },
+  {
+    title: 'Flyers',
+    path: '/'
+  },
+  {
+    title: 'Roll labels',
+    path: '/'
+  },
+  {
+    title: 'Stickers',
     path: '/'
   },
   {
@@ -159,7 +171,8 @@ function ResponsiveAppBar() {
                   },
                   '&:hover':{
                     color: theme.palette.secondary.main
-                  }
+                  },
+                  fontSize: '13px'
                 }}
                 >
                 {item.title}
