@@ -21,6 +21,7 @@ export default function Features() {
       <Container>
         <Stack direction={{xs: 'row'}} justifyContent={'center'} alignItems={'center'} spacing={4}>
           <Box
+            data-aos="fade-right"
             textAlign={"center"}
             p={4}
             sx={{
@@ -86,6 +87,7 @@ export default function Features() {
 
           <Box
             textAlign={"center"}
+            data-aos="fade-left"
             p={4}
             sx={{
               background: `${theme.palette.primary.dark}`,
