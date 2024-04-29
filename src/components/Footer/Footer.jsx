@@ -35,10 +35,7 @@ export default function Footer() {
                         <Box component={'li'}>
                             <Link href="/shop" sx={{color: 'white'}}>Shop</Link>
                         </Box>
-
-                        <Box component={'li'}>
-                            <Link href="/about" sx={{color: 'white'}}>About</Link>
-                        </Box>
+                        
                         <Box component={'li'}>
                             <Link href="/contact" sx={{color: 'white'}}>Contact</Link>
                         </Box>

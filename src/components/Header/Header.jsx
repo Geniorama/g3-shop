@@ -1,88 +1,104 @@
-import * as React from 'react';
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import Menu from '@mui/material/Menu';
-import MenuIcon from '@mui/icons-material/Menu';
-import Container from '@mui/material/Container';
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import Tooltip from '@mui/material/Tooltip';
-import MenuItem from '@mui/material/MenuItem';
-import AdbIcon from '@mui/icons-material/Adb';
-import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
-import SearchIcon from '@mui/icons-material/Search';
-import ShoppingCartCheckoutIcon from '@mui/icons-material/ShoppingCartCheckout';
-import { useState } from 'react';
-import Logo from '../../../public/img/g3-logoRecurso 1.svg';
-import Image from 'next/image';
-import { Link, useTheme } from '@mui/material';
+import * as React from "react";
+import AppBar from "@mui/material/AppBar";
+import Box from "@mui/material/Box";
+import Toolbar from "@mui/material/Toolbar";
+import IconButton from "@mui/material/IconButton";
+import Typography from "@mui/material/Typography";
+import Menu from "@mui/material/Menu";
+import MenuIcon from "@mui/icons-material/Menu";
+import Container from "@mui/material/Container";
+import Avatar from "@mui/material/Avatar";
+import Button from "@mui/material/Button";
+import Tooltip from "@mui/material/Tooltip";
+import MenuItem from "@mui/material/MenuItem";
+import AdbIcon from "@mui/icons-material/Adb";
+import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
+import SearchIcon from "@mui/icons-material/Search";
+import ShoppingCartCheckoutIcon from "@mui/icons-material/ShoppingCartCheckout";
+import { useState, useEffect } from "react";
+import Logo from "../../../public/img/g3-logoRecurso 1.svg";
+import Image from "next/image";
+import { Link, useTheme, Modal, TextField, InputAdornment } from "@mui/material";
 
 const menuItems = [
   {
-    title: 'Business Cards',
-    path: '/'
+    title: "Business Cards",
+    path: "/",
   },
   {
-    title: 'Flyers',
-    path: '/'
+    title: "Flyers",
+    path: "/",
   },
   {
-    title: 'Roll labels',
-    path: '/'
+    title: "Roll labels",
+    path: "/",
   },
   {
-    title: 'Stickers',
-    path: '/'
+    title: "Stickers",
+    path: "/",
   },
   {
-    title: 'Signs & Banners',
-    path: '/category/signs-and-banners',
+    title: "Signs & Banners",
+    path: "/category/signs-and-banners",
     list: [
       {
-        title: '',
-        path: ''
-      }
-    ]
+        title: "",
+        path: "",
+      },
+    ],
   },
   {
-    title: 'Custom T-Shirts',
-    path: '/'
+    title: "Custom T-Shirts",
+    path: "/",
   },
   {
-    title: 'Marketing material',
-    path: '/'
+    title: "Marketing material",
+    path: "/",
   },
   {
-    title: 'Design',
-    path: '/'
-  }
+    title: "Design",
+    path: "/",
+  },
 ];
-
 
 const auxMenuItems = [
   {
-    path: '/',
-    icon: <PersonOutlineIcon />
+    path: "/",
+    icon: <PersonOutlineIcon />,
   },
   {
-    path: '/',
-    icon: <SearchIcon />
+    handleClick: "search",
+    icon: <SearchIcon />,
   },
   {
-    path: '/cart',
-    icon: <ShoppingCartCheckoutIcon />
-  }
+    path: "/cart",
+    icon: <ShoppingCartCheckoutIcon />,
+  },
 ];
-
-
 
 function ResponsiveAppBar() {
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
-  const theme = useTheme()
+  const [openSearch, setOpenSearch] = useState(false);
+
+  useEffect(() => {
+    console.log('Modal:' + openSearch)
+    if(openSearch){
+      console.log(document.body)
+      document.body.style.overflow="hidden"
+      document.body.style.height="100vh"
+    } else {
+      document.body.style.overflow="unset"
+      document.body.style.height="unset"
+    }
+
+    return () => {
+      document.body.style.overflow = 'unset';
+      document.body.style.height="unset"
+    };
+  }, [openSearch])
+
+  const theme = useTheme();
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -99,15 +115,70 @@ function ResponsiveAppBar() {
     setAnchorElUser(null);
   };
 
+  const handleOpenSearch = () => setOpenSearch(true);
+  const handleCloseSearch = () => setOpenSearch(false);
+
   return (
-    <AppBar sx={{background: 'white'}} position="fixed">
+    <AppBar sx={{ background: "white" }} position="fixed">
+      <Modal
+        open={openSearch}
+        onClose={handleCloseSearch}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+        sx={{
+          backgroundColor: 'rgba(0,0,0,.9)'
+        }}
+        >
+        <Box
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            // background: 'white',
+            transform: 'translate(-50%, -50%)',
+            padding: 5,
+            width: '90%',
+            maxWidth: '600px'
+          }}
+          >
+          <TextField
+            fullWidth
+            placeholder="Search for ..."
+            variant="standard"
+            sx={{
+              '& .MuiInput-underline:before': {
+                borderBottomColor: 'white'
+              },
+              '& .MuiInput-underline:after': {
+                borderBottomColor: 'white'
+              }
+            }}
+            InputProps={{
+              style: {
+                color: 'white',
+                fontSize: '20px'
+              },
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton sx={{color: 'white', fontSize: '20px'}}>
+                    <SearchIcon />
+                  </IconButton>
+                </InputAdornment>
+              )
+            }}
+          />
+        </Box>
+      </Modal>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <Link href="/">
-            <Image alt='log-g3' src={Logo} />
+            <Image alt="log-g3" src={Logo} />
           </Link>
 
-          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }} justifyContent={'flex-end'}>
+          <Box
+            sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}
+            justifyContent={"flex-end"}
+          >
             <IconButton
               size="large"
               aria-label="account of current user"
@@ -122,18 +193,18 @@ function ResponsiveAppBar() {
               id="menu-appbar"
               anchorEl={anchorElNav}
               anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'left',
+                vertical: "bottom",
+                horizontal: "left",
               }}
               keepMounted
               transformOrigin={{
-                vertical: 'top',
-                horizontal: 'left',
+                vertical: "top",
+                horizontal: "left",
               }}
               open={Boolean(anchorElNav)}
               onClose={handleCloseNavMenu}
               sx={{
-                display: { xs: 'block', md: 'none' },
+                display: { xs: "block", md: "none" },
               }}
             >
               {menuItems.map((item, index) => (
@@ -144,50 +215,62 @@ function ResponsiveAppBar() {
             </Menu>
           </Box>
 
-          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }} justifyContent={'center'}>
+          <Box
+            sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}
+            justifyContent={"center"}
+          >
             {menuItems.map((item, index) => (
-              <Link 
-                key={index} 
+              <Link
+                key={index}
                 href={item.path}
-                underline='none'
+                underline="none"
                 sx={{
-                  padding: '1em',
-                  margin: '0 1em',
-                  fontWeight: '600',
-                  position: 'relative',
-                  '&:before':{
+                  padding: "1em",
+                  margin: "0 1em",
+                  fontWeight: "600",
+                  position: "relative",
+                  "&:before": {
                     content: '""',
-                    position: 'absolute',
-                    width: '0',
-                    height: '3px',
+                    position: "absolute",
+                    width: "0",
+                    height: "3px",
                     background: theme.palette.secondary.main,
-                    bottom: '0',
-                    left: '50%',
-                    transition: '.5s'
+                    bottom: "0",
+                    left: "50%",
+                    transition: ".5s",
                   },
-                  '&:hover:before':{
-                    width: '100%',
-                    left: '0',
+                  "&:hover:before": {
+                    width: "100%",
+                    left: "0",
                   },
-                  '&:hover':{
-                    color: theme.palette.secondary.main
+                  "&:hover": {
+                    color: theme.palette.secondary.main,
                   },
-                  fontSize: '13px'
+                  fontSize: "13px",
                 }}
-                >
+              >
                 {item.title}
               </Link>
             ))}
           </Box>
 
           {/* Menu icons desktop */}
-          <Box display={{xs: 'none', md: 'flex'}} sx={{flexGrow: 0 }}>
+          <Box display={{ xs: "none", md: "flex" }} sx={{ flexGrow: 0 }}>
             {auxMenuItems.map((item, index) => {
-              return(
-                <IconButton href={item.path} color='secondary' key={index}>
+              return (
+                <IconButton
+                  onClick={
+                    item.handleClick &&
+                    item.handleClick == "search" &&
+                    handleOpenSearch
+                  }
+                  href={item.path ? item.path : null}
+                  color="secondary"
+                  key={index}
+                >
                   {item.icon}
                 </IconButton>
-              )
+              );
             })}
           </Box>
         </Toolbar>
