@@ -7,18 +7,22 @@ import Typography from "@mui/material/Typography";
 import Menu from "@mui/material/Menu";
 import MenuIcon from "@mui/icons-material/Menu";
 import Container from "@mui/material/Container";
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
-import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
-import AdbIcon from "@mui/icons-material/Adb";
-import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import SearchIcon from "@mui/icons-material/Search";
 import ShoppingCartCheckoutIcon from "@mui/icons-material/ShoppingCartCheckout";
 import { useState, useEffect } from "react";
 import Logo from "../../../public/img/g3-logoRecurso 1.svg";
 import Image from "next/image";
-import { Link, useTheme, Modal, TextField, InputAdornment } from "@mui/material";
+import { Link, useTheme, Modal, TextField, InputAdornment, Badge } from "@mui/material";
+import { styled } from '@mui/material/styles';
+
+const StyledBadge = styled(Badge)(({ theme }) => ({
+  '& .MuiBadge-badge': {
+    border: `2px solid ${theme.palette.background.paper}`,
+    padding: '0 4px',
+    fontSize: '10px'
+  },
+}));
 
 const menuItems = [
   {
@@ -62,10 +66,6 @@ const menuItems = [
 ];
 
 const auxMenuItems = [
-  {
-    path: "/",
-    icon: <PersonOutlineIcon />,
-  },
   {
     handleClick: "search",
     icon: <SearchIcon />,
@@ -268,7 +268,9 @@ function ResponsiveAppBar() {
                   color="secondary"
                   key={index}
                 >
-                  {item.icon}
+                  <StyledBadge  badgeContent={item.path === "/cart" ? 2 : null} color="primary">
+                    {item.icon}
+                  </StyledBadge >
                 </IconButton>
               );
             })}
