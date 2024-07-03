@@ -28,7 +28,7 @@ export default function Category() {
                     <SidebarShop />
                 </Grid>
                 <Grid item xs={12} lg={9}>
-                    <GridProducts />
+                    {/* <GridProducts /> */}
                 </Grid>
             </Grid>
         </Container>
