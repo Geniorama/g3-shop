@@ -9,8 +9,10 @@ import BannerPromo from "@/components/Home/BannerPromo/BannerPromo";
 import FAQ from "@/components/Home/FAQ/FAQ";
 import AOS from "aos";
 import "aos/dist/aos.css";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import storefront from "../utils";
+import CommingSoon from "@/components/CommingSoon/CommingSoon";
+
 
 const metadata = {
   title: "Inicio",
@@ -18,9 +20,17 @@ const metadata = {
 };
 
 export default function Home({ products }) {
+  const [isCommingSoon, setIsCommingSoon] = useState(true)
   useEffect(() => {
     AOS.init();
   }, []);
+
+  if(isCommingSoon){
+    return(
+      <CommingSoon />
+    )
+  }
+  
 
   return (
     <Layout metadata={metadata}>
