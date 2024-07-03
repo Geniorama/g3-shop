@@ -41,7 +41,7 @@ function CustomTabPanel(props) {
     };
   }
 
-export default function ExploreOurProducts() {
+export default function ExploreOurProducts({products}) {
   const [value, setValue] = React.useState(0);
 
   const handleChange = (event, newValue) => {
@@ -65,9 +65,9 @@ export default function ExploreOurProducts() {
                         </Tabs>
                     </Box>
                     <CustomTabPanel value={value} index={0}>
-                        <GridProducts />
+                        <GridProducts products={products} />
 
-                        <Button variant='contained' color='secondary'>
+                        <Button href='/shop' variant='contained' color='secondary'>
                           View All Products
                         </Button>
                     </CustomTabPanel>

@@ -17,17 +17,16 @@ const metadata = {
   description: "Hello world",
 };
 
-export default function Home({products}) {
+export default function Home({ products }) {
   useEffect(() => {
     AOS.init();
   }, []);
 
-  console.log(products)
   return (
     <Layout metadata={metadata}>
       <SliderHome />
       <Features />
-      <ExploreOurProducts />
+      <ExploreOurProducts products={products} />
       <ProductCategories />
       <MostPopular />
       <Techniques />
@@ -52,6 +51,9 @@ const productsQuery = gql`
             minVariantPrice {
               amount
             }
+            maxVariantPrice {
+              amount
+            }
           }
           images(first: 1) {
             edges {
@@ -67,27 +69,23 @@ const productsQuery = gql`
   }
 `;
 
-
-
 export async function getStaticProps() {
   try {
     const { data } = await storefront(productsQuery);
     if (!data || !data.products) {
-      throw new Error('No se pudo obtener la lista de productos');
+      throw new Error("No se pudo obtener la lista de productos");
     }
     return {
       props: {
-        products: data.products
+        products: data.products,
       },
     };
   } catch (error) {
-    console.error('Error al obtener la lista de productos:', error);
+    console.error("Error al obtener la lista de productos:", error);
     return {
       props: {
-        products: [] // Devuelve una lista vacía en caso de error
-      }
+        products: [], // Devuelve una lista vacía en caso de error
+      },
     };
   }
 }
-
-

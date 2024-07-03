@@ -5,13 +5,14 @@ import { Box, Container, Grid, Typography, Breadcrumbs, Link} from '@mui/materia
 import FilterBar from '@/components/Shop/FilterBar/FilterBar';
 import GridProducts from '@/components/GridProducts/GridProducts';
 import SidebarShop from '@/components/Shop/SidebarShop/SidebarShop';
+import storefront from "../../utils";
 
 const metadata = {
     title: 'Shop',
     description: 'Hello world'
 }
 
-export default function Shop() {
+export default function Shop({products}) {
 
   return (
     <Layout
@@ -38,11 +39,67 @@ export default function Shop() {
                     <SidebarShop />
                 </Grid>
                 <Grid item xs={12} lg={9}>
-                    <GridProducts />
+                    <GridProducts
+                        products={products}
+                    />
                 </Grid>
             </Grid>
         </Container>
 
     </Layout>
   )
+}
+
+const gql = String.raw;
+
+const productsQuery = gql`
+  query Products {
+    products(first: 6) {
+      edges {
+        node {
+          title
+          description
+          handle
+          tags
+          priceRange {
+            minVariantPrice {
+              amount
+            }
+            maxVariantPrice {
+              amount
+            }
+          }
+          images(first: 1) {
+            edges {
+              node {
+                url
+                altText
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
+export async function getStaticProps() {
+  try {
+    const { data } = await storefront(productsQuery);
+    if (!data || !data.products) {
+      throw new Error("No se pudo obtener la lista de productos");
+    }
+    return {
+      props: {
+        products: data.products,
+      },
+    };
+  } catch (error) {
+    console.error("Error al obtener la lista de productos:", error);
+    return {
+      props: {
+        products: [], // Devuelve una lista vacía en caso de error
+      },
+    };
+  }
 }

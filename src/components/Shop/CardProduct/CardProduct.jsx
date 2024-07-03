@@ -5,8 +5,9 @@ import Link from 'next/link';
 import styles from './CardProduct.module.css';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
+import { formatCurrency } from '@/helpers';
 
-export default function CardProduct({dataProduct}) {
+export default function CardProduct({title, salePrice, normalPrice, image, type}) {
 
   const dataExample = {
     image: 'https://images.unsplash.com/photo-1525299374597-911581e1bdef?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
@@ -26,34 +27,39 @@ export default function CardProduct({dataProduct}) {
             overflow: 'hidden'
         }}>
             <Stack spacing={1} sx={{position: 'relative', zIndex: '2'}} direction={'row'} padding={1}>
-                <Chip color={'secondary'} label="Sale" />
-                <Chip color='primary' label="Sale" />
-                <Chip color='primary' label="Sale" />
+                {salePrice && (
+                    <Chip color={'secondary'} label="Sale" />
+                )}
+                {/* <Chip color='primary' label="Sale" /> */}
+                {/* <Chip color='primary' label="Sale" /> */}
             </Stack>
             <Link href={'/product'}>
-                <Image unoptimized fill style={{objectFit: 'cover'}} alt='' src={dataProduct ? dataProduct.image : dataExample.image} />
+                <Image unoptimized fill style={{objectFit: 'cover'}} alt='' src={image ? image : dataExample.image} />
             </Link>
         </Box>
         <Box sx={{textAlign: 'center', padding: '1.5em'}}>
             <Link href={'/product'} style={{textDecoration: 'none', color: 'unset'}}>
                 <Typography sx={{fontWeight: 'bold', fontSize: '20px'}} component={'h3'}>
-                    {dataProduct ? dataProduct.title :  dataExample.title}
+                    {title}
                 </Typography>
             </Link>
-            {dataProduct && (
-                dataProduct.type == 'variable' && (
-                    <Typography color={'gray'} fontSize={'12px'}>
-                        from
-                    </Typography>
-                )
+            {type == 'variable' && (
+                <Typography color={'gray'} fontSize={'12px'}>
+                    from
+                </Typography>
             )}
                         
             <Stack direction={'row'} spacing={1} justifyContent={'center'}>
-                <Typography color={'gray'} component={'span'} sx={{fontSize: '15px', textDecoration: 'line-through'}}>
-                    $30.00
-                </Typography>
+                {/* Sale price */}
+                {salePrice && (
+                    <Typography color={'gray'} component={'span'} sx={{fontSize: '15px', textDecoration: 'line-through'}}>
+                        {formatCurrency(salePrice)}
+                    </Typography>
+                )}
+
+                {/* Normal price */}
                 <Typography color={'secondary'} component={'span'} sx={{fontSize: '15px'}}>
-                    $20.00
+                   {formatCurrency(normalPrice)}
                 </Typography>
             </Stack>
         </Box>
