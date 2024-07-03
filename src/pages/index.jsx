@@ -26,7 +26,7 @@ export default function Home({ products }) {
     <Layout metadata={metadata}>
       <SliderHome />
       <Features />
-      <ExploreOurProducts products={products} />
+      <ExploreOurProducts products={products.edges} />
       <ProductCategories />
       <MostPopular />
       <Techniques />
