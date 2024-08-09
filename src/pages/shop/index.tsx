@@ -36,6 +36,30 @@ export default function Shop({ initialProducts, collections, totalProducts }: Sh
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000]);
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
+  const [sortOption, setSortOption] = useState<string>('');
+
+  useEffect(() => {
+    const sortProducts = () => {
+      let sortedProducts = [...filteredProducts];
+      switch (sortOption) {
+        case 'title-asc':
+          sortedProducts.sort((a, b) => a.title.localeCompare(b.title));
+          break;
+        case 'title-desc':
+          sortedProducts.sort((a, b) => b.title.localeCompare(a.title));
+          break;
+        case 'price-asc':
+          sortedProducts.sort((a, b) => a.normalPrice - b.normalPrice);
+          break;
+        case 'price-desc':
+          sortedProducts.sort((a, b) => b.normalPrice - a.normalPrice);
+          break;
+      }
+      setFilteredProducts(sortedProducts);
+    };
+
+    sortProducts();
+  }, [sortOption, filteredProducts]);
 
   useEffect(() => {
     const filterByPrice = () => {
@@ -78,6 +102,10 @@ export default function Shop({ initialProducts, collections, totalProducts }: Sh
     setPriceRange(range);
   };
 
+  const handleSortChange = (option: string) => {
+    setSortOption(option);
+  };
+
   return (
     <Layout metadata={metadata}>
       <PageHeading title="Shop" />
@@ -90,7 +118,13 @@ export default function Shop({ initialProducts, collections, totalProducts }: Sh
           <Typography color="text.primary">{"Shop"}</Typography>
         </Breadcrumbs>
         <Box margin={3} />
-        <FilterBar />
+        <FilterBar 
+          totalProducts={totalProducts}
+          filteredProductsCount={filteredProducts.length}
+          productsPerPage={PRODUCTS_PER_PAGE}
+          currentPage={currentPage}
+          onSortChange={handleSortChange}
+        />
         <Box margin={3} />
         <Grid container spacing={5}>
           <Grid item xs={12} lg={3}>
