@@ -19,7 +19,7 @@ export default function Features() {
   return (
     <Box component={"section"} sx={{ padding: "3rem 0" }}>
       <Container>
-        <Stack direction={{xs: 'row'}} justifyContent={'center'} alignItems={'center'} spacing={4}>
+        <Stack direction={{lg: 'row'}} justifyContent={'center'} alignItems={'center'} gap={{xs: 2, lg:4}}>
           <Box
             data-aos="fade-right"
             textAlign={"center"}

@@ -250,7 +250,9 @@ function ResponsiveAppBar() {
             >
               {menuCollection && menuCollection.length > 0 && menuCollection.map((item, index) => (
                 <MenuItem key={index} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{item.title}</Typography>
+                  <Link sx={{textDecoration: 'none'}} href={`/collections/${item.handle}`}>
+                    <Typography textAlign="center">{item.title}</Typography>
+                  </Link>
                 </MenuItem>
               ))}
             </Menu>
