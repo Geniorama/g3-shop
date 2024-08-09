@@ -20,7 +20,7 @@ export type ProductOption = {
 
 export type Product = {
   id: string;
-  slug?: string;
+  slug: string;
   title: string;
   normalPrice: number;
   salePrice?: number;

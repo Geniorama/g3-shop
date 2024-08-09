@@ -8,7 +8,7 @@ import {
   Typography,
   Breadcrumbs,
   Link,
-  Button
+  Button,
 } from "@mui/material";
 import FilterBar from "@/components/Shop/FilterBar/FilterBar";
 import SidebarShop from "@/components/Shop/SidebarShop/SidebarShop";
@@ -16,6 +16,7 @@ import GridProducts from "@/components/GridProducts/GridProducts";
 import type { Product } from "@/types";
 import type { Collection } from "shopify-buy";
 import shopifyClient from "@/lib/shopify";
+import Loader from "@/components/Loader/Loader";
 
 const metadata = {
   title: "Shop",
@@ -30,28 +31,40 @@ type ShopProps = {
 
 const PRODUCTS_PER_PAGE = 9;
 
-export default function Shop({ initialProducts, collections, totalProducts }: ShopProps) {
-  const [products, setProducts] = useState<Product[]>(initialProducts);
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>(initialProducts);
+export default function Shop({
+  initialProducts,
+  collections,
+  totalProducts,
+}: ShopProps) {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [filteredProducts, setFilteredProducts] =
+    useState<Product[]>([]);
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000]);
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
-  const [sortOption, setSortOption] = useState<string>('');
+  const [sortOption, setSortOption] = useState<string>("");
+
+  useEffect(() => {
+    if (initialProducts) {
+      setProducts(initialProducts);
+      setFilteredProducts(initialProducts)
+    }
+  }, [initialProducts]);
 
   useEffect(() => {
     const sortProducts = () => {
       let sortedProducts = [...filteredProducts];
       switch (sortOption) {
-        case 'title-asc':
+        case "title-asc":
           sortedProducts.sort((a, b) => a.title.localeCompare(b.title));
           break;
-        case 'title-desc':
+        case "title-desc":
           sortedProducts.sort((a, b) => b.title.localeCompare(a.title));
           break;
-        case 'price-asc':
+        case "price-asc":
           sortedProducts.sort((a, b) => a.normalPrice - b.normalPrice);
           break;
-        case 'price-desc':
+        case "price-desc":
           sortedProducts.sort((a, b) => b.normalPrice - a.normalPrice);
           break;
       }
@@ -62,31 +75,35 @@ export default function Shop({ initialProducts, collections, totalProducts }: Sh
   }, [sortOption, filteredProducts]);
 
   useEffect(() => {
-    const filterByPrice = () => {
-      const filtered = products.filter(product => {
-        const price = product.normalPrice;
-        return price >= priceRange[0] && price <= priceRange[1];
-      });
-      setFilteredProducts(filtered);
-    };
+    if (products) {
+      const filterByPrice = () => {
+        const filtered = products.filter((product) => {
+          const price = product.normalPrice;
+          return price >= priceRange[0] && price <= priceRange[1];
+        });
+        setFilteredProducts(filtered);
+      };
 
-    filterByPrice();
+      filterByPrice();
+    }
   }, [priceRange, products]);
 
   const fetchMoreProducts = async (page: number) => {
     setIsLoading(true);
     try {
-      const res = await fetch(`/api/products?page=${page}&limit=${PRODUCTS_PER_PAGE}`);
+      const res = await fetch(
+        `/api/products?page=${page}&limit=${PRODUCTS_PER_PAGE}`
+      );
       if (!res.ok) {
-        throw new Error('Failed to fetch products');
+        throw new Error("Failed to fetch products");
       }
       const data = await res.json();
       if (!Array.isArray(data.products)) {
-        throw new Error('Invalid products data');
+        throw new Error("Invalid products data");
       }
       setProducts((prev) => [...prev, ...data.products]);
     } catch (error) {
-      console.error('Error fetching products:', error);
+      console.error("Error fetching products:", error);
     } finally {
       setIsLoading(false);
     }
@@ -118,7 +135,7 @@ export default function Shop({ initialProducts, collections, totalProducts }: Sh
           <Typography color="text.primary">{"Shop"}</Typography>
         </Breadcrumbs>
         <Box margin={3} />
-        <FilterBar 
+        <FilterBar
           totalProducts={totalProducts}
           filteredProductsCount={filteredProducts.length}
           productsPerPage={PRODUCTS_PER_PAGE}
@@ -134,13 +151,29 @@ export default function Shop({ initialProducts, collections, totalProducts }: Sh
             />
           </Grid>
           <Grid item xs={12} lg={9}>
-            <GridProducts products={filteredProducts} pagination={false} />
-            {products.length < totalProducts && (
+            { filteredProducts && filteredProducts.length > 0 ? (
+              <GridProducts products={filteredProducts} pagination={false} />
+            ) : (
+              <Box sx={{display: 'flex', alignItems: 'center', height: '100%', p: 2}} >
+                <Loader
+                  sx={{
+                    width: '50px',
+                    height: '50px',
+                    margin: 'auto'
+                  }} 
+                />
+              </Box>
+            )}
+            {products && products.length < totalProducts && (
               <Box textAlign="center" margin={3}>
                 {/* <button onClick={handleLoadMore} disabled={isLoading}>
                   {isLoading ? "Loading..." : "Load More"}
                 </button> */}
-                <Button variant="outlined" onClick={handleLoadMore} disabled={isLoading}>
+                <Button
+                  variant="outlined"
+                  onClick={handleLoadMore}
+                  disabled={isLoading}
+                >
                   {isLoading ? "Loading..." : "Load More"}
                 </Button>
               </Box>
@@ -179,11 +212,13 @@ export async function getStaticProps() {
       slug: product.handle,
     }));
 
-    const serializableCollections = fetchCollections.map((collection: Collection) => ({
-      id: collection.id,
-      title: collection.title,
-      handle: collection.handle,
-    }));
+    const serializableCollections = fetchCollections.map(
+      (collection: Collection) => ({
+        id: collection.id,
+        title: collection.title,
+        handle: collection.handle,
+      })
+    );
 
     return {
       props: {

@@ -1,3 +1,4 @@
+import { GetStaticPaths, GetStaticProps } from 'next';
 import { Box, Container, Grid, Divider, Typography } from "@mui/material";
 import Layout from "@/components/Layout/Layout";
 import ProductHeading from "../../components/Product/ProductHeading/ProductHeading";
@@ -9,7 +10,7 @@ import NewsLetterBar from "../../components/Shop/NewsletterBar/NewsLetterBar";
 import type { Product } from "@/types";
 import shopifyClient from "@/lib/shopify";
 import { useState, useEffect } from "react";
-import { useDispatch, useSelector} from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addItem, removeItem } from "@/store/features/cartSlice";
 import { createCheckout, addLineItems, removeLineItem } from "@/store/actions/cartActions";
 import { RootState } from "@/store";
@@ -92,19 +93,34 @@ export default function Product({ product, relatedProductsIds }: ProductProps) {
   );
 }
 
-export async function getServerSideProps({ params }: any) {
-  const slug = params.slug;
+export const getStaticPaths: GetStaticPaths = async () => {
+  const products = await shopifyClient.product.fetchAll();
+
+  const paths = products.map((product: any) => ({
+    params: { slug: product.handle },
+  }));
+
+  return {
+    paths,
+    fallback: 'blocking',
+  };
+};
+
+export const getStaticProps: GetStaticProps = async ({ params }) => {
+  const slug = params?.slug;
+
+  if (!slug || Array.isArray(slug)) {
+    return {
+      notFound: true,
+    };
+  }
 
   try {
     const productData = await shopifyClient.product.fetchByHandle(slug);
 
     const isVariable = (variants: any) => {
-      if(variants.length > 1){
-        return true
-      }
-
-      return false
-    }
+      return variants.length > 1;
+    };
 
     const product: Product = {
       id: productData.id,
@@ -120,13 +136,12 @@ export async function getServerSideProps({ params }: any) {
         url: image.src,
         altText: image.altText,
       })),
-
-      options: productData.options.map((option:any) => ({
+      options: productData.options.map((option: any) => ({
         id: option.id,
         name: option.name,
         values: option.values.map((value: any) => ({
-          value: value.value, // Accede al valor real
-        }))
+          value: value.value,
+        })),
       })),
       isVariable: isVariable(productData.variants),
       variants: productData.variants.map(variant => ({
@@ -135,10 +150,9 @@ export async function getServerSideProps({ params }: any) {
         price: variant.price.amount,
         selectedOptions: variant.selectedOptions.map(selectOption => ({
           name: selectOption.name,
-          value: selectOption.value
-        }))
-      }))
-      
+          value: selectOption.value,
+        })),
+      })),
     };
 
     return {
@@ -149,5 +163,8 @@ export async function getServerSideProps({ params }: any) {
     };
   } catch (error) {
     console.log(error);
+    return {
+      notFound: true,
+    };
   }
-}
+};

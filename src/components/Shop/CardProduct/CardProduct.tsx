@@ -1,7 +1,6 @@
 import React from "react";
-import { Box, Typography, useTheme } from "@mui/material";
+import { Box, Typography, useTheme, Link } from "@mui/material";
 import Image from "next/image";
-import Link from "next/link";
 import styles from "./CardProduct.module.css";
 import Chip from "@mui/material/Chip";
 import Stack from "@mui/material/Stack";
@@ -47,7 +46,7 @@ export default function CardProduct({
           {/* <Chip color='primary' label="Sale" /> */}
         </Stack>
         {image && (
-          <Link prefetch href={`/product/${slug}`}>
+          <Link href={`/product/${slug}`}>
             <img
               style={{
                 width: "100%",
