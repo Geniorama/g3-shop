@@ -43,7 +43,7 @@ export default function BannerPromo() {
                         <Typography sx={{fontSize: '20px'}}>
                             Join us, and togetherwe&apos;ll conquer the digital galaxy.
                         </Typography>
-                        <Button variant='contained' sx={{marginTop: '2em'}} color='secondary'>
+                        <Button href='https://g3marketingdigital.com/' target='_blank' variant='contained' sx={{marginTop: '2em'}} color='secondary'>
                             Explore Now
                         </Button>
                     </Box>

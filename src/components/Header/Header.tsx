@@ -103,7 +103,6 @@ function ResponsiveAppBar() {
 
   useEffect(() => {
     if(openSearch){
-      console.log(document.body)
       document.body.style.overflow="hidden"
       document.body.style.height="100vh"
     } else {
@@ -156,8 +155,6 @@ function ResponsiveAppBar() {
       handleClick: handleGoToCart
     },
   ];
-
-  console.log(menuCollection)
 
   return (
     <AppBar sx={{ background: "white" }} position="fixed">

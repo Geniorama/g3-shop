@@ -140,6 +140,7 @@ export default function ProductSummary({
     },
   ];
 
+  console.log(dataProduct.collections)
   return (
     <Box>
       <Typography
@@ -284,18 +285,22 @@ export default function ProductSummary({
           Categories:
         </Typography>
         <Box fontSize={{ xs: "13px" }} ml={{ xs: 1 }}>
-          <Link href="/">Cat1</Link> , <Link>Cat2</Link>, <Link>Cat3</Link>
+          {dataProduct.collections && dataProduct.collections.map(collection => (
+            <Link key={collection.id} href={`/collections/${collection.handle}`}>
+              {collection.title}
+            </Link>
+          ))}
         </Box>
       </Stack>
 
-      <Stack mt={{ xs: 1 }} direction={"row"}>
+      {/* <Stack mt={{ xs: 1 }} direction={"row"}>
         <Typography fontSize={{ xs: "13px" }} fontWeight={"bold"}>
           Tags:
         </Typography>
         <Box fontSize={{ xs: "13px" }} ml={{ xs: 1 }}>
           <Link>Tag1</Link> , <Link>Tag2</Link>, <Link>Tag3</Link>
         </Box>
-      </Stack>
+      </Stack> */}
 
       <Stack mt={{ xs: 1 }} direction={"row"} alignItems={"center"}>
         <Typography fontSize={{ xs: "13px" }} fontWeight={"bold"}>

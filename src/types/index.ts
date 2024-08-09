@@ -38,6 +38,7 @@ export type Product = {
   options?: ProductOption[] | null;
   isVariable: boolean;
   variants?: ProductVariant[] | null;
+  collections?: MenuCollection[];
 };
 
 export type ItemCart = Product & {

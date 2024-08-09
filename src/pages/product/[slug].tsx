@@ -114,8 +114,17 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 
   try {
     const productData = await shopifyClient.product.fetchByHandle(slug);
-
-    console.log(productData.productType)
+    const productCollections = await shopifyClient.collection.fetchAllWithProducts();
+    const collections = productCollections.filter(collection => 
+      collection.products.some(p => p.id === productData.id)
+    ).map(collection => ({
+      id: collection.id,
+      title: collection.title,
+      handle: collection.handle
+    }));
+  
+    // const collections = productCollections.map(collection => collection.products)
+    console.log(collections)
     const isVariable = (variants: any) => {
       return variants.length > 1;
     };
@@ -151,13 +160,14 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
           value: selectOption.value,
         })),
       })),
-      type: productData.productType
+      type: productData.productType,
+      collections: collections
     };
 
     return {
       props: {
         product,
-        relatedProductsIds: [],
+        relatedProductsIds: []
       },
     };
   } catch (error) {
