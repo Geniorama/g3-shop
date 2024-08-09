@@ -6,13 +6,17 @@ import { Box, Container, Grid, Typography, Button } from "@mui/material";
 import FilterBar from "@/components/Shop/FilterBar/FilterBar";
 import SidebarShop from "@/components/Shop/SidebarShop/SidebarShop";
 import GridProducts from "@/components/GridProducts/GridProducts";
-import type { Product } from "@/types";
+import type { Product, MenuCollection } from "@/types";
 import shopifyClient from "@/lib/shopify";
 import Loader from "@/components/Loader/Loader";
 
 const PRODUCTS_PER_PAGE = 9;
 
-export default function ShopPage() {
+type ShopPageProps = {
+  collections?: MenuCollection[]
+}
+
+export default function ShopPage({collections}:ShopPageProps) {
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000]);
@@ -20,6 +24,7 @@ export default function ShopPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [sortOption, setSortOption] = useState<string>("");
   const [sortedProducts, setSortedProducts] = useState<Product[]>([]);
+  const [sidebarCollections, setSidebarCollections] = useState<MenuCollection[]>([])
 
   const filterProducts = () => {
     const filtered = products.filter((product) => {
@@ -49,6 +54,12 @@ export default function ShopPage() {
     }
     setSortedProducts(sorted);
   };
+
+  useEffect(() => {
+    if(collections){
+      setSidebarCollections(collections)
+    }
+  },[collections])
 
   useEffect(() => {
     const fetchInitialProducts = async () => {
@@ -114,7 +125,7 @@ export default function ShopPage() {
         <Grid container spacing={5}>
           <Grid item xs={12} lg={3}>
             <SidebarShop
-              categories={[]} // No categories for general shop view
+              categories={sidebarCollections ? sidebarCollections : []} // No categories for general shop view
               onPriceChange={handlePriceChange}
             />
           </Grid>
@@ -137,9 +148,10 @@ export default function ShopPage() {
                     margin: "auto",
                   }}
                 />
+                <Typography>Loading ...</Typography>
               </Box>
             )}
-            {products.length > 0 && (
+            {products.length > PRODUCTS_PER_PAGE && (
               <Box textAlign="center" margin={3}>
                 <Button
                   variant="outlined"
@@ -155,4 +167,30 @@ export default function ShopPage() {
       </Container>
     </Layout>
   );
+}
+
+
+export async function getServerSideProps() {
+    try {
+      const fetchDataCollections = await shopifyClient.collection.fetchAll()
+
+      const serializeCollections = fetchDataCollections.map(collection => ({
+        id: collection.id,
+        title: collection.title,
+        handle: collection.handle
+      }))
+
+      return{
+        props:{
+          collections: serializeCollections
+        }
+      }
+    } catch (error) {
+      console.error(error)
+      return{
+        props:{
+          collections: []
+        }
+      }
+    }
 }

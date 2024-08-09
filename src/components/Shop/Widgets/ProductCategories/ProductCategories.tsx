@@ -11,11 +11,11 @@ import {
   Divider,
 } from "@mui/material";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
-import type { Collection } from "shopify-buy";
+import { MenuCollection } from "@/types";
 import { useRouter } from "next/router";
 
 type ProductCategoriesProps = {
-  categories?: Collection[];
+  categories?: MenuCollection[];
 };
 
 export default function ProductCategories({
