@@ -18,10 +18,10 @@ import {
 } from "@mui/material";
 import { numberToPrice } from "../../../helpers/helpers";
 import type { Product, ItemCart } from "@/types";
-import { useState } from "react";
-import { ChangeEvent } from "react";
+import { useState, useRef, ChangeEvent } from "react";
 import { ProductVariant } from "@/types";
 import { useRouter } from "next/router";
+import AttachFileIcon from "@mui/icons-material/AttachFile";
 
 type SharedLinksProps = {
   icon: React.ReactElement;
@@ -30,11 +30,14 @@ type SharedLinksProps = {
 };
 
 type ProductSummaryProps = {
-  dataProduct: Product,
-  onAddToCart: (item: ItemCart) => Promise<void>
-}
+  dataProduct: Product;
+  onAddToCart: (item: ItemCart) => Promise<void>;
+};
 
-export default function ProductSummary({ dataProduct, onAddToCart }: ProductSummaryProps) {
+export default function ProductSummary({
+  dataProduct,
+  onAddToCart,
+}: ProductSummaryProps) {
   const {
     title,
     description,
@@ -43,6 +46,7 @@ export default function ProductSummary({ dataProduct, onAddToCart }: ProductSumm
     image,
     options,
     variants,
+    type,
   }: Product = dataProduct;
   const [quantity, setQuantity] = useState(1);
   const [selectedOptions, setSelectedOptions] = useState<{
@@ -51,7 +55,8 @@ export default function ProductSummary({ dataProduct, onAddToCart }: ProductSumm
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(
     null
   );
-  const router = useRouter()
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const router = useRouter();
 
   const handleAddItem = (item: Product, quantity: number) => {
     const itemCart: ItemCart = {
@@ -59,16 +64,28 @@ export default function ProductSummary({ dataProduct, onAddToCart }: ProductSumm
       quantity,
       id: selectedVariant?.variantId || item.id,
       normalPrice: selectedVariant?.price || item.normalPrice,
-      selectedOptions: selectedVariant?.selectedOptions
+      selectedOptions: selectedVariant?.selectedOptions,
     };
-    
-    onAddToCart(itemCart)
+
+    onAddToCart(itemCart);
     // setTimeout(() => router.push('/cart'), 1000)
   };
 
   const handleQuantityChange = (e: ChangeEvent<HTMLInputElement>) => {
     const newQuantity = parseInt(e.target.value); // Parse to number
     setQuantity(newQuantity);
+  };
+
+  const handleFileInputClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Aquí puedes manejar el archivo seleccionado
+      console.log(file);
+    }
   };
 
   const handleOptionChange = (optionName: string, value: string) => {
@@ -134,9 +151,47 @@ export default function ProductSummary({ dataProduct, onAddToCart }: ProductSumm
         dangerouslySetInnerHTML={{ __html: `${description}` }}
       />
 
-      {options && (
-        <Stack direction={"column"} gap={3} mb={{ xs: 2 }}>
-          <Typography>Select the options:</Typography>
+      {type === "Upload Design" && (
+        <Stack mb={3}>
+          <Typography fontSize={"15px"} fontWeight={"600"}>
+            Do you have a design?
+          </Typography>
+
+          <Stack
+            direction={"row"}
+            justifyContent={"center"}
+            alignItems={"center"}
+            onClick={handleFileInputClick}
+            sx={{
+              border: "1px dashed",
+              borderColor: "indigo",
+              padding: 2,
+              textAlign: "center",
+              my: 2,
+              cursor: "pointer",
+            }}
+          >
+            <AttachFileIcon />
+            <Typography fontWeight={"600"} fontSize={"15px"} color={"indigo"}>
+              Click to select your file
+            </Typography>
+          </Stack>
+          <input
+            ref={fileInputRef}
+            onChange={handleFileChange}
+            type="file"
+            name=""
+            id=""
+            style={{ display: 'none' }}
+          />
+        </Stack>
+      )}
+
+      {options && options.length > 1 && (
+        <Stack direction={"column"} gap={2} mb={{ xs: 2 }}>
+          <Typography fontSize={"15px"} fontWeight={"600"}>
+            Select the options:
+          </Typography>
           {options.map((option) => (
             <FormControl key={option.id}>
               <InputLabel id={option.id}>{option.name}</InputLabel>
@@ -144,7 +199,7 @@ export default function ProductSummary({ dataProduct, onAddToCart }: ProductSumm
                 labelId={option.id}
                 label={option.name}
                 value={selectedOptions[option.name]}
-                defaultValue={''}
+                defaultValue={""}
                 onChange={(e) =>
                   handleOptionChange(option.name, e.target.value)
                 }

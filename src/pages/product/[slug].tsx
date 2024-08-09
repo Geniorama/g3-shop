@@ -118,6 +118,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   try {
     const productData = await shopifyClient.product.fetchByHandle(slug);
 
+    console.log(productData.productType)
     const isVariable = (variants: any) => {
       return variants.length > 1;
     };
@@ -153,6 +154,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
           value: selectOption.value,
         })),
       })),
+      type: productData.productType
     };
 
     return {
