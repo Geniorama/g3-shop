@@ -9,7 +9,6 @@ import {
   Button,
   Link,
   TextField,
-  FormLabel,
   FormControl,
   Input,
   Select,
@@ -48,7 +47,10 @@ export default function ProductSummary({
     variants,
     type,
   }: Product = dataProduct;
-  const [quantity, setQuantity] = useState(1);
+
+  const [hasFile, setHasFile] = useState<boolean>(false);
+  const [fileName, setFileName] = useState<string>('');
+  const [quantity, setQuantity] = useState<number>(1);
   const [selectedOptions, setSelectedOptions] = useState<{
     [key: string]: string;
   }>({});
@@ -84,7 +86,16 @@ export default function ProductSummary({
     const file = e.target.files?.[0];
     if (file) {
       // Aquí puedes manejar el archivo seleccionado
-      console.log(file);
+      setHasFile(true);
+      setFileName(file.name); // Guardar el nombre del archivo para mostrarlo en el UI
+    }
+  };
+
+  const handleRemoveFile = () => {
+    setHasFile(false);
+    setFileName(''); // Limpiar el nombre del archivo
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ''; // Limpiar el input de archivo
     }
   };
 
@@ -169,13 +180,25 @@ export default function ProductSummary({
               textAlign: "center",
               my: 2,
               cursor: "pointer",
+              backgroundColor: hasFile ? 'indigo' : 'white'
             }}
           >
-            <AttachFileIcon />
-            <Typography fontWeight={"600"} fontSize={"15px"} color={"indigo"}>
-              Click to select your file
+            <AttachFileIcon
+              sx={{
+                color: hasFile ? "white" : "indigo"
+              }}
+            />
+            <Typography fontWeight={"600"} fontSize={"15px"} color={hasFile ? "white": "indigo"}>
+              {hasFile ? "Change file": "Click to select your file"}
             </Typography>
           </Stack>
+          {hasFile && (
+            <Box sx={{ textAlign: 'center', fontSize: '13px' }}>
+              <Link sx={{ color: 'red', textDecorationColor: 'red', cursor: 'pointer' }} onClick={handleRemoveFile}>
+                Remove file
+              </Link>
+            </Box>
+          )}
           <input
             ref={fileInputRef}
             onChange={handleFileChange}
@@ -183,6 +206,7 @@ export default function ProductSummary({
             name=""
             id=""
             style={{ display: 'none' }}
+            accept=".jpg,.jpeg,.png,.pdf"
           />
         </Stack>
       )}
@@ -198,7 +222,7 @@ export default function ProductSummary({
               <Select
                 labelId={option.id}
                 label={option.name}
-                value={selectedOptions[option.name]}
+                value={selectedOptions[option.name] || ''}
                 defaultValue={""}
                 onChange={(e) =>
                   handleOptionChange(option.name, e.target.value)

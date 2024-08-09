@@ -43,7 +43,7 @@ export default function Product({ product, relatedProductsIds }: ProductProps) {
   }, [product, relatedProductsIds]);
 
   if (!infoProduct) {
-    return "Cargando...";
+    return "Loading...";
   }
 
   const handleAddToCart = async (item: ItemCart) => {
