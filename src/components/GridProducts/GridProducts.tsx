@@ -15,12 +15,14 @@ export default function GridProducts({products, pagination}:GridProductsProps) {
     <Box display={'grid'} gridTemplateColumns={"repeat(auto-fill, minmax(min(250px, 100%), 1fr))"} gap={3}>
         {products.map((product, i:number) => (
           <Box key={i}>
-            <CardProduct 
+            <CardProduct
+              id={product.id}
               title={product.title}
               slug={product.slug}
               normalPrice={product.normalPrice}
               image={product.image}
-              type={'simple'}
+              type={product.isVariable ? 'variable': 'simple'}
+              isVariable={product.isVariable}
             />
           </Box>
         ))}

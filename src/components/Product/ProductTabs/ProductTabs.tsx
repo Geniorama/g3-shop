@@ -5,17 +5,20 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import { useState } from "react";
 import type { Product } from "@/types";
+import { BoxProps } from "@mui/material/Box";
 
-function CustomTabPanel(props:any) {
-  const { children, value, index, ...other } = props;
-
+type CustomTabPanelProps = {
+  children: string,
+  value: number,
+  index: number
+}
+function CustomTabPanel({children, value, index,}:CustomTabPanelProps) {
   return (
     <div
       role="tabpanel"
       hidden={value !== index}
       id={`simple-tabpanel-${index}`}
       aria-labelledby={`simple-tab-${index}`}
-      {...other}
     >
       {value === index && (
         <Box sx={{ py: 3 }}>
@@ -67,7 +70,7 @@ export default function ProductTabs({description}:ProductTabsProps) {
         </Tabs>
       </Box>
       {description && (
-        <CustomTabPanel sx={{fontSize: '12px'}} value={value} index={0}>
+        <CustomTabPanel value={value} index={0}>
          {description}
         </CustomTabPanel>
       )}
