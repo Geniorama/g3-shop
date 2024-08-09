@@ -2,21 +2,14 @@
 import React, { useState, useEffect } from "react";
 import Layout from "@/components/Layout/Layout";
 import PageHeading from "@/components/PageHeading/PageHeading";
-import {
-  Box,
-  Container,
-  Grid,
-  Typography,
-  Breadcrumbs,
-  Link,
-  Button
-} from "@mui/material";
+import { Box, Container, Grid, Typography, Breadcrumbs, Link, Button } from "@mui/material";
 import FilterBar from "@/components/Shop/FilterBar/FilterBar";
 import SidebarShop from "@/components/Shop/SidebarShop/SidebarShop";
 import GridProducts from "@/components/GridProducts/GridProducts";
 import type { Product } from "@/types";
 import type { Collection } from "shopify-buy";
 import shopifyClient from "@/lib/shopify";
+import Loader from "@/components/Loader/Loader";
 
 const PRODUCTS_PER_PAGE = 9;
 
@@ -26,30 +19,76 @@ type CollectionPageProps = {
   totalProducts: number;
 };
 
-export default function CollectionPage({ collection, initialProducts, totalProducts }: CollectionPageProps) {
+export default function CollectionPage({
+  collection,
+  initialProducts,
+  totalProducts,
+}: CollectionPageProps) {
   const [products, setProducts] = useState<Product[]>(initialProducts);
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>(initialProducts);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000]);
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
-  const [sortOption, setSortOption] = useState<string>('');
+  const [sortOption, setSortOption] = useState<string>("");
+  const [sortedProducts, setSortedProducts] = useState<Product[]>([]);
+
+  // Filter products based on price range
+  const filterProducts = () => {
+    const filtered = products.filter((product) => {
+      const price = product.normalPrice;
+      return price >= priceRange[0] && price <= priceRange[1];
+    });
+    setFilteredProducts(filtered);
+  };
+
+  // Sort products based on selected option
+  const sortProducts = () => {
+    let sorted = [...filteredProducts];
+    switch (sortOption) {
+      case "title-asc":
+        sorted.sort((a, b) => a.title.localeCompare(b.title));
+        break;
+      case "title-desc":
+        sorted.sort((a, b) => b.title.localeCompare(a.title));
+        break;
+      case "price-asc":
+        sorted.sort((a, b) => a.normalPrice - b.normalPrice);
+        break;
+      case "price-desc":
+        sorted.sort((a, b) => b.normalPrice - a.normalPrice);
+        break;
+      default:
+        break;
+    }
+    setSortedProducts(sorted);
+  };
 
   // Fetch more products when the currentPage changes
   useEffect(() => {
     const fetchMoreProducts = async () => {
+      if (isLoading) return; // Avoid multiple calls if already loading
+
       setIsLoading(true);
       try {
-        const res = await fetch(`/api/products?collectionSlug=${collection.handle}&page=${currentPage}&limit=${PRODUCTS_PER_PAGE}`);
+        const res = await fetch(
+          `/api/products?collectionSlug=${collection.handle}&page=${currentPage}&limit=${PRODUCTS_PER_PAGE}`
+        );
         if (!res.ok) {
-          throw new Error('Failed to fetch products');
+          throw new Error("Failed to fetch products");
         }
         const data = await res.json();
         if (!Array.isArray(data.products)) {
-          throw new Error('Invalid products data');
+          throw new Error("Invalid products data");
         }
-        setProducts((prev) => [...prev, ...data.products]);
+
+        // Avoid duplicate products
+        const newProducts = data.products.filter((product: Product) =>
+          !products.some((existingProduct) => existingProduct.id === product.id)
+        );
+
+        setProducts((prev) => [...prev, ...newProducts]);
       } catch (error) {
-        console.error('Error fetching products:', error);
+        console.error("Error fetching products:", error);
       } finally {
         setIsLoading(false);
       }
@@ -58,46 +97,17 @@ export default function CollectionPage({ collection, initialProducts, totalProdu
     fetchMoreProducts();
   }, [currentPage, collection.handle]);
 
-  // Filter products by price range
+  // Update filtered and sorted products when filters or sorting change
   useEffect(() => {
-    const filterByPrice = () => {
-      const filtered = products.filter(product => {
-        const price = product.normalPrice;
-        return price >= priceRange[0] && price <= priceRange[1];
-      });
-      setFilteredProducts(filtered);
-    };
-
-    filterByPrice();
+    filterProducts();
   }, [priceRange, products]);
 
-  // Sort filtered products
   useEffect(() => {
-    const sortProducts = () => {
-      let sortedProducts = [...filteredProducts];
-      switch (sortOption) {
-        case 'title-asc':
-          sortedProducts.sort((a, b) => a.title.localeCompare(b.title));
-          break;
-        case 'title-desc':
-          sortedProducts.sort((a, b) => b.title.localeCompare(a.title));
-          break;
-        case 'price-asc':
-          sortedProducts.sort((a, b) => a.normalPrice - b.normalPrice);
-          break;
-        case 'price-desc':
-          sortedProducts.sort((a, b) => b.normalPrice - a.normalPrice);
-          break;
-      }
-      setFilteredProducts(sortedProducts);
-    };
-
     sortProducts();
-  }, [sortOption, filteredProducts]);
+  }, [filteredProducts, sortOption]);
 
   const handleLoadMore = () => {
-    const nextPage = currentPage + 1;
-    setCurrentPage(nextPage);
+    setCurrentPage((prev) => prev + 1);
   };
 
   const handlePriceChange = (range: [number, number]) => {
@@ -109,7 +119,12 @@ export default function CollectionPage({ collection, initialProducts, totalProdu
   };
 
   return (
-    <Layout metadata={{ title: collection.title, description: collection.description }}>
+    <Layout
+      metadata={{
+        title: collection.title,
+        description: collection.description,
+      }}
+    >
       <PageHeading title={collection.title} />
 
       <Container>
@@ -123,12 +138,12 @@ export default function CollectionPage({ collection, initialProducts, totalProdu
           <Typography color="text.primary">{collection.title}</Typography>
         </Breadcrumbs>
         <Box margin={3} />
-        <FilterBar 
-          totalProducts={totalProducts} 
-          filteredProductsCount={filteredProducts.length} 
-          productsPerPage={PRODUCTS_PER_PAGE} 
-          currentPage={currentPage} 
-          onSortChange={handleSortChange} 
+        <FilterBar
+          totalProducts={totalProducts}
+          filteredProductsCount={filteredProducts.length}
+          productsPerPage={PRODUCTS_PER_PAGE}
+          currentPage={currentPage}
+          onSortChange={handleSortChange}
         />
         <Box margin={3} />
         <Grid container spacing={5}>
@@ -139,10 +154,33 @@ export default function CollectionPage({ collection, initialProducts, totalProdu
             />
           </Grid>
           <Grid item xs={12} lg={9}>
-            <GridProducts products={filteredProducts} pagination={false} />
+            {sortedProducts.length > 0 ? (
+              <GridProducts products={sortedProducts} pagination={false} />
+            ) : (
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  height: "100%",
+                  p: 2,
+                }}
+              >
+                <Loader
+                  sx={{
+                    width: "50px",
+                    height: "50px",
+                    margin: "auto",
+                  }}
+                />
+              </Box>
+            )}
             {products.length < totalProducts && (
               <Box textAlign="center" margin={3}>
-                <Button variant="outlined" onClick={handleLoadMore} disabled={isLoading}>
+                <Button
+                  variant="outlined"
+                  onClick={handleLoadMore}
+                  disabled={isLoading}
+                >
                   {isLoading ? "Loading..." : "Load More"}
                 </Button>
               </Box>
@@ -157,15 +195,15 @@ export default function CollectionPage({ collection, initialProducts, totalProdu
 export async function getStaticPaths() {
   try {
     const fetchCollections = await shopifyClient.collection.fetchAll();
-    
+
     const paths = fetchCollections.map((collection: Collection) => ({
-      params: { slug: collection.handle }
+      params: { slug: collection.handle },
     }));
 
-    return { paths, fallback: 'blocking' };
+    return { paths, fallback: "blocking" };
   } catch (error) {
     console.log(error);
-    return { paths: [], fallback: 'blocking' };
+    return { paths: [], fallback: "blocking" };
   }
 }
 
@@ -175,22 +213,18 @@ export async function getStaticProps({ params }: { params: { slug: string } }) {
     if (!collection) {
       throw new Error(`Collection with handle ${params.slug} not found`);
     }
-    
-    const fetchProducts = await shopifyClient.product.fetchAll();
-    const fetchCollection = await shopifyClient.collection.fetchByHandle(params.slug)
-    const productsByCollection = fetchCollection.products
 
-    // Filter products by the collection handle
-  
-    const initialProducts = productsByCollection.slice(0, PRODUCTS_PER_PAGE);
+    const productsByCollection = collection.products;
     const totalProducts = productsByCollection.length;
+
+    const initialProducts = productsByCollection.slice(0, PRODUCTS_PER_PAGE);
 
     const serializableProducts: Product[] = initialProducts.map((product) => ({
       id: product.id,
       title: product.title,
       image: {
-        url: product.images[0]?.src || '',
-        altText: product.images[0]?.altText || '',
+        url: product.images[0]?.src || "",
+        altText: product.images[0]?.altText || "",
       },
       description: product.descriptionHtml,
       normalPrice: product.variants[0]?.price.amount,
@@ -210,7 +244,7 @@ export async function getStaticProps({ params }: { params: { slug: string } }) {
           id: collection.id,
           title: collection.title,
           description: collection.descriptionHtml,
-          handle: collection.handle, // Ensure handle is included
+          handle: collection.handle,
         },
         initialProducts: serializableProducts,
         totalProducts,
@@ -221,10 +255,10 @@ export async function getStaticProps({ params }: { params: { slug: string } }) {
     return {
       props: {
         collection: {
-          id: '',
-          title: '',
-          description: '',
-          handle: '', // Ensure handle is included
+          id: "",
+          title: "",
+          description: "",
+          handle: "", 
         },
         initialProducts: [],
         totalProducts: 0,

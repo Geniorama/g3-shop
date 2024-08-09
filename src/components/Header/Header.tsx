@@ -102,7 +102,6 @@ function ResponsiveAppBar() {
   },[])
 
   useEffect(() => {
-    console.log('Modal:' + openSearch)
     if(openSearch){
       console.log(document.body)
       document.body.style.overflow="hidden"

@@ -10,10 +10,8 @@ import NewsLetterBar from "../../components/Shop/NewsletterBar/NewsLetterBar";
 import type { Product } from "@/types";
 import shopifyClient from "@/lib/shopify";
 import { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { addItem, removeItem } from "@/store/features/cartSlice";
-import { createCheckout, addLineItems, removeLineItem } from "@/store/actions/cartActions";
-import { RootState } from "@/store";
+import { useDispatch } from "react-redux";
+import { addItem } from "@/store/features/cartSlice";
 import type { ItemCart } from "@/types";
 import { AppDispatch } from "@/store";
 import { useRouter } from "next/router";
@@ -29,7 +27,6 @@ type ProductProps = {
 };
 
 export default function Product({ product, relatedProductsIds }: ProductProps) {
-  const { title } = product;
   const [infoProduct, setInfoProduct] = useState<Product>();
   const [relatedProducts, setRelatedProducts] = useState<Product["id"][]>();
   const dispatch = useDispatch<AppDispatch>();
