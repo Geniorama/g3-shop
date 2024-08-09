@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import type { Collection } from "shopify-buy";
+import { useRouter } from "next/router";
 
 type ProductCategoriesProps = {
   categories?: Collection[];
@@ -21,6 +22,7 @@ export default function ProductCategories({
   categories,
 }: ProductCategoriesProps) {
   const [open, setOpen] = React.useState(false);
+  const router = useRouter()
   const handleClick = () => {
     setOpen(!open);
   };
@@ -37,7 +39,7 @@ export default function ProductCategories({
         {categories && categories.map((cat) => (
           <>
             <Divider />
-            <ListItemButton onClick={handleClick}>
+            <ListItemButton href={`/collections/${cat.handle}`}>
               <ListItemText primary={cat.title} />
               {/* {open ? <ExpandLess /> : <ExpandMore />} */}
             </ListItemButton>

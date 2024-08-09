@@ -47,7 +47,7 @@ export default function CardProduct({
           {/* <Chip color='primary' label="Sale" /> */}
         </Stack>
         {image && (
-          <Link href={`/product/${slug}`}>
+          <Link prefetch href={`/product/${slug}`}>
             <img
               style={{
                 width: "100%",
