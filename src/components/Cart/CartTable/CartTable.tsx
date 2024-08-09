@@ -9,6 +9,10 @@ import Paper from "@mui/material/Paper";
 import { numberToPrice } from "../../../helpers/helpers";
 import Image from "next/image";
 import CloseIcon from "@mui/icons-material/Close";
+import type { ItemCart, Product } from "@/types";
+import { useDispatch } from "react-redux";
+import { removeItem } from "@/store/features/cartSlice";
+
 import {
   Typography,
   IconButton,
@@ -19,24 +23,21 @@ import {
   Grid,
 } from "@mui/material";
 
-function createData(name, calories, fat, carbs, protein) {
-  return { name, calories, fat, carbs, protein };
-}
+type CartTableProps = {
+  products: ItemCart[],
+  onRemoveItem: (itemId: ItemCart["id"]) => void
+};
 
-const rows = [
-  createData("Frozen yoghurt", "Business cards", 6.0, 2, 4.0),
-  createData("Ice cream sandwich", "Pop material", 9.0, 37, 4.3),
-  createData("Banner", "Banner", 16.0, 24, 6.0),
-];
+export default function CartTable({ products, onRemoveItem }: CartTableProps) {
+  const dispatch = useDispatch()
 
-export default function CartTable() {
   return (
     <Box>
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCell style={{ fontWeight: "bold" }}>IMAGE</TableCell>
+              <TableCell style={{ fontWeight: "bold" }}>{/**IMAGE */}</TableCell>
               <TableCell style={{ fontWeight: "bold" }}>PRODUCT</TableCell>
               <TableCell style={{ fontWeight: "bold" }}>PRICE</TableCell>
               <TableCell style={{ fontWeight: "bold" }}>QUANTITY</TableCell>
@@ -45,44 +46,37 @@ export default function CartTable() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row) => (
+            {products.map((product) => (
               <TableRow
-                key={row.name}
+                key={product.id}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
               >
-                <TableCell component="th" scope="row">
-                  <Image
-                    width={70}
-                    height={70}
-                    alt=""
-                    src={
-                      "https://images.unsplash.com/photo-1495846414472-6696652d955f?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                    }
-                  />
-                </TableCell>
+                {product.image && (
+                  <TableCell component="th" scope="row">
+                    <img style={{width: '70px', height: '70px', objectFit: 'cover'}} src={product.image.url} alt="" />
+                  </TableCell>
+                )}
                 <TableCell>
-                  <ul>
-                    <span
-                      style={{ display: "inline-block", marginBottom: "10px" }}
+                  <Typography
+                    fontWeight={'bold'}
                     >
-                      Product name
-                    </span>
-                    <li>
-                      <b>Color:</b>
-                      <span> Red</span>
-                    </li>
-                    <li>
-                      <b>Size:</b>
-                      <span> Small</span>
-                    </li>
-                  </ul>
+                    {product.title}
+                  </Typography>
+                  {product.selectedOptions && product.selectedOptions.map(option => (
+                    <Box key={option.name} sx={{fontSize: '12px', paddingLeft: 2}} component={'ul'}>
+                      <Box component={'li'}>
+                        <Typography fontSize={'12px'} fontWeight={'600'} component={'span'}>{option.name}: </Typography>
+                        <Typography fontSize={'12px'} component={'span'}>{option.value}</Typography>
+                      </Box>
+                    </Box>
+                  ))}
                 </TableCell>
-                <TableCell>{numberToPrice(row.fat)}</TableCell>
-                <TableCell>{row.carbs}</TableCell>
-                <TableCell>{numberToPrice(row.fat * row.carbs)}</TableCell>
+                <TableCell>{numberToPrice(product.normalPrice)}</TableCell>
+                <TableCell>{product.quantity}</TableCell>
+                <TableCell>{numberToPrice(product.normalPrice * product.quantity)}</TableCell>
                 <TableCell>
-                  <IconButton sx={{ color: "red" }}>
-                    <CloseIcon sx={{ fontSize: "13px" }} color="red" />
+                  <IconButton onClick={() => onRemoveItem(product.id)} sx={{ color: "red" }}>
+                    <CloseIcon sx={{ fontSize: "13px", color: "red" }} />
                   </IconButton>
                 </TableCell>
               </TableRow>

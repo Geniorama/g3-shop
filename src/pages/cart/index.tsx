@@ -1,6 +1,6 @@
 import Layout from "@/components/Layout/Layout";
 import PageHeading from "@/components/PageHeading/PageHeading";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Typography,
   Box,
@@ -13,14 +13,38 @@ import {
 import ProductionQuantityLimitsIcon from "@mui/icons-material/ProductionQuantityLimits";
 import CartTable from "../../components/Cart/CartTable/CartTable";
 import CartTotals from "../../components/Cart/CartTotals/CartTotals";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store";
+import shopifyClient from "@/lib/shopify";
+import { useDispatch } from "react-redux";
+import { removeItem } from "@/store/features/cartSlice";
+import type { ItemCart } from "@/types";
 
-export default function Cart() {
+export default function Cart({checkoutId}:any) {
   const [isEmpty, setIsEmpty] = useState(true);
+
+  const cartItems = useSelector((state: RootState) => state.cart.items)
+  const cartTotal = useSelector((state: RootState) => state.cart.totalAmount)
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    if(cartItems.length > 0){
+      setIsEmpty(false)
+    } else {
+      setIsEmpty(true)
+    }
+  }, [cartItems])
 
   const metadata = {
     title: "Cart",
     description: "My description",
   };
+
+  
+  const handleRemoveFromCart = (itemId: ItemCart['id']) => {
+    dispatch(removeItem(itemId))
+  }
+
   return (
     <Layout metadata={metadata}>
       {!isEmpty && (
@@ -62,8 +86,13 @@ export default function Cart() {
       ) : (
         <Box py={{ xs: 8 }}>
           <Container>
-            <CartTable />
-            <CartTotals />
+            <CartTable 
+              products={cartItems}
+              onRemoveItem={handleRemoveFromCart}
+            />
+            <CartTotals 
+              total={cartTotal}
+            />
           </Container>
         </Box>
       )}

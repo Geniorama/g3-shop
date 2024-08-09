@@ -7,8 +7,12 @@ import {
   Link,
 } from "@mui/material";
 
+type ProductHeadingProps = {
+  title?: string,
+  cover?: string
+}
 
-export default function ProductHeading({title, cover}) {
+export default function ProductHeading({title, cover}:ProductHeadingProps) {
   const defaultImage = 'https://plus.unsplash.com/premium_photo-1661768208245-14edc8f71585?q=80&w=2072&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
   return (
     <Box

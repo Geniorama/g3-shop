@@ -2,7 +2,13 @@ import React from 'react'
 import { Box, Typography, Stack, useTheme } from '@mui/material';
 import Image from 'next/image';
 
-export default function TitleSection({image, title, textAlign}) {
+type TitleSectionProps = {
+    image?: string,
+    title?: string,
+    textAlign?: string
+}
+
+export default function TitleSection({image, title, textAlign}: TitleSectionProps) {
   const theme = useTheme()
 
   return (

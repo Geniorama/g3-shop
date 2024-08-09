@@ -15,6 +15,12 @@ import Logo from "../../../public/img/g3-logoRecurso 1.svg";
 import Image from "next/image";
 import { Link, useTheme, Modal, TextField, InputAdornment, Badge } from "@mui/material";
 import { styled } from '@mui/material/styles';
+import {RootState} from '../../store/index'
+import { useSelector } from "react-redux";
+import { OverridableComponent } from "@mui/material/OverridableComponent";
+import { SvgIconTypeMap } from "@mui/material";
+import { useRouter } from "next/router";
+import { MouseEventHandler } from "react";
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   '& .MuiBadge-badge': {
@@ -65,21 +71,15 @@ const menuItems = [
   },
 ];
 
-const auxMenuItems = [
-  {
-    handleClick: "search",
-    icon: <SearchIcon />,
-  },
-  {
-    path: "/cart",
-    icon: <ShoppingCartCheckoutIcon />,
-  },
-];
+
 
 function ResponsiveAppBar() {
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
   const [openSearch, setOpenSearch] = useState(false);
+  
+  const cartItems = useSelector((state: RootState) => state.cart.items)
+  const router = useRouter()
 
   useEffect(() => {
     console.log('Modal:' + openSearch)
@@ -100,10 +100,10 @@ function ResponsiveAppBar() {
 
   const theme = useTheme();
 
-  const handleOpenNavMenu = (event) => {
+  const handleOpenNavMenu = (event:any) => {
     setAnchorElNav(event.currentTarget);
   };
-  const handleOpenUserMenu = (event) => {
+  const handleOpenUserMenu = (event:any) => {
     setAnchorElUser(event.currentTarget);
   };
 
@@ -117,6 +117,26 @@ function ResponsiveAppBar() {
 
   const handleOpenSearch = () => setOpenSearch(true);
   const handleCloseSearch = () => setOpenSearch(false);
+  const handleGoToCart = () => router.push('/cart')
+
+  type AuxMenuItemsProps = {
+    handleClick?: MouseEventHandler<HTMLButtonElement>,
+    icon: React.ReactElement,
+    name?: string
+  }
+  
+  const auxMenuItems:AuxMenuItemsProps[] = [
+    {
+      name: 'search',
+      handleClick: handleOpenSearch,
+      icon: <SearchIcon />,
+    },
+    {
+      name: "cart",
+      icon: <ShoppingCartCheckoutIcon />,
+      handleClick: handleGoToCart
+    },
+  ];
 
   return (
     <AppBar sx={{ background: "white" }} position="fixed">
@@ -259,16 +279,11 @@ function ResponsiveAppBar() {
             {auxMenuItems.map((item, index) => {
               return (
                 <IconButton
-                  onClick={
-                    item.handleClick &&
-                    item.handleClick == "search" &&
-                    handleOpenSearch
-                  }
-                  href={item.path ? item.path : null}
+                  onClick={item.handleClick}
                   color="secondary"
                   key={index}
                 >
-                  <StyledBadge  badgeContent={item.path === "/cart" ? 2 : null} color="primary">
+                  <StyledBadge badgeContent={item.name === "cart" ? cartItems.length : null} color="primary">
                     {item.icon}
                   </StyledBadge >
                 </IconButton>
