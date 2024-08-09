@@ -5,14 +5,14 @@ import { PersistGate } from 'redux-persist/integration/react';
 import { Provider } from 'react-redux';
 import { wrapper } from '@/store'
 
-function App({ Component, pageProps, ...rest }: AppProps) {
-  const { store } = wrapper.useWrappedStore(rest);
+function App({ Component, ...rest }: AppProps) {
+  const { store, props } = wrapper.useWrappedStore(rest);
   const persistor = (store as any).__persistor;
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
         <ThemeConfig>
-        <Component {...pageProps} />
+        <Component {...props.pageProps} />
       </ThemeConfig>
       </PersistGate>
     </Provider>

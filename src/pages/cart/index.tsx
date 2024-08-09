@@ -15,20 +15,57 @@ import CartTable from "../../components/Cart/CartTable/CartTable";
 import CartTotals from "../../components/Cart/CartTotals/CartTotals";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
-import shopifyClient from "@/lib/shopify";
 import { useDispatch } from "react-redux";
 import { removeItem } from "@/store/features/cartSlice";
 import type { ItemCart } from "@/types";
+import { setCheckoutId } from "@/store/features/cartSlice";
 
-export default function Cart({checkoutId}:any) {
+export default function Cart() {
   const [isEmpty, setIsEmpty] = useState(true);
+  const [checkoutUrl, setCheckoutUrl] = useState('')
+  const {checkoutId, items} = useSelector((state:RootState) => state.cart)
 
   const cartItems = useSelector((state: RootState) => state.cart.items)
   const cartTotal = useSelector((state: RootState) => state.cart.totalAmount)
   const dispatch = useDispatch()
 
+  async function createCheckout() {
+    try {
+      const res = await fetch('/api/create-checkout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({items})
+      })
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+      const data = await res.json()
+  
+      if(res.ok){
+        dispatch(setCheckoutId(data.id))
+        if(data.webUrl){
+          setCheckoutUrl(data.webUrl)
+        }
+      }
+      
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  /**
+   * CREATE CHECKOUT SHOPIFY
+  */
   useEffect(() => {
-    if(cartItems.length > 0){
+    if(items && items.length > 0){
+      createCheckout()
+    }
+  },[items])
+
+  useEffect(() => {
+    if(cartItems.length > 0 && checkoutId){
       setIsEmpty(false)
     } else {
       setIsEmpty(true)
@@ -39,7 +76,6 @@ export default function Cart({checkoutId}:any) {
     title: "Cart",
     description: "My description",
   };
-
   
   const handleRemoveFromCart = (itemId: ItemCart['id']) => {
     dispatch(removeItem(itemId))
@@ -92,6 +128,7 @@ export default function Cart({checkoutId}:any) {
             />
             <CartTotals 
               total={cartTotal}
+              checkoutUrl={checkoutUrl}
             />
           </Container>
         </Box>

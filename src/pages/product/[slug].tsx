@@ -10,11 +10,12 @@ import NewsLetterBar from "../../components/Shop/NewsletterBar/NewsLetterBar";
 import type { Product } from "@/types";
 import shopifyClient from "@/lib/shopify";
 import { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
-import { addItem } from "@/store/features/cartSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { addItem, setCheckoutId } from "@/store/features/cartSlice";
 import type { ItemCart } from "@/types";
 import { AppDispatch } from "@/store";
 import { useRouter } from "next/router";
+import { RootState } from '@/store';
 
 const metadata = {
   title: "Producto",
@@ -32,6 +33,8 @@ export default function Product({ product, relatedProductsIds }: ProductProps) {
   const dispatch = useDispatch<AppDispatch>();
   const router = useRouter()
 
+  const {items, checkoutId} = useSelector((state:RootState)=>state.cart)
+
   useEffect(() => {
     if (product) {
       setInfoProduct(product);
@@ -48,7 +51,6 @@ export default function Product({ product, relatedProductsIds }: ProductProps) {
 
   const handleAddToCart = async (item: ItemCart) => {
     dispatch(addItem(item))
-    setTimeout(() => router.push('/cart'), 1000)
   };
 
   return (
@@ -122,9 +124,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
       title: collection.title,
       handle: collection.handle
     }));
-  
-    // const collections = productCollections.map(collection => collection.products)
-    console.log(collections)
+
     const isVariable = (variants: any) => {
       return variants.length > 1;
     };

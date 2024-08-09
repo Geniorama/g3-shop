@@ -2,30 +2,26 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import shopifyClient from '@/lib/shopify';
 import type { ItemCart } from '@/types';
-import Shopify  from "shopify-api-node"
-
-const shopify = new Shopify({
-    shopName: `g3-print.myshopify.com`,
-    accessToken: `3c9add35240c8befeb2ee646b668d94a`,
-});
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
     try {
       const { items } = req.body;
-
-      // Crear un checkout en Shopify
-      const checkout = await shopify.checkout.create({
-        lineItems: items.map((item: ItemCart) => ({
+      const checkout = await shopifyClient.checkout.create();
+      if (items.length > 0) {
+        const lineItemsToAdd = items.map((item:ItemCart) => ({
           variantId: item.id,
           quantity: item.quantity,
-        })),
-      });
+        }));
 
-      res.status(200).json(checkout);
+        const newCheckout = await shopifyClient.checkout.addLineItems(checkout.id, lineItemsToAdd);
+        res.status(200).json(newCheckout);
+      } else {
+        res.status(400).json({ message: 'No items received' });
+      }
     } catch (error) {
       console.error('Error al crear el checkout:', error);
-      res.status(500).json({ error: 'Error al crear el checkout' });
+      res.status(500).json({ message: 'Error al crear el checkout' , error: error });
     }
   } else {
     res.setHeader('Allow', ['POST']);

@@ -115,7 +115,6 @@ export default function ProductSummary({
         });
       });
 
-      console.log("Matching Variant:", matchingVariant); // Verifica qué variante está siendo encontrada
       setSelectedVariant(matchingVariant || null);
     }
   };
@@ -139,8 +138,7 @@ export default function ProductSummary({
       url: `https://twitter.com/share?url=http://localhost:3000/product/${slug}&text=${title}`,
     },
   ];
-
-  console.log(dataProduct.collections)
+  
   return (
     <Box>
       <Typography

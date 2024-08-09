@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { createCheckout, addLineItems, removeLineItem } from "../actions/cartActions";
 import type { ItemCart } from "@/types";
 
 type CartState = {
@@ -39,13 +38,7 @@ const cartSlice = createSlice({
     setCheckoutId: (state, action: PayloadAction<string>) => {
       state.checkoutId = action.payload;
     },
-  },
-  extraReducers: (builder) => {
-    builder
-      .addCase(createCheckout.fulfilled, (state, action) => {
-        state.checkoutId = action.payload; // Asegúrate de que se actualiza correctamente
-      });
-  },
+  }
 });
 
 export const { addItem, removeItem, setCheckoutId } = cartSlice.actions;

@@ -11,9 +11,10 @@ import { numberToPrice } from "../../../helpers/helpers";
 type CartTotalsProps = {
   subtotal?: number;
   total?: number;
+  checkoutUrl: string;
 };
 
-export default function CartTotals({ subtotal, total }: CartTotalsProps) {
+export default function CartTotals({ subtotal, total, checkoutUrl }: CartTotalsProps) {
   return (
     <Box>
       <Grid mt={{ xs: 7 }} container justifyContent={"flex-end"}>
@@ -74,7 +75,7 @@ export default function CartTotals({ subtotal, total }: CartTotalsProps) {
             CONTINUE SHOPPING
           </Button>
           <Button
-            href="/checkout"
+            href={checkoutUrl}
             size="large"
             variant="contained"
             color="secondary"
