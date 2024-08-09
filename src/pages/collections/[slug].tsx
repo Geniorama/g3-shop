@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import Layout from "@/components/Layout/Layout";
 import PageHeading from "@/components/PageHeading/PageHeading";
-import { Box, Container, Grid, Typography, Breadcrumbs, Link, Button } from "@mui/material";
+import { Box, Container, Grid, Typography, Breadcrumbs, Link, Button, Stack } from "@mui/material";
 import FilterBar from "@/components/Shop/FilterBar/FilterBar";
 import SidebarShop from "@/components/Shop/SidebarShop/SidebarShop";
 import GridProducts from "@/components/GridProducts/GridProducts";
@@ -162,16 +162,20 @@ export default function CollectionPage({
                   display: "flex",
                   alignItems: "center",
                   height: "100%",
+                  justifyContent: "center",
                   p: 2,
                 }}
               >
-                <Loader
-                  sx={{
-                    width: "50px",
-                    height: "50px",
-                    margin: "auto",
-                  }}
-                />
+                <Stack gap={1}>
+                  <Loader
+                    sx={{
+                      width: "50px",
+                      height: "50px",
+                      margin: "auto",
+                    }}
+                  />
+                  <Typography fontWeight={'600'}>Loading ...</Typography>
+                </Stack>
               </Box>
             )}
             {products.length < totalProducts && (

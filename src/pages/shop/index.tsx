@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import Layout from "@/components/Layout/Layout";
 import PageHeading from "@/components/PageHeading/PageHeading";
-import { Box, Container, Grid, Typography, Button } from "@mui/material";
+import { Box, Container, Grid, Typography, Button, Stack } from "@mui/material";
 import FilterBar from "@/components/Shop/FilterBar/FilterBar";
 import SidebarShop from "@/components/Shop/SidebarShop/SidebarShop";
 import GridProducts from "@/components/GridProducts/GridProducts";
@@ -13,10 +13,10 @@ import Loader from "@/components/Loader/Loader";
 const PRODUCTS_PER_PAGE = 9;
 
 type ShopPageProps = {
-  collections?: MenuCollection[]
-}
+  collections?: MenuCollection[];
+};
 
-export default function ShopPage({collections}:ShopPageProps) {
+export default function ShopPage({ collections }: ShopPageProps) {
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000]);
@@ -24,7 +24,9 @@ export default function ShopPage({collections}:ShopPageProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [sortOption, setSortOption] = useState<string>("");
   const [sortedProducts, setSortedProducts] = useState<Product[]>([]);
-  const [sidebarCollections, setSidebarCollections] = useState<MenuCollection[]>([])
+  const [sidebarCollections, setSidebarCollections] = useState<
+    MenuCollection[]
+  >([]);
 
   const filterProducts = () => {
     const filtered = products.filter((product) => {
@@ -56,16 +58,18 @@ export default function ShopPage({collections}:ShopPageProps) {
   };
 
   useEffect(() => {
-    if(collections){
-      setSidebarCollections(collections)
+    if (collections) {
+      setSidebarCollections(collections);
     }
-  },[collections])
+  }, [collections]);
 
   useEffect(() => {
     const fetchInitialProducts = async () => {
       setIsLoading(true);
       try {
-        const res = await fetch(`/api/products?page=${currentPage}&limit=${PRODUCTS_PER_PAGE}`);
+        const res = await fetch(
+          `/api/products?page=${currentPage}&limit=${PRODUCTS_PER_PAGE}`
+        );
         if (!res.ok) {
           throw new Error("Failed to fetch products");
         }
@@ -138,17 +142,20 @@ export default function ShopPage({collections}:ShopPageProps) {
                   display: "flex",
                   alignItems: "center",
                   height: "100%",
+                  justifyContent: "center",
                   p: 2,
                 }}
               >
-                <Loader
-                  sx={{
-                    width: "50px",
-                    height: "50px",
-                    margin: "auto",
-                  }}
-                />
-                <Typography>Loading ...</Typography>
+                <Stack gap={1}>
+                  <Loader
+                    sx={{
+                      width: "50px",
+                      height: "50px",
+                      margin: "auto",
+                    }}
+                  />
+                  <Typography fontWeight={'600'}>Loading ...</Typography>
+                </Stack>
               </Box>
             )}
             {products.length > PRODUCTS_PER_PAGE && (
@@ -169,28 +176,27 @@ export default function ShopPage({collections}:ShopPageProps) {
   );
 }
 
-
 export async function getServerSideProps() {
-    try {
-      const fetchDataCollections = await shopifyClient.collection.fetchAll()
+  try {
+    const fetchDataCollections = await shopifyClient.collection.fetchAll();
 
-      const serializeCollections = fetchDataCollections.map(collection => ({
-        id: collection.id,
-        title: collection.title,
-        handle: collection.handle
-      }))
+    const serializeCollections = fetchDataCollections.map((collection) => ({
+      id: collection.id,
+      title: collection.title,
+      handle: collection.handle,
+    }));
 
-      return{
-        props:{
-          collections: serializeCollections
-        }
-      }
-    } catch (error) {
-      console.error(error)
-      return{
-        props:{
-          collections: []
-        }
-      }
-    }
+    return {
+      props: {
+        collections: serializeCollections,
+      },
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      props: {
+        collections: [],
+      },
+    };
+  }
 }
