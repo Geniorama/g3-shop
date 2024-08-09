@@ -70,7 +70,7 @@ export default function ProductSummary({
     };
 
     onAddToCart(itemCart);
-    // setTimeout(() => router.push('/cart'), 1000)
+    setTimeout(() => router.push('/cart'), 1000)
   };
 
   const handleQuantityChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -210,7 +210,7 @@ export default function ProductSummary({
         </Stack>
       )}
 
-      {options && options.length > 1 && (
+      {options && (
         <Stack direction={"column"} gap={2} mb={{ xs: 2 }}>
           <Typography fontSize={"15px"} fontWeight={"600"}>
             Select the options:
