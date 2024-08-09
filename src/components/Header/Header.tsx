@@ -21,6 +21,7 @@ import { OverridableComponent } from "@mui/material/OverridableComponent";
 import { SvgIconTypeMap } from "@mui/material";
 import { useRouter } from "next/router";
 import { MouseEventHandler } from "react";
+import type { MenuCollection } from "@/types";
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   '& .MuiBadge-badge': {
@@ -30,46 +31,47 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
   },
 }));
 
-const menuItems = [
-  {
-    title: "Business Cards",
-    path: "/",
-  },
-  {
-    title: "Flyers",
-    path: "/",
-  },
-  {
-    title: "Roll labels",
-    path: "/",
-  },
-  {
-    title: "Stickers",
-    path: "/",
-  },
-  {
-    title: "Signs & Banners",
-    path: "/category/signs-and-banners",
-    list: [
-      {
-        title: "",
-        path: "",
-      },
-    ],
-  },
-  {
-    title: "Custom T-Shirts",
-    path: "/",
-  },
-  {
-    title: "Marketing material",
-    path: "/",
-  },
-  {
-    title: "Design",
-    path: "/",
-  },
-];
+// const menuItems:MenuCollection[] = [
+//   {
+//     id: '1',
+//     title: "Business Cards",
+//     handle: "business-cards",
+//   },
+//   {
+//     title: "Flyers",
+//     path: "/",
+//   },
+//   {
+//     title: "Roll labels",
+//     path: "/",
+//   },
+//   {
+//     title: "Stickers",
+//     path: "/",
+//   },
+//   {
+//     title: "Signs & Banners",
+//     path: "/category/signs-and-banners",
+//     list: [
+//       {
+//         title: "",
+//         path: "",
+//       },
+//     ],
+//   },
+//   {
+//     title: "Custom T-Shirts",
+//     path: "/",
+//   },
+//   {
+//     title: "Marketing material",
+//     path: "/",
+//   },
+//   {
+//     title: "Design",
+//     path: "/collections/design",
+//   },
+// ];
 
 
 
@@ -77,9 +79,27 @@ function ResponsiveAppBar() {
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
   const [openSearch, setOpenSearch] = useState(false);
+  const [menuCollection, setMenuCollection] = useState<MenuCollection[]>([])
   
   const cartItems = useSelector((state: RootState) => state.cart.items)
   const router = useRouter()
+
+  async function fetchMenuItems(){
+    try {
+       const res = await fetch('/api/menuCollections')
+       if (!res.ok) {
+          throw new Error("Failed to fetch products");
+        }
+       const menuData = await res.json()
+       setMenuCollection(menuData.collections)
+    } catch (error) {
+       console.error(error)
+    }
+  }
+
+  useEffect(()=>{
+    fetchMenuItems()
+  },[])
 
   useEffect(() => {
     console.log('Modal:' + openSearch)
@@ -137,6 +157,8 @@ function ResponsiveAppBar() {
       handleClick: handleGoToCart
     },
   ];
+
+  console.log(menuCollection)
 
   return (
     <AppBar sx={{ background: "white" }} position="fixed">
@@ -227,7 +249,7 @@ function ResponsiveAppBar() {
                 display: { xs: "block", md: "none" },
               }}
             >
-              {menuItems.map((item, index) => (
+              {menuCollection && menuCollection.length > 0 && menuCollection.map((item, index) => (
                 <MenuItem key={index} onClick={handleCloseNavMenu}>
                   <Typography textAlign="center">{item.title}</Typography>
                 </MenuItem>
@@ -239,10 +261,10 @@ function ResponsiveAppBar() {
             sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}
             justifyContent={"center"}
           >
-            {menuItems.map((item, index) => (
+            {menuCollection && menuCollection.length > 0 && menuCollection.map((item, index) => (
               <Link
                 key={index}
-                href={item.path}
+                href={`/collections/${item.handle}`}
                 underline="none"
                 sx={{
                   padding: "1em",

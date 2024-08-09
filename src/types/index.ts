@@ -47,3 +47,11 @@ export type ItemCart = Product & {
     value: string,
   }[]
 };
+
+
+export type MenuCollection = {
+  id: string,
+  title: string,
+  handle: string,
+  hasSubitems?: boolean
+}
