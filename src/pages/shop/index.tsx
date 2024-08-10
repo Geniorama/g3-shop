@@ -92,7 +92,7 @@ export default function ShopPage({ collections }: ShopPageProps) {
   useEffect(() => {
     filterProducts(); // Filtrar por precio
     sortProducts(); // Ordenar según la opción seleccionada
-  }, [priceRange, sortOption, products]);
+  }, [priceRange, sortOption, products, filteredProducts]);
 
   const handleLoadMore = () => {
     const nextPage = currentPage + 1;

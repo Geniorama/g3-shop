@@ -24,7 +24,7 @@ export default function ProductCategories() {
                     <CardCategory image={tshirt} name={'Custom T-Shirts'} />
                 </Grid>
                 <Grid item xs={12} md={6}>
-                    <CardCategory image={mkting} name={'Marketing material'}/>
+                    <CardCategory href={'/collections/marketing-material'} image={mkting} name={'Marketing material'}/>
                 </Grid>
                 <Grid item xs={12} md={6}>
                     <CardCategory name={'Design'} />
