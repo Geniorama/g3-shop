@@ -21,12 +21,24 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       products = fetchProducts;
     }
 
-    const startIndex = (Number(page) - 1) * Number(limit);
-    const endIndex = startIndex + Number(limit);
+    const totalProducts = products.length; // Total de productos disponibles
 
-    const productsPage = products.slice(startIndex, endIndex);
+    // Validar la página y el límite
+    const pageNumber = parseInt(page as string, 10);
+    const limitNumber = parseInt(limit as string, 10);
 
-    const serializableProducts: Product[] = productsPage.map((product:any) => ({
+    // Asegúrate de que la página y el límite sean números válidos
+    if (isNaN(pageNumber) || isNaN(limitNumber) || pageNumber < 1 || limitNumber < 1) {
+      return res.status(400).json({ products: [], totalProducts: 0 });
+    }
+
+    const startIndex = (pageNumber - 1) * limitNumber;
+    const endIndex = startIndex + limitNumber;
+
+    // Asegúrate de no exceder el número total de productos
+    const productsPage = products.slice(startIndex, Math.min(endIndex, totalProducts));
+
+    const serializableProducts: Product[] = productsPage.map((product: any) => ({
       id: product.id,
       title: product.title,
       image: {
@@ -37,7 +49,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       normalPrice: product.variants[0]?.price.amount,
       isVariable: product.variants.length > 1,
       gallery: product.images
-        ? product.images.map((image:any) => ({
+        ? product.images.map((image: any) => ({
             url: image.src,
             altText: image.altText,
           }))
@@ -45,9 +57,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       slug: product.handle,
     }));
 
-    res.status(200).json({ products: serializableProducts });
+    res.status(200).json({ products: serializableProducts, totalProducts });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ products: [] });
+    res.status(500).json({ products: [], totalProducts: 0 });
   }
 }

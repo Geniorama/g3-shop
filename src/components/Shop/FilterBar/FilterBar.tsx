@@ -40,7 +40,7 @@ export default function FilterBar({
     >
       <Grid item>
         <Typography>
-          Showing {start}-{end} of {filteredProductsCount} results
+          Showing {filteredProductsCount} results
         </Typography>
       </Grid>
       <Grid item>

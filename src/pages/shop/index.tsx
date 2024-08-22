@@ -1,14 +1,14 @@
-// pages/shop.tsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Layout from "@/components/Layout/Layout";
 import PageHeading from "@/components/PageHeading/PageHeading";
-import { Box, Container, Grid, Typography, Button, Stack } from "@mui/material";
+import { Box, Container, Grid, Typography, Stack } from "@mui/material";
 import FilterBar from "@/components/Shop/FilterBar/FilterBar";
 import SidebarShop from "@/components/Shop/SidebarShop/SidebarShop";
 import GridProducts from "@/components/GridProducts/GridProducts";
 import type { Product, MenuCollection } from "@/types";
 import shopifyClient from "@/lib/shopify";
 import Loader from "@/components/Loader/Loader";
+import { useInView } from "react-intersection-observer";
 
 const PRODUCTS_PER_PAGE = 9;
 
@@ -24,9 +24,12 @@ export default function ShopPage({ collections }: ShopPageProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [sortOption, setSortOption] = useState<string>("");
   const [sortedProducts, setSortedProducts] = useState<Product[]>([]);
-  const [sidebarCollections, setSidebarCollections] = useState<
-    MenuCollection[]
-  >([]);
+  const [sidebarCollections, setSidebarCollections] = useState<MenuCollection[]>([]);
+  const [totalProducts, setTotalProducts] = useState(0);  // Estado para almacenar el total de productos
+  const { ref, inView } = useInView({
+    triggerOnce: false,
+    threshold: 1.0,
+  });
 
   const filterProducts = () => {
     const filtered = products.filter((product) => {
@@ -64,29 +67,38 @@ export default function ShopPage({ collections }: ShopPageProps) {
   }, [collections]);
 
   useEffect(() => {
-    const fetchInitialProducts = async () => {
+    const fetchProducts = async () => {
       setIsLoading(true);
       try {
-        const res = await fetch(
-          `/api/products?page=${currentPage}&limit=${PRODUCTS_PER_PAGE}`
-        );
+        const res = await fetch(`/api/products?page=${currentPage}&limit=${PRODUCTS_PER_PAGE}`);
         if (!res.ok) {
           throw new Error("Failed to fetch products");
         }
         const data = await res.json();
+        console.log("Productos recibidos:", data.products.length); // Depurar aquí
+        console.log("Total de productos:", data.totalProducts); // Depurar aquí
+    
         if (!Array.isArray(data.products)) {
           throw new Error("Invalid products data");
         }
-
-        setProducts(data.products);
+    
+        // Añadir productos nuevos al estado sin duplicar
+        setProducts((prevProducts) => {
+          const existingProductIds = new Set(prevProducts.map((product) => product.id));
+          const newProducts = data.products.filter((product:any) => !existingProductIds.has(product.id));
+          return [...prevProducts, ...newProducts];
+        });
+        
+        setTotalProducts(data.totalProducts); // Asegúrate de que este valor es correcto
       } catch (error) {
         console.error("Error fetching products:", error);
       } finally {
         setIsLoading(false);
       }
     };
+    
 
-    fetchInitialProducts();
+    fetchProducts();
   }, [currentPage]);
 
   useEffect(() => {
@@ -94,10 +106,12 @@ export default function ShopPage({ collections }: ShopPageProps) {
     sortProducts(); // Ordenar según la opción seleccionada
   }, [priceRange, sortOption, products, filteredProducts]);
 
-  const handleLoadMore = () => {
-    const nextPage = currentPage + 1;
-    setCurrentPage(nextPage);
-  };
+  useEffect(() => {
+    if (inView && !isLoading && products.length < totalProducts) {
+      setCurrentPage((prevPage) => prevPage + 1);
+    }
+  }, [inView, isLoading, products.length, totalProducts]);
+  
 
   const handlePriceChange = (range: [number, number]) => {
     setPriceRange(range);
@@ -158,15 +172,10 @@ export default function ShopPage({ collections }: ShopPageProps) {
                 </Stack>
               </Box>
             )}
-            {products.length > PRODUCTS_PER_PAGE && (
+            <div ref={ref}></div> {/* Este div es el observador que dispara el siguiente fetch */}
+            {isLoading && (
               <Box textAlign="center" margin={3}>
-                <Button
-                  variant="outlined"
-                  onClick={handleLoadMore}
-                  disabled={isLoading}
-                >
-                  {isLoading ? "Loading..." : "Load More"}
-                </Button>
+                <Loader />
               </Box>
             )}
           </Grid>
@@ -174,29 +183,4 @@ export default function ShopPage({ collections }: ShopPageProps) {
       </Container>
     </Layout>
   );
-}
-
-export async function getServerSideProps() {
-  try {
-    const fetchDataCollections = await shopifyClient.collection.fetchAll(-1);
-
-    const serializeCollections = fetchDataCollections.map((collection) => ({
-      id: collection.id,
-      title: collection.title,
-      handle: collection.handle,
-    }));
-
-    return {
-      props: {
-        collections: serializeCollections,
-      },
-    };
-  } catch (error) {
-    console.error(error);
-    return {
-      props: {
-        collections: [],
-      },
-    };
-  }
 }

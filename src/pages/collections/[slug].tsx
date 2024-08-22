@@ -1,5 +1,4 @@
-// pages/collections/[slug].tsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Layout from "@/components/Layout/Layout";
 import PageHeading from "@/components/PageHeading/PageHeading";
 import { Box, Container, Grid, Typography, Breadcrumbs, Link, Button, Stack } from "@mui/material";
@@ -10,6 +9,7 @@ import type { Product } from "@/types";
 import type { Collection } from "shopify-buy";
 import shopifyClient from "@/lib/shopify";
 import Loader from "@/components/Loader/Loader";
+import { useInView } from "react-intersection-observer";
 
 const PRODUCTS_PER_PAGE = 9;
 
@@ -32,41 +32,16 @@ export default function CollectionPage({
   const [sortOption, setSortOption] = useState<string>("");
   const [sortedProducts, setSortedProducts] = useState<Product[]>([]);
 
-  // Filter products based on price range
-  const filterProducts = () => {
-    const filtered = products.filter((product) => {
-      const price = product.normalPrice;
-      return price >= priceRange[0] && price <= priceRange[1];
-    });
-    setFilteredProducts(filtered);
-  };
-
-  // Sort products based on selected option
-  const sortProducts = () => {
-    let sorted = [...filteredProducts];
-    switch (sortOption) {
-      case "title-asc":
-        sorted.sort((a, b) => a.title.localeCompare(b.title));
-        break;
-      case "title-desc":
-        sorted.sort((a, b) => b.title.localeCompare(a.title));
-        break;
-      case "price-asc":
-        sorted.sort((a, b) => a.normalPrice - b.normalPrice);
-        break;
-      case "price-desc":
-        sorted.sort((a, b) => b.normalPrice - a.normalPrice);
-        break;
-      default:
-        break;
-    }
-    setSortedProducts(sorted);
-  };
+  // Intersection Observer hook to trigger loading more products
+  const { ref, inView } = useInView({
+    threshold: 1.0, // Trigger when 100% of the element is visible
+    triggerOnce: false, // Keep triggering until no more products
+  });
 
   // Fetch more products when the currentPage changes
   useEffect(() => {
     const fetchMoreProducts = async () => {
-      if (isLoading) return; // Avoid multiple calls if already loading
+      if (isLoading || products.length >= totalProducts) return; // Avoid multiple calls if already loading or all products are loaded
 
       setIsLoading(true);
       try {
@@ -87,6 +62,7 @@ export default function CollectionPage({
         );
 
         setProducts((prev) => [...prev, ...newProducts]);
+        setCurrentPage((prev) => prev + 1); // Increment page number for next fetch
       } catch (error) {
         console.error("Error fetching products:", error);
       } finally {
@@ -94,21 +70,49 @@ export default function CollectionPage({
       }
     };
 
-    fetchMoreProducts();
-  }, [currentPage, collection.handle]);
+    if (inView) {
+      fetchMoreProducts();
+    }
+  }, [inView, currentPage, collection.handle, isLoading, products, totalProducts]);
 
-  // Update filtered and sorted products when filters or sorting change
+  // Filter products based on price range
   useEffect(() => {
+    const filterProducts = () => {
+      const filtered = products.filter((product) => {
+        const price = product.normalPrice;
+        return price >= priceRange[0] && price <= priceRange[1];
+      });
+      setFilteredProducts(filtered);
+    };
+
     filterProducts();
   }, [priceRange, products]);
 
+  // Sort products based on selected option
   useEffect(() => {
+    const sortProducts = () => {
+      let sorted = [...filteredProducts];
+      switch (sortOption) {
+        case "title-asc":
+          sorted.sort((a, b) => a.title.localeCompare(b.title));
+          break;
+        case "title-desc":
+          sorted.sort((a, b) => b.title.localeCompare(a.title));
+          break;
+        case "price-asc":
+          sorted.sort((a, b) => a.normalPrice - b.normalPrice);
+          break;
+        case "price-desc":
+          sorted.sort((a, b) => b.normalPrice - a.normalPrice);
+          break;
+        default:
+          break;
+      }
+      setSortedProducts(sorted);
+    };
+
     sortProducts();
   }, [filteredProducts, sortOption]);
-
-  const handleLoadMore = () => {
-    setCurrentPage((prev) => prev + 1);
-  };
 
   const handlePriceChange = (range: [number, number]) => {
     setPriceRange(range);
@@ -155,7 +159,24 @@ export default function CollectionPage({
           </Grid>
           <Grid item xs={12} lg={9}>
             {sortedProducts.length > 0 ? (
-              <GridProducts products={sortedProducts} pagination={false} />
+              <>
+                <GridProducts products={sortedProducts} pagination={false} />
+                <div ref={ref}>
+                  {isLoading && (
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        p: 2,
+                      }}
+                    >
+                      <Loader sx={{ width: "50px", height: "50px", margin: "auto" }} />
+                      <Typography fontWeight={'600'}>Loading...</Typography>
+                    </Box>
+                  )}
+                </div>
+              </>
             ) : (
               <Box
                 sx={{
@@ -166,27 +187,7 @@ export default function CollectionPage({
                   p: 2,
                 }}
               >
-                <Stack gap={1}>
-                  <Loader
-                    sx={{
-                      width: "50px",
-                      height: "50px",
-                      margin: "auto",
-                    }}
-                  />
-                  <Typography fontWeight={'600'}>Loading ...</Typography>
-                </Stack>
-              </Box>
-            )}
-            {products.length < totalProducts && (
-              <Box textAlign="center" margin={3}>
-                <Button
-                  variant="outlined"
-                  onClick={handleLoadMore}
-                  disabled={isLoading}
-                >
-                  {isLoading ? "Loading..." : "Load More"}
-                </Button>
+                <Typography fontWeight={'600'}>No products available</Typography>
               </Box>
             )}
           </Grid>
@@ -196,26 +197,13 @@ export default function CollectionPage({
   );
 }
 
-export async function getStaticPaths() {
-  try {
-    const fetchCollections = await shopifyClient.collection.fetchAll(-1);
-
-    const paths = fetchCollections.map((collection: Collection) => ({
-      params: { slug: collection.handle },
-    }));
-
-    return { paths, fallback: "blocking" };
-  } catch (error) {
-    console.log(error);
-    return { paths: [], fallback: "blocking" };
-  }
-}
-
-export async function getStaticProps({ params }: { params: { slug: string } }) {
+export async function getServerSideProps({ params }: { params: { slug: string } }) {
   try {
     const collection = await shopifyClient.collection.fetchByHandle(params.slug);
     if (!collection) {
-      throw new Error(`Collection with handle ${params.slug} not found`);
+      return {
+        notFound: true,
+      };
     }
 
     const productsByCollection = collection.products;
@@ -257,16 +245,7 @@ export async function getStaticProps({ params }: { params: { slug: string } }) {
   } catch (error) {
     console.log(error);
     return {
-      props: {
-        collection: {
-          id: "",
-          title: "",
-          description: "",
-          handle: "", 
-        },
-        initialProducts: [],
-        totalProducts: 0,
-      },
+      notFound: true,
     };
   }
 }
