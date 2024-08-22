@@ -178,7 +178,7 @@ export default function ShopPage({ collections }: ShopPageProps) {
 
 export async function getServerSideProps() {
   try {
-    const fetchDataCollections = await shopifyClient.collection.fetchAll();
+    const fetchDataCollections = await shopifyClient.collection.fetchAll(-1);
 
     const serializeCollections = fetchDataCollections.map((collection) => ({
       id: collection.id,
