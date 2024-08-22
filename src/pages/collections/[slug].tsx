@@ -198,7 +198,7 @@ export default function CollectionPage({
 
 export async function getStaticPaths() {
   try {
-    const fetchCollections = await shopifyClient.collection.fetchAll();
+    const fetchCollections = await shopifyClient.collection.fetchAll(-1);
 
     const paths = fetchCollections.map((collection: Collection) => ({
       params: { slug: collection.handle },
