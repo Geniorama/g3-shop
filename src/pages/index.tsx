@@ -59,7 +59,7 @@ export default function Home({ products }: HomeProps) {
 
 export async function getServerSideProps(){
   try {
-    const fetchProducts = await shopifyClient.product.fetchAll()
+    const fetchProducts = await shopifyClient.product.fetchAll(8)
 
     const serializableProducts:Product[] = fetchProducts.map(product => ({
       id: product.id,
