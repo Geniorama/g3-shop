@@ -46,6 +46,7 @@ export default function ProductSummary({
     options,
     variants,
     type,
+    isVariable
   }: Product = dataProduct;
 
   const [hasFile, setHasFile] = useState<boolean>(false);
@@ -70,7 +71,7 @@ export default function ProductSummary({
     };
 
     onAddToCart(itemCart);
-    setTimeout(() => router.push('/cart'), 1000)
+    router.push('/cart')
   };
 
   const handleQuantityChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -123,21 +124,20 @@ export default function ProductSummary({
     {
       icon: <FacebookOutlinedIcon sx={{ fontSize: "16px" }} />,
       name: "Facebook",
-      url: `https://www.facebook.com/sharer.php?u=http://localhost:3000/product/${slug}`,
+      url: `https://www.facebook.com/sharer.php?u=${process.env.NEXT_PUBLIC_SITE_URL}/product/${slug}`,
     },
-
     {
       icon: <PinterestIcon sx={{ fontSize: "16px" }} />,
       name: "Pinterest",
-      url: `https://pinterest.com/pin/create/bookmarklet/?media=${image?.url}&url=http://localhost:3000/product/${slug}&description=${title}`,
+      url: `https://pinterest.com/pin/create/bookmarklet/?media=${image?.url}&url=${process.env.NEXT_PUBLIC_SITE_URL}/product/${slug}&description=${title}`,
     },
-
     {
       icon: <TwitterIcon sx={{ fontSize: "16px" }} />,
       name: "X",
-      url: `https://twitter.com/share?url=http://localhost:3000/product/${slug}&text=${title}`,
+      url: `https://twitter.com/share?url=${process.env.NEXT_PUBLIC_SITE_URL}/product/${slug}&text=${title}`,
     },
   ];
+  
   
   return (
     <Box>
@@ -210,7 +210,7 @@ export default function ProductSummary({
         </Stack>
       )}
 
-      {options && (
+      {options && isVariable && (
         <Stack direction={"column"} gap={2} mb={{ xs: 2 }}>
           <Typography fontSize={"15px"} fontWeight={"600"}>
             Select the options:

@@ -21,65 +21,65 @@ import type { ItemCart } from "@/types";
 import { setCheckoutId } from "@/store/features/cartSlice";
 
 export default function Cart() {
-  const [isEmpty, setIsEmpty] = useState(true);
-  const [checkoutUrl, setCheckoutUrl] = useState('')
-  const {checkoutId, items} = useSelector((state:RootState) => state.cart)
+  const [isEmpty, setIsEmpty] = useState<Boolean | null>(null);
+  const [checkoutUrl, setCheckoutUrl] = useState("");
+  const { checkoutId, items } = useSelector((state: RootState) => state.cart);
 
-  const cartItems = useSelector((state: RootState) => state.cart.items)
-  const cartTotal = useSelector((state: RootState) => state.cart.totalAmount)
-  const dispatch = useDispatch()
-
-  async function createCheckout() {
-    try {
-      const res = await fetch('/api/create-checkout', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({items})
-      })
-      if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`);
-      }
-      const data = await res.json()
-  
-      if(res.ok){
-        dispatch(setCheckoutId(data.id))
-        if(data.webUrl){
-          setCheckoutUrl(data.webUrl)
-        }
-      }
-      
-    } catch (error) {
-      console.log(error)
-    }
-  }
+  const cartItems = useSelector((state: RootState) => state.cart.items);
+  const cartTotal = useSelector((state: RootState) => state.cart.totalAmount);
+  const dispatch = useDispatch();
 
   /**
    * CREATE CHECKOUT SHOPIFY
-  */
+   */
   useEffect(() => {
-    if(items && items.length > 0){
-      createCheckout()
+    async function createCheckout() {
+      try {
+        const res = await fetch("/api/create-checkout", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ items }),
+        });
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        const data = await res.json();
+
+        if (res.ok) {
+          dispatch(setCheckoutId(data.id));
+          if (data.webUrl) {
+            setCheckoutUrl(data.webUrl);
+          }
+        }
+      } catch (error) {
+        console.log(error);
+      }
     }
-  },[items])
+
+    console.log('Cart Items',items)
+    if (items && items.length > 0) {
+      createCheckout();
+    }
+  }, [items, dispatch]);
 
   useEffect(() => {
-    if(cartItems.length > 0 && checkoutId){
-      setIsEmpty(false)
+    if (cartItems.length > 0 && checkoutId) {
+      setIsEmpty(false);
     } else {
-      setIsEmpty(true)
+      setIsEmpty(true);
     }
-  }, [cartItems])
+  }, [cartItems]);
 
   const metadata = {
     title: "Cart",
     description: "My description",
   };
-  
-  const handleRemoveFromCart = (itemId: ItemCart['id']) => {
-    dispatch(removeItem(itemId))
-  }
+
+  const handleRemoveFromCart = (itemId: ItemCart["id"]) => {
+    dispatch(removeItem(itemId));
+  };
 
   return (
     <Layout metadata={metadata}>
@@ -98,7 +98,13 @@ export default function Cart() {
       )}
 
       {isEmpty ? (
-        <Box display={'flex'} justifyContent={'center'} alignItems={'center'} sx={{ textAlign: "center", height: "calc(100vh - 60px)" }} py={{ xs: 8 }}>
+        <Box
+          display={"flex"}
+          justifyContent={"center"}
+          alignItems={"center"}
+          sx={{ textAlign: "center", height: "calc(100vh - 60px)" }}
+          py={{ xs: 8 }}
+        >
           <Container>
             <Box p={{ xs: 3 }}>
               <ProductionQuantityLimitsIcon
@@ -122,14 +128,11 @@ export default function Cart() {
       ) : (
         <Box py={{ xs: 8 }}>
           <Container>
-            <CartTable 
+            <CartTable
               products={cartItems}
               onRemoveItem={handleRemoveFromCart}
             />
-            <CartTotals 
-              total={cartTotal}
-              checkoutUrl={checkoutUrl}
-            />
+            <CartTotals total={cartTotal} checkoutUrl={checkoutUrl} />
           </Container>
         </Box>
       )}

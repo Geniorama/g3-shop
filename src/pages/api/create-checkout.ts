@@ -9,10 +9,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const { items } = req.body;
       const checkout = await shopifyClient.checkout.create();
       if (items.length > 0) {
-        const lineItemsToAdd = items.map((item:ItemCart) => ({
-          variantId: item.id,
-          quantity: item.quantity,
-        }));
+        const lineItemsToAdd = items.map((item: ItemCart) => {
+          const variantId = item.isVariable
+            ? item.id
+            : item.variants && item.variants.length > 0
+            ? item.variants[0].variantId
+            : item.id;
+        
+          return {
+            variantId,
+            quantity: item.quantity,
+          };
+        });
 
         const newCheckout = await shopifyClient.checkout.addLineItems(checkout.id, lineItemsToAdd);
         res.status(200).json(newCheckout);

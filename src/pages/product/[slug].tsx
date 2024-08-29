@@ -53,6 +53,8 @@ export default function Product({ product, relatedProductsIds }: ProductProps) {
     dispatch(addItem(item))
   };
 
+  console.log(infoProduct)
+
   return (
     <Layout metadata={metadata}>
       <ProductHeading title={infoProduct.title} />
