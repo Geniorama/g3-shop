@@ -61,7 +61,7 @@ export default function Product({ product, relatedProductsIds }: ProductProps) {
 
       <Box component={"section"} pt={{ xs: 10 }}>
         <Container>
-          <Grid container spacing={5}>
+          <Grid container pb={{xs: 5}} spacing={5}>
             <Grid item xs={12} md={6}>
               <ProductGallery images={infoProduct.gallery} />
             </Grid>
@@ -73,9 +73,9 @@ export default function Product({ product, relatedProductsIds }: ProductProps) {
               />
             </Grid>
 
-            <Grid item xs={12}>
+            {/* <Grid item xs={12}>
               <ProductTabs description={infoProduct.description} />
-            </Grid>
+            </Grid> */}
           </Grid>
 
           {relatedProducts && relatedProducts.length > 0 && (
