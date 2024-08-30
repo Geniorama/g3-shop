@@ -5,18 +5,23 @@ import { Box, Container, Grid, Typography, Stack } from "@mui/material";
 import FilterBar from "@/components/Shop/FilterBar/FilterBar";
 import SidebarShop from "@/components/Shop/SidebarShop/SidebarShop";
 import GridProducts from "@/components/GridProducts/GridProducts";
-import type { Product, MenuCollection } from "@/types";
-import shopifyClient from "@/lib/shopify";
+import type { Product, MenuCollection, ProductNode } from "@/types";
 import Loader from "@/components/Loader/Loader";
 import { useInView } from "react-intersection-observer";
+import { GraphQLClient } from 'graphql-request';
+import { PRODUCTS_QUERY } from "@/lib/queries";
+import type { ProductsResponse } from "@/types";
+
+
 
 const PRODUCTS_PER_PAGE = 9;
 
 type ShopPageProps = {
   collections?: MenuCollection[];
+  data?: ProductsResponse
 };
 
-export default function ShopPage({ collections }: ShopPageProps) {
+export default function ShopPage({ collections, data }: ShopPageProps) {
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000]);
@@ -65,6 +70,27 @@ export default function ShopPage({ collections }: ShopPageProps) {
       setSidebarCollections(collections);
     }
   }, [collections]);
+
+  useEffect(() =>{
+    if(data){
+      console.log(data)
+      const transformDataProduct = data.products.edges.map((item:any) => {
+        const {id, title, handle, createdAt, images}:ProductNode = item
+        return ({
+          id,
+          title,
+          handle,
+          featuredImage: {
+            src: images?.edges[0].node.src || '',
+            altText: images?.edges[0].node.altText || ''
+          }
+        })
+      })
+
+      console.log('Transform data:', transformDataProduct)
+
+    }
+  }, [data])
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -183,4 +209,24 @@ export default function ShopPage({ collections }: ShopPageProps) {
       </Container>
     </Layout>
   );
+}
+
+
+export const graphqlClient = new GraphQLClient(`${process.env.NEXT_PUBLIC_SHOPIFY_API_URL}`, {
+  headers: {
+    "X-Shopify-Storefront-Access-Token": `${process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN}`,
+    "Content-Type": "application/json",
+  },
+});
+
+export async function getServerSideProps(){
+  const res:ProductsResponse = await graphqlClient.request(PRODUCTS_QUERY, {first: 50})
+  const products = res.products.edges
+
+  return {
+    props: {
+      data: res,
+      collections: []
+    }
+  }
 }

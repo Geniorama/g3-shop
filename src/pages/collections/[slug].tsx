@@ -10,6 +10,7 @@ import type { Collection } from "shopify-buy";
 import shopifyClient from "@/lib/shopify";
 import Loader from "@/components/Loader/Loader";
 import { useInView } from "react-intersection-observer";
+import Astronaut from "@/assets/img/g3-1Recurso 1.svg"
 
 const PRODUCTS_PER_PAGE = 9;
 
@@ -129,7 +130,12 @@ export default function CollectionPage({
         description: collection.description,
       }}
     >
-      <PageHeading title={collection.title} />
+      <PageHeading 
+        title={collection.title}
+        backgroundColor="#602BE0"
+        textColor="#FFFFFF"
+        floatImage={Astronaut.src}
+      />
 
       <Container>
         <Breadcrumbs aria-label="breadcrumb">

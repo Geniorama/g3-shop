@@ -36,7 +36,7 @@ export type Product = {
   description?: string;
   shortDescription?: string;
   options?: ProductOption[] | null;
-  isVariable: boolean;
+  isVariable?: boolean;
   variants?: ProductVariant[] | null;
   collections?: MenuCollection[];
 };
@@ -56,3 +56,43 @@ export type MenuCollection = {
   handle: string,
   hasSubitems?: boolean
 }
+
+export type ProductImage = {
+  src: string;
+  altText: string;
+};
+
+export type ProductVariantQL = {
+  priceV2: {
+    amount: string;
+  };
+};
+
+export type ProductNode = {
+  id: string;
+  title: string;
+  handle: string;
+  createdAt: string;
+  images: {
+    edges: {
+      node: ProductImage;
+    }[];
+  };
+  variants: {
+    edges: {
+      node: ProductVariantQL;
+    }[];
+  };
+};
+
+export type ProductsResponse = {
+  products: {
+    edges: {
+      node: ProductNode;
+      cursor: string;
+    }[];
+    pageInfo: {
+      hasNextPage: boolean;
+    };
+  };
+};
