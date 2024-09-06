@@ -69,6 +69,22 @@ export const fetchContactInfo = async () => {
   }
 };
 
+
+// Fetch policies
+export const fetchPolicies = async () => {
+  try {
+    const res = await contentfulClient.getEntries({
+      content_type: "policies",
+      limit: 1
+    })
+
+    return res.items[0]?.fields || {}
+  } catch (error) {
+    console.error("Error fetching contact info:", error);
+    return {};
+  }
+}
+
 // Fetch social media
 export const fetchSocialMedia = async () => {
   try {
