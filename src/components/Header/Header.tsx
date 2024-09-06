@@ -65,6 +65,22 @@ function ResponsiveAppBar() {
   }
 
   useEffect(() => {
+    const bottomHeader = document.getElementById('bottom-header')
+    if(bottomHeader){
+      const positionHeader = bottomHeader.offsetTop
+
+      window.addEventListener('scroll', function(){
+        const scrollY = this.window.scrollY
+        if(scrollY > positionHeader){
+          bottomHeader.style.position = 'fixed'
+        } else {
+          bottomHeader.style.position = 'relative'
+        }
+      })
+    }
+  },[])
+
+  useEffect(() => {
     fetchMenuItems();
   }, []);
 
@@ -164,7 +180,7 @@ function ResponsiveAppBar() {
           </Container>
         </Box>
       )}
-      <AppBar sx={{ background: "white" }} position="relative">
+      <AppBar id="bottom-header" sx={{ background: "white", top: '0', zIndex: '9' }} position="relative">
         <Modal
           open={openSearch}
           onClose={handleCloseSearch}
