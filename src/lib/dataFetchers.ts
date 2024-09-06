@@ -14,9 +14,9 @@ const shopifyClient = new GraphQLClient(
   }
 );
 
-export const fetchAllProducts = async (cursor?: string) => {
+export const fetchAllProducts = async (cursor?: string, first?: number) => {
   try {
-    const data:ShopifyProductsResponse = await shopifyClient.request(GET_ALL_PRODUCTS, {cursor})
+    const data:ShopifyProductsResponse = await shopifyClient.request(GET_ALL_PRODUCTS, {cursor, first: first || 9})
     return data
   } catch (error) {
     console.error("Error fetching all products:", error);

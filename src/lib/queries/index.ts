@@ -112,8 +112,8 @@ export const GET_COLLECTION_BY_SLUG = gql`
 `;
 
 export const GET_ALL_PRODUCTS = gql`
-  query getAllProducts($cursor: String) {
-    products(first: 9, after: $cursor) {
+  query getAllProducts($cursor: String, $first: Int!) {
+    products(first: $first, after: $cursor) {
       edges {
         node {
           id

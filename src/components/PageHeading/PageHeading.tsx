@@ -27,7 +27,6 @@ export default function PageHeading({
         position: "relative",
       }}
       component={"section"}
-      mt={{ xs: 6, lg: 8 }}
       mb={{ xs: 5 }}
       py={{ xs: 6, md: 8 }}
     >

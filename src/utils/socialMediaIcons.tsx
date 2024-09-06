@@ -10,12 +10,12 @@ type socialMediaIconsProps = {
 const socialMediaIcons:socialMediaIconsProps[] = [
   {
     name: 'facebook',
-    icon: <FacebookOutlinedIcon />
+    icon: <FacebookOutlinedIcon sx={{fontSize:"1em"}} />
   },
 
   {
     name: 'instagram',
-    icon: <InstagramIcon />
+    icon: <InstagramIcon sx={{fontSize:"1em"}} />
   },
 
   {
