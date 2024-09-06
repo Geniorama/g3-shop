@@ -8,7 +8,7 @@ export default function Techniques() {
   return (
     <Box component={'section'} sx={{padding: '3rem 1rem', backgroundColor: '#fafafa'}}>
         <Container>
-            <Grid spacing={6} container>
+            <Grid spacing={6} container justifyContent={'center'}>
                 <Grid item xs={12}>
                     <TitleSection 
                         title={'Techniques'}
@@ -18,12 +18,6 @@ export default function Techniques() {
                     <CircleTechnique 
                         title={'Embroidery'} 
                         color={theme.palette.secondary.main}
-                    />
-                </Grid>
-                <Grid item xs={6} md={3}>
-                    <CircleTechnique 
-                        title={'Heat Transfer Vinyl'} 
-                        color={theme.palette.primary.main}
                     />
                 </Grid>
                 <Grid item xs={6} md={3}>

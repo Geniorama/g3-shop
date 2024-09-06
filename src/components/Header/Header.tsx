@@ -65,20 +65,20 @@ function ResponsiveAppBar() {
   }
 
   useEffect(() => {
-    const bottomHeader = document.getElementById('bottom-header')
-    if(bottomHeader){
-      const positionHeader = bottomHeader.offsetTop
+    const bottomHeader = document.getElementById("bottom-header");
+    if (bottomHeader) {
+      const positionHeader = bottomHeader.offsetTop;
 
-      window.addEventListener('scroll', function(){
-        const scrollY = this.window.scrollY
-        if(scrollY > positionHeader){
-          bottomHeader.style.position = 'fixed'
+      window.addEventListener("scroll", function () {
+        const scrollY = this.window.scrollY;
+        if (scrollY > positionHeader) {
+          bottomHeader.style.position = "fixed";
         } else {
-          bottomHeader.style.position = 'relative'
+          bottomHeader.style.position = "relative";
         }
-      })
+      });
     }
-  },[])
+  }, []);
 
   useEffect(() => {
     fetchMenuItems();
@@ -180,7 +180,11 @@ function ResponsiveAppBar() {
           </Container>
         </Box>
       )}
-      <AppBar id="bottom-header" sx={{ background: "white", top: '0', zIndex: '9' }} position="relative">
+      <AppBar
+        id="bottom-header"
+        sx={{ background: "white", top: "0", zIndex: "9" }}
+        position="relative"
+      >
         <Modal
           open={openSearch}
           onClose={handleCloseSearch}
@@ -322,6 +326,38 @@ function ResponsiveAppBar() {
                     {item.title}
                   </Link>
                 ))}
+
+              <Link
+                href="#"
+                target="_blank"
+                underline="none"
+                sx={{
+                  padding: "1em",
+                  margin: "0 1em",
+                  fontWeight: "600",
+                  position: "relative",
+                  "&:before": {
+                    content: '""',
+                    position: "absolute",
+                    width: "0",
+                    height: "3px",
+                    background: theme.palette.secondary.main,
+                    bottom: "0",
+                    left: "50%",
+                    transition: ".5s",
+                  },
+                  "&:hover:before": {
+                    width: "100%",
+                    left: "0",
+                  },
+                  "&:hover": {
+                    color: theme.palette.secondary.main,
+                  },
+                  fontSize: "13px",
+                }}
+              >
+                Projects
+              </Link>
 
               <Button variant="contained" color="secondary" href="/contact">
                 Contact Us

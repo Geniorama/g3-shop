@@ -1,9 +1,10 @@
-import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { ContactInfo, SocialMediaItem } from "@/types";
 
 type InitialProps = {
   contactInfo: ContactInfo | null;
   socialMedia?: SocialMediaItem[];
+  projectsLink?: string;
   loading: boolean;
   error: string | null;
 };
@@ -13,6 +14,7 @@ const initialState: InitialProps = {
   loading: false,
   error: null,
   socialMedia: [],
+  projectsLink: ''
 };
 
 
@@ -29,8 +31,16 @@ const generalInfoSlice = createSlice({
     setSocialMedia: (state, action: PayloadAction<SocialMediaItem[]>) => {
       state.socialMedia = action.payload;
     },
+
+    setProjectsLink:(state, action: PayloadAction<string>) => {
+      state.projectsLink = action.payload
+    },
+
+    setData:(state, action:PayloadAction<InitialProps>) => {
+      state = action.payload
+    }
   },
 });
 
-export const { setContactInfo, setSocialMedia } = generalInfoSlice.actions;
+export const { setContactInfo, setSocialMedia, setData } = generalInfoSlice.actions;
 export default generalInfoSlice.reducer;
