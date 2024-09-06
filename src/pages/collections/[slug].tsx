@@ -1,29 +1,48 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, use } from "react";
 import Layout from "@/components/Layout/Layout";
 import PageHeading from "@/components/PageHeading/PageHeading";
-import { Box, Container, Grid, Typography, Breadcrumbs, Link, Button, Stack } from "@mui/material";
+import {
+  Box,
+  Container,
+  Grid,
+  Typography,
+  Breadcrumbs,
+  Link,
+} from "@mui/material";
 import FilterBar from "@/components/Shop/FilterBar/FilterBar";
 import SidebarShop from "@/components/Shop/SidebarShop/SidebarShop";
 import GridProducts from "@/components/GridProducts/GridProducts";
-import type { Product } from "@/types";
-import type { Collection } from "shopify-buy";
-import shopifyClient from "@/lib/shopify";
-import Loader from "@/components/Loader/Loader";
-import { useInView } from "react-intersection-observer";
-import Astronaut from "@/assets/img/g3-1Recurso 1.svg"
+import type { Product, ShopifyCollectionResponse, ContactInfo, SocialMediaItem } from "@/types";
+import Astronaut from "@/assets/img/g3-1Recurso 1.svg";
+import {
+  fetchContactInfo,
+  fetchSocialMedia,
+  fetchCollectionBySlug,
+} from "@/lib/dataFetchers";
+import { useDispatch } from "react-redux";
+import {Button} from "@mui/material";
+import { setSocialMedia, setContactInfo } from "@/store/features/generalInfoSlice";
 
 const PRODUCTS_PER_PAGE = 9;
 
 type CollectionPageProps = {
-  collection: Collection;
+  collection: ShopifyCollectionResponse;
   initialProducts: Product[];
-  totalProducts: number;
+  totalProducts?: number;
+  initialEndCursor: string;
+  initialHasNextPage: boolean;
+  contactInfo?: ContactInfo,
+  socialMedia?: SocialMediaItem[]
 };
 
 export default function CollectionPage({
   collection,
   initialProducts,
   totalProducts,
+  initialEndCursor,
+  initialHasNextPage,
+  contactInfo,
+  socialMedia
 }: CollectionPageProps) {
   const [products, setProducts] = useState<Product[]>(initialProducts);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
@@ -32,49 +51,63 @@ export default function CollectionPage({
   const [isLoading, setIsLoading] = useState(false);
   const [sortOption, setSortOption] = useState<string>("");
   const [sortedProducts, setSortedProducts] = useState<Product[]>([]);
+  const [titlePage, setTitlePage] = useState('')
+  const [cursor, setCursor] = useState<string | null>(initialEndCursor);
+  const [hasNextPage, setHasNextPage] = useState<boolean>(initialHasNextPage);
+  const [currentCollection, setCurrentCollection] = useState<{title: string, handle: string}>()
 
-  // Intersection Observer hook to trigger loading more products
-  const { ref, inView } = useInView({
-    threshold: 1.0, // Trigger when 100% of the element is visible
-    triggerOnce: false, // Keep triggering until no more products
-  });
+  const dispatch = useDispatch()
 
-  // Fetch more products when the currentPage changes
-  useEffect(() => {
-    const fetchMoreProducts = async () => {
-      if (isLoading || products.length >= totalProducts) return; // Avoid multiple calls if already loading or all products are loaded
+  const loadMoreProducts = async () => {
+    if (!hasNextPage || isLoading || !currentCollection?.handle) return;
 
-      setIsLoading(true);
-      try {
-        const res = await fetch(
-          `/api/products?collectionSlug=${collection.handle}&page=${currentPage}&limit=${PRODUCTS_PER_PAGE}`
-        );
-        if (!res.ok) {
-          throw new Error("Failed to fetch products");
-        }
-        const data = await res.json();
-        if (!Array.isArray(data.products)) {
-          throw new Error("Invalid products data");
-        }
-
-        // Avoid duplicate products
-        const newProducts = data.products.filter((product: Product) =>
-          !products.some((existingProduct) => existingProduct.id === product.id)
-        );
-
-        setProducts((prev) => [...prev, ...newProducts]);
-        setCurrentPage((prev) => prev + 1); // Increment page number for next fetch
-      } catch (error) {
-        console.error("Error fetching products:", error);
-      } finally {
-        setIsLoading(false);
+    setIsLoading(true);
+    const newProductsResponse = await fetchCollectionBySlug(currentCollection?.handle, cursor);
+    if(newProductsResponse !== null && newProductsResponse !== undefined){
+      const newProducts = newProductsResponse.collection?.products.edges.map((product) => ({
+        id: product.node.id,
+        title: product.node.title,
+        description: product.node.description,
+        slug: product.node.handle,
+        image: {
+          url: product.node.images.edges[0]?.node.src,
+          altText: product.node.images.edges[0]?.node.src,
+        },
+        normalPrice: +product.node.priceRange.minVariantPrice.amount,
+        isVariable: product.node.variants.edges.length > 0,
+      }));
+  
+      if (newProducts && newProducts.length > 0) {
+        setProducts((prevProducts) => [...prevProducts, ...newProducts]);
+        setFilteredProducts((prevFiltered) => [...prevFiltered, ...newProducts]);
       }
-    };
-
-    if (inView) {
-      fetchMoreProducts();
+      setCursor(newProductsResponse.collection?.products.pageInfo.endCursor || null);
+      setHasNextPage(newProductsResponse.collection?.products.pageInfo.hasNextPage || false);
+      setIsLoading(false);
     }
-  }, [inView, currentPage, collection.handle, isLoading, products, totalProducts]);
+  };
+
+  useEffect(() => {
+    if(collection.collection){
+      const dataCurrentCollection = {
+        title: collection.collection.title,
+        handle: collection.collection.handle
+      }
+      setCurrentCollection(dataCurrentCollection)
+    }
+  },[collection])
+
+  useEffect(() => {
+    if(contactInfo){
+      dispatch(setContactInfo(contactInfo))
+    }
+  }, [contactInfo, dispatch])
+
+  useEffect(() => {
+    if(socialMedia){
+      dispatch(setSocialMedia(socialMedia))
+    }
+  }, [socialMedia, dispatch])
 
   // Filter products based on price range
   useEffect(() => {
@@ -101,19 +134,20 @@ export default function CollectionPage({
           sorted.sort((a, b) => b.title.localeCompare(a.title));
           break;
         case "price-asc":
-          sorted.sort((a, b) => a.normalPrice - b.normalPrice);
+          sorted.sort((a, b) => a.normalPrice - b.normalPrice); // Asegúrate de que normalPrice es un número
           break;
         case "price-desc":
-          sorted.sort((a, b) => b.normalPrice - a.normalPrice);
+          sorted.sort((a, b) => b.normalPrice - a.normalPrice); // Asegúrate de que normalPrice es un número
           break;
         default:
           break;
       }
       setSortedProducts(sorted);
     };
-
+  
     sortProducts();
   }, [filteredProducts, sortOption]);
+  
 
   const handlePriceChange = (range: [number, number]) => {
     setPriceRange(range);
@@ -126,12 +160,12 @@ export default function CollectionPage({
   return (
     <Layout
       metadata={{
-        title: collection.title,
-        description: collection.description,
+        title: titlePage,
+        // description: collection.description,
       }}
     >
-      <PageHeading 
-        title={collection.title}
+      <PageHeading
+        title={currentCollection?.title || ''}
         backgroundColor="#602BE0"
         textColor="#FFFFFF"
         floatImage={Astronaut.src}
@@ -145,11 +179,11 @@ export default function CollectionPage({
           <Link underline="hover" color="inherit" href="/collections">
             Collections
           </Link>
-          <Typography color="text.primary">{collection.title}</Typography>
+          <Typography color="text.primary">{currentCollection?.title}</Typography>
         </Breadcrumbs>
         <Box margin={3} />
         <FilterBar
-          totalProducts={totalProducts}
+          totalProducts={totalProducts || 0}
           filteredProductsCount={filteredProducts.length}
           productsPerPage={PRODUCTS_PER_PAGE}
           currentPage={currentPage}
@@ -167,21 +201,18 @@ export default function CollectionPage({
             {sortedProducts.length > 0 ? (
               <>
                 <GridProducts products={sortedProducts} pagination={false} />
-                <div ref={ref}>
-                  {isLoading && (
-                    <Box
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        p: 2,
-                      }}
+                {hasNextPage && (
+                  <Box display="flex" justifyContent="center" marginY={4}>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={loadMoreProducts}
+                      disabled={isLoading}
                     >
-                      <Loader sx={{ width: "50px", height: "50px", margin: "auto" }} />
-                      <Typography fontWeight={'600'}>Loading...</Typography>
-                    </Box>
-                  )}
-                </div>
+                      {isLoading ? 'Loading...' : 'Load More'}
+                    </Button>
+                  </Box>
+                )}
               </>
             ) : (
               <Box
@@ -193,7 +224,9 @@ export default function CollectionPage({
                   p: 2,
                 }}
               >
-                <Typography fontWeight={'600'}>No products available</Typography>
+                <Typography fontWeight={"600"}>
+                  No products available
+                </Typography>
               </Box>
             )}
           </Grid>
@@ -204,54 +237,35 @@ export default function CollectionPage({
 }
 
 export async function getServerSideProps({ params }: { params: { slug: string } }) {
-  try {
-    const collection = await shopifyClient.collection.fetchByHandle(params.slug);
-    if (!collection) {
-      return {
-        notFound: true,
-      };
-    }
+  const fetchCollection = await fetchCollectionBySlug(params.slug);
+  const contactInfo = await fetchContactInfo()
+  const socialMedia = await fetchSocialMedia()
 
-    const productsByCollection = collection.products;
-    const totalProducts = productsByCollection.length;
+  const initialProducts = fetchCollection?.collection?.products.edges?.map((product) => ({
+    id: product.node.id,
+    title: product.node.title,
+    description: product.node.description,
+    slug: product.node.handle,
+    image: {
+      url: product.node.images.edges[0]?.node.src || '',
+      altText: product.node.images.edges[0]?.node.altText || '',
+    },
+    normalPrice: product.node.priceRange.minVariantPrice.amount,
+    isVariable: product.node.variants.edges.length > 0,
+  })) || [];
 
-    const initialProducts = productsByCollection.slice(0, PRODUCTS_PER_PAGE);
+  const initialEndCursor = fetchCollection?.collection?.products.pageInfo.endCursor || null;
+  const initialHasNextPage = fetchCollection?.collection?.products.pageInfo.hasNextPage || false;
 
-    const serializableProducts: Product[] = initialProducts.map((product) => ({
-      id: product.id,
-      title: product.title,
-      image: {
-        url: product.images[0]?.src || "",
-        altText: product.images[0]?.altText || "",
-      },
-      description: product.descriptionHtml,
-      normalPrice: product.variants[0]?.price.amount,
-      isVariable: product.variants.length > 1,
-      gallery: product.images
-        ? product.images.map((image) => ({
-            url: image.src,
-            altText: image.altText,
-          }))
-        : [],
-      slug: product.handle,
-    }));
-
-    return {
-      props: {
-        collection: {
-          id: collection.id,
-          title: collection.title,
-          description: collection.descriptionHtml,
-          handle: collection.handle,
-        },
-        initialProducts: serializableProducts,
-        totalProducts,
-      },
-    };
-  } catch (error) {
-    console.log(error);
-    return {
-      notFound: true,
-    };
-  }
+  return {
+    props: {
+      collection: fetchCollection || {},
+      initialProducts,
+      totalProducts: initialProducts.length || 0,
+      initialEndCursor,
+      initialHasNextPage,
+      contactInfo,
+      socialMedia
+    },
+  };
 }

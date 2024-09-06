@@ -11,9 +11,13 @@ import AOS from "aos";
 import "aos/dist/aos.css";
 import { useEffect, useState } from "react";
 import CommingSoon from "@/components/CommingSoon/CommingSoon";
-import type { Product } from "@/types";
+import type { ContactInfo, Product, SocialMediaItem } from "@/types";
 import { GraphQLClient, gql } from "graphql-request";
 import { GET_LATEST_PRODUCTS } from "@/lib/queries";
+import contentfulClient from "@/lib/contentful";
+import { useDispatch } from "react-redux";
+import { setContactInfo, setSocialMedia } from "@/store/features/generalInfoSlice";
+import { fetchContactInfo, fetchLatestProducts, fetchSocialMedia } from "@/lib/dataFetchers";
 
 const metadata = {
   title: "Inicio",
@@ -22,25 +26,43 @@ const metadata = {
 
 type HomeProps = {
   products: Product[];
+  contactInfo: ContactInfo;
+  socialMedia: SocialMediaItem[]
 };
 
-export default function Home({ products }: HomeProps) {
+export default function Home({ products, contactInfo, socialMedia }: HomeProps) {
   const [isCommingSoon, setIsCommingSoon] = useState(false);
   const [listProducts, setListProducts] = useState<Product[]>();
+
+  const dispatch = useDispatch()
+
   useEffect(() => {
     if (products) {
-      console.log(products);
       setListProducts(products);
     }
     AOS.init();
   }, [products]);
 
+  useEffect(() => {
+    if(contactInfo){
+      dispatch(setContactInfo(contactInfo))
+    }
+  }, [contactInfo, dispatch])
+
+  useEffect(() => {
+    if(socialMedia){
+      dispatch(setSocialMedia(socialMedia))
+    }
+  }, [socialMedia, dispatch])
+
   if (isCommingSoon) {
     return <CommingSoon />;
   }
-
+  
   return (
-    <Layout metadata={metadata}>
+    <Layout 
+      metadata={metadata}
+      >
       <SliderHome />
       <Features />
       {listProducts && <ExploreOurProducts products={listProducts} />}
@@ -61,37 +83,15 @@ const client = new GraphQLClient(`${process.env.NEXT_PUBLIC_SHOPIFY_API_URL}`, {
 });
 
 export async function getServerSideProps() {
-  try {
-    const data:any = await client.request(GET_LATEST_PRODUCTS, { first: 8 });
+  const products = await fetchLatestProducts()
+  const contactInfo = await fetchContactInfo()
+  const socialMedia = await fetchSocialMedia()
 
-    const products = data.products.edges.map(({ node }:any) => ({
-      id: node.id,
-      title: node.title,
-      image: {
-        url: node.images.edges[0]?.node.src,
-        altText: node.images.edges[0]?.node.altText || '',
-      },
-      normalPrice: parseFloat(node.variants.edges[0]?.node.price.amount),
-      isVariable: node.variants.edges.length > 1,
-      gallery: node.images.edges.map((image:any) => ({
-        url: image.node.src,
-        altText: image.node.altText,
-      })),
-      slug: node.handle,
-      createdAt: node.createdAt,
-    }));
-
-    return {
-      props: {
-        products,
-      },
-    };
-  } catch (error) {
-    console.error("Error fetching products:", error);
-    return {
-      props: {
-        products: [],
-      },
-    };
+  return {
+    props: {
+      products,
+      contactInfo,
+      socialMedia
+    }
   }
 }

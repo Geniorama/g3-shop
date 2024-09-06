@@ -7,7 +7,7 @@ import rootReducer from './rootReducer';
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: ['cart'], // Solo persiste el estado del carrito
+  whitelist: ['cart', 'general']
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

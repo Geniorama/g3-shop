@@ -303,7 +303,7 @@ function ResponsiveAppBar() {
                   color="secondary"
                   key={index}
                 >
-                  <StyledBadge badgeContent={item.name === "cart" ? cartItems.length : null} color="primary">
+                  <StyledBadge badgeContent={item.name === "cart" ? cartItems?.length : null} color="primary">
                     {item.icon}
                   </StyledBadge >
                 </IconButton>

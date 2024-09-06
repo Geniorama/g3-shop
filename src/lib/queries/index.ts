@@ -63,3 +63,93 @@ export const PRODUCTS_QUERY = gql`
     }
   }
 `;
+
+export const GET_COLLECTION_BY_SLUG = gql`
+  query getCollectionBySlug($slug: String, $cursor: String) {
+    collection(handle: $slug) {
+      id
+      title
+      handle
+      products(first: 9, after: $cursor) {
+        edges {
+          node {
+            id
+            title
+            description
+            handle
+            images(first: 5) {
+              edges {
+                node {
+                  src
+                  altText
+                }
+              }
+            }
+            priceRange {
+              minVariantPrice {
+                amount
+                currencyCode
+              }
+            }
+            variants(first: 1) {
+              edges {
+                node {
+                  price {
+                    amount
+                  }
+                }
+              }
+            }
+          }
+        }
+        pageInfo {
+          hasNextPage
+          endCursor
+        }
+      }
+    }
+  }
+`;
+
+export const GET_ALL_PRODUCTS = gql`
+  query getAllProducts($cursor: String) {
+    products(first: 9, after: $cursor) {
+      edges {
+        node {
+          id
+          title
+          description
+          handle
+          images(first: 5) {
+            edges {
+              node {
+                src
+                altText
+              }
+            }
+          }
+          priceRange {
+            minVariantPrice {
+              amount
+              currencyCode
+            }
+          }
+          variants(first: 1) {
+            edges {
+              node {
+                price {
+                  amount
+                }
+              }
+            }
+          }
+        }
+      }
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
+    }
+  }
+`;
+

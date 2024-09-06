@@ -9,14 +9,17 @@ import {
   IconButton,
   useTheme,
 } from "@mui/material";
-import FacebookOutlinedIcon from "@mui/icons-material/FacebookOutlined";
-import InstagramIcon from "@mui/icons-material/Instagram";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
+import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import type { MenuCollection } from "@/types";
+import { useSelector } from "react-redux";
+import type { RootState } from "@/store";
+import socialMediaIcons from "@/utils/socialMediaIcons";
 
 export default function Footer() {
   const [menuCollection, setMenuCollection] = useState<MenuCollection[]>([]);
   const theme = useTheme();
+  const {contactInfo, socialMedia} = useSelector((state:RootState) => state.general)
 
   async function fetchMenuItems() {
     try {
@@ -34,33 +37,50 @@ export default function Footer() {
   useEffect(() => {
     fetchMenuItems();
   }, []);
+
   return (
     <Box
       component={"footer"}
       sx={{ padding: "2rem", backgroundColor: "#252B42" }}
     >
-      <Box
+      {contactInfo?.whatsAppLink && (
+        <IconButton
+          href={contactInfo.whatsAppLink}
+          target="_blank"
+          size="large"
+          sx={{
+            background: `#25D366`,
+            color: "white",
+            position: "fixed",
+            bottom: "80px",
+            right: "20px",
+            "&:hover": {
+              backgroundColor: "#128c7e",
+            },
+          }}
+        >
+          <WhatsAppIcon />
+        </IconButton>
+      )}
+
+      <IconButton
+        href="#top"
+        size="large"
         sx={{
+          background: `${theme.palette.secondary.light}`,
+          color: "white",
           position: "fixed",
           bottom: "20px",
           right: "20px",
         }}
       >
-        <IconButton
-          href="#top"
-          sx={{
-            background: `${theme.palette.secondary.light}`,
-            color: "white",
-          }}
-        >
-          <ArrowUpwardIcon />
-        </IconButton>
-      </Box>
+        <ArrowUpwardIcon />
+      </IconButton>
 
       <Container>
         <Grid
           container
-          spacing={{ xs: 3, sm: 5, lg: 18 }}
+          spacing={{ xs: 3, sm: 5, xl: 15 }}
           justifyContent={"flex-start"}
         >
           {/* Widget */}
@@ -146,29 +166,41 @@ export default function Footer() {
               component={"ul"}
               sx={{ fontSize: "10px", listStyle: "none", lineHeight: "2em" }}
             >
-              <Box component={"li"}>
-                <Link sx={{ color: "white" }}>Phone: +08 9229 8228</Link>
-              </Box>
+              {contactInfo?.whatsAppNumber && (
+                <Box component={"li"}>
+                  <Link
+                    href={contactInfo.whatsAppLink}
+                    target="_blank"
+                    sx={{ color: "white" }}
+                  >
+                    Phone: {contactInfo.whatsAppNumber}
+                  </Link>
+                </Box>
+              )}
 
-              <Box component={"li"}>
-                <Link
-                  href="https://maps.app.goo.gl/4turQdzFf9MTWyyTA"
-                  target="_blank"
-                  sx={{ color: "white" }}
-                >
-                  29 SE 2nd Ave, Miami, Florida 33131, United States
-                </Link>
-              </Box>
+              {contactInfo?.address && (
+                <Box component={"li"}>
+                  <Link
+                    href={contactInfo.locationLink}
+                    target="_blank"
+                    sx={{ color: "white" }}
+                  >
+                    Addrees: {contactInfo.address}
+                  </Link>
+                </Box>
+              )}
 
-              <Box component={"li"}>
-                <Link
-                  href="mailto:info@g3print.com"
-                  target="_blank"
-                  sx={{ color: "white" }}
-                >
-                  Email: info@g3print.com
-                </Link>
-              </Box>
+              {contactInfo?.email && (
+                <Box component={"li"}>
+                  <Link
+                    href={`mailto:${contactInfo.email}`}
+                    target="_blank"
+                    sx={{ color: "white" }}
+                  >
+                    Email: {contactInfo.email}
+                  </Link>
+                </Box>
+              )}
             </Box>
           </Grid>
 
@@ -181,17 +213,17 @@ export default function Footer() {
               component={"ul"}
               sx={{ fontSize: "10px", listStyle: "none", lineHeight: "2em" }}
             >
-              <Box component={"li"}>
-                <Link sx={{ color: "white" }}>Facebook</Link>
-              </Box>
-
-              <Box component={"li"}>
-                <Link sx={{ color: "white" }}>Instagram</Link>
-              </Box>
-
-              <Box component={"li"}>
-                <Link sx={{ color: "white" }}>Pinterest</Link>
-              </Box>
+              {socialMedia?.map((item) => (
+                <Box key={item.name} component={"li"}>
+                  <Link
+                    target="_blank"
+                    href={item.url}
+                    sx={{ color: "white", textTransform: "capitalize" }}
+                  >
+                    {item.name}
+                  </Link>
+                </Box>
+              ))}
             </Box>
           </Grid>
         </Grid>
@@ -200,19 +232,29 @@ export default function Footer() {
           <Grid item>
             <Typography color={"white"} fontSize={"10px"}>
               Made with love ❤ by{" "}
-              <Link href="https://g3marketingdigital.com/" target="_blank" sx={{ color: "white" }}>G3 Digital Marketing</Link> |{" "}
-              {new Date().getFullYear()} © All rights reserved
+              <Link
+                href="https://g3marketingdigital.com/"
+                target="_blank"
+                sx={{ color: "white" }}
+              >
+                G3 Digital Marketing
+              </Link>{" "}
+              | {new Date().getFullYear()} © All rights reserved
             </Typography>
           </Grid>
 
           <Grid item xs={12} lg={"auto"}>
             <Stack direction={"row"} justifyContent={{ xs: "center" }}>
-              <IconButton color="secondary">
-                <FacebookOutlinedIcon />
-              </IconButton>
-              <IconButton color="secondary">
-                <InstagramIcon />
-              </IconButton>
+              {socialMedia?.map((item) => {
+                const iconItem = socialMediaIcons.find(
+                  (subItem) => subItem.name === item.name
+                );
+                return (
+                  <IconButton href={item.url} target="_blank" title={item.name} aria-label={item.name} key={item.name} color="secondary">
+                    {iconItem ? iconItem.icon : null}
+                  </IconButton>
+                );
+              })}
             </Stack>
           </Grid>
         </Grid>

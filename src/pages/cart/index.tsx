@@ -8,19 +8,28 @@ import {
   Button,
   Breadcrumbs,
   Link,
-  Grid,
 } from "@mui/material";
 import ProductionQuantityLimitsIcon from "@mui/icons-material/ProductionQuantityLimits";
 import CartTable from "../../components/Cart/CartTable/CartTable";
 import CartTotals from "../../components/Cart/CartTotals/CartTotals";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/store";
-import { useDispatch } from "react-redux";
 import { removeItem } from "@/store/features/cartSlice";
 import type { ItemCart } from "@/types";
 import { setCheckoutId } from "@/store/features/cartSlice";
+import { fetchContactInfo, fetchSocialMedia } from "@/lib/dataFetchers";
+import type { ContactInfo, SocialMediaItem } from "@/types";
+import {
+  setContactInfo,
+  setSocialMedia,
+} from "@/store/features/generalInfoSlice";
 
-export default function Cart() {
+type CartProps = {
+  contactInfo?: ContactInfo;
+  socialMedia?: SocialMediaItem[];
+};
+
+export default function Cart({ contactInfo, socialMedia }: CartProps) {
   const [isEmpty, setIsEmpty] = useState<Boolean | null>(null);
   const [checkoutUrl, setCheckoutUrl] = useState("");
   const { checkoutId, items } = useSelector((state: RootState) => state.cart);
@@ -28,6 +37,18 @@ export default function Cart() {
   const cartItems = useSelector((state: RootState) => state.cart.items);
   const cartTotal = useSelector((state: RootState) => state.cart.totalAmount);
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (contactInfo) {
+      dispatch(setContactInfo(contactInfo));
+    }
+  }, [contactInfo, dispatch]);
+
+  useEffect(() => {
+    if (socialMedia) {
+      dispatch(setSocialMedia(socialMedia));
+    }
+  }, [socialMedia, dispatch]);
 
   /**
    * CREATE CHECKOUT SHOPIFY
@@ -58,7 +79,7 @@ export default function Cart() {
       }
     }
 
-    console.log('Cart Items',items)
+    console.log("Cart Items", items);
     if (items && items.length > 0) {
       createCheckout();
     }
@@ -70,7 +91,7 @@ export default function Cart() {
     } else {
       setIsEmpty(true);
     }
-  }, [cartItems]);
+  }, [cartItems, checkoutId]);
 
   const metadata = {
     title: "Cart",
@@ -138,4 +159,16 @@ export default function Cart() {
       )}
     </Layout>
   );
+}
+
+export async function getServerSideProps() {
+  const contactInfo = await fetchContactInfo();
+  const socialMedia = await fetchSocialMedia();
+
+  return {
+    props: {
+      contactInfo,
+      socialMedia,
+    },
+  };
 }

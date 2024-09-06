@@ -1,11 +1,15 @@
 import React from 'react';
-// import Header from '@/components/Header/Header'
 import Header from '@/components/Header/Header'
 import Head from 'next/head';
 import { Box } from '@mui/material';
 import Footer from '@/components/Footer/Footer';
 
-export default function Layout({children, metadata}) {
+type LayoutProps = {
+  children: any
+  metadata: {title?: string, description?: string}
+}
+
+export default function Layout({children, metadata}:LayoutProps) {
   return (
     <>
         <Head>
@@ -18,7 +22,6 @@ export default function Layout({children, metadata}) {
           {/* Ancle top */}
         </Box>
         <Box component={'main'}>
-            
             {children}
         </Box>
         <Footer />
