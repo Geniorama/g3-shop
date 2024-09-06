@@ -18,6 +18,7 @@ import contentfulClient from "@/lib/contentful";
 import { useDispatch } from "react-redux";
 import { setContactInfo, setSocialMedia } from "@/store/features/generalInfoSlice";
 import { fetchContactInfo, fetchLatestProducts, fetchSocialMedia } from "@/lib/dataFetchers";
+import RateUs from "@/components/Home/RateUs/RateUs";
 
 const metadata = {
   title: "Inicio",
@@ -71,6 +72,7 @@ export default function Home({ products, contactInfo, socialMedia }: HomeProps) 
       <Techniques />
       <BannerPromo />
       <FAQ />
+      <RateUs />
     </Layout>
   );
 }
