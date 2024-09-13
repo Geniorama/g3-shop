@@ -109,6 +109,21 @@ export const fetchTechniques = async () => {
   }
 };
 
+export const fetchPromoDay = async () => {
+  try {
+    const res = await contentfulClient.getEntries({
+      content_type: "promoDay",
+    });
+
+    const item = res.items[0]
+
+    return item;
+  } catch (error) {
+    console.error("Error fetching contact info:", error);
+    return {};
+  }
+};
+
 export const fetchCustomMenu = async () => {
   try {
     const res = await contentfulClient.getEntries({

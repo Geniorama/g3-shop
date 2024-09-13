@@ -1,10 +1,19 @@
 import React from "react";
-import { Box, Grid, Container, Typography } from "@mui/material";
+import { Box, Grid, Container, Typography, Button } from "@mui/material";
 import CardProduct from "@/components/Shop/CardProduct/CardProduct";
 import Image from "next/image";
 import HeadIcon from "@/assets/img/most_popular_icon.svg";
 
-export default function MostPopular() {
+export type MostPopularProps = {
+  title: string,
+  description: string,
+  imageUrl: string,
+  iconUrl?: string,
+  buttonLink?: string,
+  buttonText?: string
+}
+
+export default function MostPopular({title, description, imageUrl, iconUrl, buttonLink, buttonText}:MostPopularProps) {
   return (
     <Box component={"section"} sx={{ padding: "3rem 1rem" }}>
       <Container>
@@ -14,8 +23,7 @@ export default function MostPopular() {
             xs={12}
             sm={8}
             sx={{
-              backgroundImage:
-                "url(https://images.unsplash.com/photo-1599590984817-0c15f31b1fa5?q=80&w=2072&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)",
+              backgroundImage: `url('${imageUrl}')`,
               minHeight: "20vh",
               backgroundSize: "cover",
               backgroundRepeat: "no-repeat",
@@ -38,15 +46,20 @@ export default function MostPopular() {
               variant="h5"
               sx={{ fontWeight: "bold" }}
             >
-              MOST POPULAR
+              {title}
             </Typography>
             
             <Typography sx={{color: '#737373'}}>
-              We focus on ergonomics and meeting you where you work. It&apos;s only a
-              keystroke away.
+              {description}
             </Typography>
             <Box sx={{margin: '2rem 0'}}></Box>
-            <CardProduct />
+            <Button
+              href={buttonLink}
+              variant="outlined"
+              color="secondary"
+              >
+              {buttonText}
+            </Button>
           </Grid>
         </Grid>
       </Container>

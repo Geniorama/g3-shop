@@ -14,12 +14,24 @@ import CommingSoon from "@/components/CommingSoon/CommingSoon";
 import type { ContactInfo, Product, SocialMediaItem } from "@/types";
 import { GraphQLClient } from "graphql-request";
 import { useDispatch } from "react-redux";
-import { setContactInfo, setSocialMedia } from "@/store/features/generalInfoSlice";
-import { fetchContactInfo, fetchLatestProducts, fetchSocialMedia, fetchSliderHome, fetchFeatures, fetchTechniques } from "@/lib/dataFetchers";
+import {
+  setContactInfo,
+  setSocialMedia,
+} from "@/store/features/generalInfoSlice";
+import {
+  fetchContactInfo,
+  fetchLatestProducts,
+  fetchSocialMedia,
+  fetchSliderHome,
+  fetchFeatures,
+  fetchTechniques,
+  fetchPromoDay,
+} from "@/lib/dataFetchers";
 import RateUs from "@/components/Home/RateUs/RateUs";
 import type { Slide } from "@/components/Home/SliderHome/SliderHome";
 import type { Feature } from "@/components/Home/Features/Features";
-import type {CircleTechniqueProps} from "@/components/CircleTechnique/CircleTechnique";
+import type { CircleTechniqueProps } from "@/components/CircleTechnique/CircleTechnique";
+import type { MostPopularProps } from "@/components/Home/MostPopular/MostPopular";
 
 const metadata = {
   title: "Inicio",
@@ -31,18 +43,29 @@ type HomeProps = {
   contactInfo: ContactInfo;
   socialMedia: SocialMediaItem[];
   slidersHome: [];
-  features:[];
-  techniques:[];
+  features: [];
+  techniques: [];
+  promoDay: any;
 };
 
-export default function Home({ products, contactInfo, socialMedia, slidersHome, features, techniques }: HomeProps) {
+export default function Home({
+  products,
+  contactInfo,
+  socialMedia,
+  slidersHome,
+  features,
+  techniques,
+  promoDay,
+}: HomeProps) {
   const [isCommingSoon, setIsCommingSoon] = useState(false);
   const [listProducts, setListProducts] = useState<Product[]>();
-  const [slides, setSlides] = useState<Slide[]>()
-  const [listFeatures, setListFeatures] = useState<Feature[]>()
-  const [listTechniques, setListTechniques] = useState<CircleTechniqueProps[]>()
+  const [slides, setSlides] = useState<Slide[]>();
+  const [listFeatures, setListFeatures] = useState<Feature[]>();
+  const [listTechniques, setListTechniques] =
+    useState<CircleTechniqueProps[]>();
+  const [itemPromoDay, setItemPromoDay] = useState<MostPopularProps>();
 
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (products) {
@@ -52,8 +75,8 @@ export default function Home({ products, contactInfo, socialMedia, slidersHome, 
   }, [products]);
 
   useEffect(() => {
-    if(slidersHome){
-      const transformData:Slide[] = slidersHome.map((slide:any) => ({
+    if (slidersHome) {
+      const transformData: Slide[] = slidersHome.map((slide: any) => ({
         title: slide.fields.title,
         titleSmall: slide.fields.titleSmall,
         titleLarge: slide.fields.titleLarge,
@@ -63,65 +86,91 @@ export default function Home({ products, contactInfo, socialMedia, slidersHome, 
         backgroundColor: slide.fields.backgroundColor,
         imageUrl: slide.fields.imageUrl,
         imageAlignment: slide.fields.imageAlignment,
-        iconUrl: slide.fields.iconUrl
-      }))
+        iconUrl: slide.fields.iconUrl,
+      }));
 
-      setSlides(transformData)
+      setSlides(transformData);
     }
-  },[slidersHome])
+  }, [slidersHome]);
 
   useEffect(() => {
-    if(features){
-      const transformData:Feature[] = features.map((feature:any) => ({
+    if (features) {
+      const transformData: Feature[] = features.map((feature: any) => ({
         icon: feature.fields.iconUrl,
-        title: feature.fields.title
-      }))  
-      
-      setListFeatures(transformData)
+        title: feature.fields.title,
+      }));
+
+      setListFeatures(transformData);
     }
-  },[features])
+  }, [features]);
 
   useEffect(() => {
-    if(techniques){
-      const transformData:CircleTechniqueProps[] = techniques.map((tech:any) => ({
-        title: tech.fields.title,
-        color: '',
-        image: {
-          src: tech.fields.imageUrl,
-          altText: tech.fields.altText
-        }
-      }))  
-      
-      setListTechniques(transformData)
+    if (techniques) {
+      const transformData: CircleTechniqueProps[] = techniques.map(
+        (tech: any) => ({
+          title: tech.fields.title,
+          color: "",
+          image: {
+            src: tech.fields.imageUrl,
+            altText: tech.fields.altText,
+          },
+        })
+      );
+
+      setListTechniques(transformData);
     }
-  },[techniques])
+  }, [techniques]);
 
   useEffect(() => {
-    if(contactInfo){
-      dispatch(setContactInfo(contactInfo))
+    if (promoDay) {
+      const transformData: MostPopularProps = {
+        title: promoDay.fields.title,
+        imageUrl: promoDay.fields.imageUrl,
+        description: promoDay.fields.description,
+        buttonLink: promoDay.fields.buttonLink,
+        buttonText: promoDay.fields.buttonText
+      }
+
+      setItemPromoDay(transformData)
     }
-  }, [contactInfo, dispatch])
+  }, [promoDay]);
 
   useEffect(() => {
-    if(socialMedia){
-      dispatch(setSocialMedia(socialMedia))
+    if (contactInfo) {
+      dispatch(setContactInfo(contactInfo));
     }
-  }, [socialMedia, dispatch])
+  }, [contactInfo, dispatch]);
+
+  useEffect(() => {
+    if (socialMedia) {
+      dispatch(setSocialMedia(socialMedia));
+    }
+  }, [socialMedia, dispatch]);
 
   if (isCommingSoon) {
     return <CommingSoon />;
   }
-  
+
   return (
-    <Layout 
-      metadata={metadata}
-      >
+    <Layout metadata={metadata}>
       {slides && slides.length > 0 && <SliderHome slides={slides} />}
-      {listFeatures && listFeatures.length > 0 && <Features features={listFeatures} />}
+      {listFeatures && listFeatures.length > 0 && (
+        <Features features={listFeatures} />
+      )}
       {listProducts && <ExploreOurProducts products={listProducts} />}
       <ProductCategories />
-      <MostPopular />
-      {listTechniques && listTechniques.length > 0 && <Techniques techniques={listTechniques} />}
+      {itemPromoDay && (
+        <MostPopular
+          title={itemPromoDay.title}
+          description={itemPromoDay.description}
+          imageUrl={itemPromoDay.imageUrl}
+          buttonText={itemPromoDay.buttonText}
+          buttonLink={itemPromoDay.buttonLink}
+        />
+      )}
+      {listTechniques && listTechniques.length > 0 && (
+        <Techniques techniques={listTechniques} />
+      )}
       <BannerPromo />
       <FAQ />
       <RateUs />
@@ -129,20 +178,14 @@ export default function Home({ products, contactInfo, socialMedia, slidersHome, 
   );
 }
 
-const client = new GraphQLClient(`${process.env.NEXT_PUBLIC_SHOPIFY_API_URL}`, {
-  headers: {
-    "X-Shopify-Storefront-Access-Token": `${process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN}`,
-    "Content-Type": "application/json",
-  },
-});
-
 export async function getServerSideProps() {
-  const products = await fetchLatestProducts()
-  const contactInfo = await fetchContactInfo()
-  const socialMedia = await fetchSocialMedia()
-  const slidersHome = await fetchSliderHome()
-  const features = await fetchFeatures()
-  const techniques = await fetchTechniques()
+  const products = await fetchLatestProducts();
+  const contactInfo = await fetchContactInfo();
+  const socialMedia = await fetchSocialMedia();
+  const slidersHome = await fetchSliderHome();
+  const features = await fetchFeatures();
+  const techniques = await fetchTechniques();
+  const promoDay = await fetchPromoDay();
 
   return {
     props: {
@@ -151,7 +194,8 @@ export async function getServerSideProps() {
       socialMedia,
       slidersHome,
       features,
-      techniques
-    }
-  }
+      techniques,
+      promoDay,
+    },
+  };
 }
