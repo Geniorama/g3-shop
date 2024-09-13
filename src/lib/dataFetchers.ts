@@ -83,6 +83,19 @@ export const fetchSliderHome = async () => {
   }
 };
 
+export const fetchFeatures = async () => {
+  try {
+    const res = await contentfulClient.getEntries({
+      content_type: "features",
+    });
+
+    return res.items;
+  } catch (error) {
+    console.error("Error fetching contact info:", error);
+    return {};
+  }
+};
+
 export const fetchCustomMenu = async () => {
   try {
     const res = await contentfulClient.getEntries({

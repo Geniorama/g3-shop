@@ -17,9 +17,10 @@ import { GET_LATEST_PRODUCTS } from "@/lib/queries";
 import contentfulClient from "@/lib/contentful";
 import { useDispatch } from "react-redux";
 import { setContactInfo, setSocialMedia } from "@/store/features/generalInfoSlice";
-import { fetchContactInfo, fetchLatestProducts, fetchSocialMedia, fetchSliderHome } from "@/lib/dataFetchers";
+import { fetchContactInfo, fetchLatestProducts, fetchSocialMedia, fetchSliderHome, fetchFeatures } from "@/lib/dataFetchers";
 import RateUs from "@/components/Home/RateUs/RateUs";
 import type { Slide } from "@/components/Home/SliderHome/SliderHome";
+import { Feature } from "@/components/Home/Features/Features";
 
 const metadata = {
   title: "Inicio",
@@ -30,13 +31,15 @@ type HomeProps = {
   products: Product[];
   contactInfo: ContactInfo;
   socialMedia: SocialMediaItem[];
-  slidersHome: []
+  slidersHome: [];
+  features:[]
 };
 
-export default function Home({ products, contactInfo, socialMedia, slidersHome }: HomeProps) {
+export default function Home({ products, contactInfo, socialMedia, slidersHome, features }: HomeProps) {
   const [isCommingSoon, setIsCommingSoon] = useState(false);
   const [listProducts, setListProducts] = useState<Product[]>();
   const [slides, setSlides] = useState<Slide[]>()
+  const [listFeatures, setListFeatures] = useState<Feature[]>()
 
   const dispatch = useDispatch()
 
@@ -67,6 +70,17 @@ export default function Home({ products, contactInfo, socialMedia, slidersHome }
   },[slidersHome])
 
   useEffect(() => {
+    if(features){
+      const transformData:Feature[] = features.map((feature:any) => ({
+        icon: feature.fields.iconUrl,
+        title: feature.fields.title
+      }))  
+      
+      setListFeatures(transformData)
+    }
+  },[features])
+
+  useEffect(() => {
     if(contactInfo){
       dispatch(setContactInfo(contactInfo))
     }
@@ -86,8 +100,8 @@ export default function Home({ products, contactInfo, socialMedia, slidersHome }
     <Layout 
       metadata={metadata}
       >
-      {slides && <SliderHome slides={slides} />}
-      <Features />
+      {slides && slides.length > 0 && <SliderHome slides={slides} />}
+      {listFeatures && listFeatures.length > 0 && <Features features={listFeatures} />}
       {listProducts && <ExploreOurProducts products={listProducts} />}
       <ProductCategories />
       <MostPopular />
@@ -111,13 +125,15 @@ export async function getServerSideProps() {
   const contactInfo = await fetchContactInfo()
   const socialMedia = await fetchSocialMedia()
   const slidersHome = await fetchSliderHome()
+  const features = await fetchFeatures()
 
   return {
     props: {
       products,
       contactInfo,
       socialMedia,
-      slidersHome
+      slidersHome,
+      features
     }
   }
 }

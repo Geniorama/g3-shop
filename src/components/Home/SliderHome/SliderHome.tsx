@@ -51,7 +51,7 @@ export default function SliderHome({ slides }:SliderHomeProps) {
                   justifyContent={"center"}
                   xs={12}
                   lg={6}
-                  sx={{ minHeight: "80vh" }}
+                  sx={{ height: "80vh", overflow: 'hidden' }}
                   item
                 >
                   <img
@@ -91,7 +91,7 @@ export default function SliderHome({ slides }:SliderHomeProps) {
                   </Box>
                 </Grid>
                 <Grid item xs={12} lg={6}>
-                  <img src={slide.imageUrl} alt="" style={{ width: "100%" }} />
+                  <img src={slide.imageUrl} alt="" style={{ width: "100%", maxHeight: '500px', objectFit: 'contain' }} />
                 </Grid>
               </Grid>
             </Container>
