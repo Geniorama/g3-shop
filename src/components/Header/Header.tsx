@@ -31,6 +31,7 @@ import { useRouter } from "next/router";
 import { MouseEventHandler } from "react";
 import type { MenuCollection } from "@/types";
 import socialMediaIcons from "@/utils/socialMediaIcons";
+import { fetchCustomMenu } from "@/lib/dataFetchers";
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
@@ -79,6 +80,15 @@ function ResponsiveAppBar() {
       });
     }
   }, []);
+
+  // useEffect(() => {
+  //   const getMenuItems = async () => {
+  //     const res = await fetchCustomMenu()
+  //     console.log(res)
+  //   }
+
+  //   getMenuItems()
+  // },[fetchCustomMenu])
 
   useEffect(() => {
     fetchMenuItems();

@@ -34,7 +34,7 @@ export default function PageHeading({
         {floatImage && (
           <Box
             sx={{
-              width: { xs: "15%" },
+              width: { xs: "13%" },
               position: "absolute",
               right: "10%",
               top: "10%",

@@ -69,6 +69,32 @@ export const fetchContactInfo = async () => {
   }
 };
 
+// Fetch Slider Home
+export const fetchSliderHome = async () => {
+  try {
+    const res = await contentfulClient.getEntries({
+      content_type: "sliderHome",
+    });
+
+    return res.items;
+  } catch (error) {
+    console.error("Error fetching contact info:", error);
+    return {};
+  }
+};
+
+export const fetchCustomMenu = async () => {
+  try {
+    const res = await contentfulClient.getEntries({
+      content_type: "customMenu",
+    });
+
+    return res.items;
+  } catch (error) {
+    console.error("Error fetching custom menu:", error);
+    return {};
+  }
+};
 
 // Fetch policies
 export const fetchPolicies = async () => {

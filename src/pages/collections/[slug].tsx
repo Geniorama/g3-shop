@@ -12,7 +12,12 @@ import {
 import FilterBar from "@/components/Shop/FilterBar/FilterBar";
 import SidebarShop from "@/components/Shop/SidebarShop/SidebarShop";
 import GridProducts from "@/components/GridProducts/GridProducts";
-import type { Product, ShopifyCollectionResponse, ContactInfo, SocialMediaItem } from "@/types";
+import type {
+  Product,
+  ShopifyCollectionResponse,
+  ContactInfo,
+  SocialMediaItem,
+} from "@/types";
 import Astronaut from "@/assets/img/g3-1Recurso 1.svg";
 import {
   fetchContactInfo,
@@ -20,8 +25,11 @@ import {
   fetchCollectionBySlug,
 } from "@/lib/dataFetchers";
 import { useDispatch } from "react-redux";
-import {Button} from "@mui/material";
-import { setSocialMedia, setContactInfo } from "@/store/features/generalInfoSlice";
+import { Button } from "@mui/material";
+import {
+  setSocialMedia,
+  setContactInfo,
+} from "@/store/features/generalInfoSlice";
 
 const PRODUCTS_PER_PAGE = 9;
 
@@ -31,8 +39,8 @@ type CollectionPageProps = {
   totalProducts?: number;
   initialEndCursor: string;
   initialHasNextPage: boolean;
-  contactInfo?: ContactInfo,
-  socialMedia?: SocialMediaItem[]
+  contactInfo?: ContactInfo;
+  socialMedia?: SocialMediaItem[];
 };
 
 export default function CollectionPage({
@@ -42,7 +50,7 @@ export default function CollectionPage({
   initialEndCursor,
   initialHasNextPage,
   contactInfo,
-  socialMedia
+  socialMedia,
 }: CollectionPageProps) {
   const [products, setProducts] = useState<Product[]>(initialProducts);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
@@ -51,63 +59,83 @@ export default function CollectionPage({
   const [isLoading, setIsLoading] = useState(false);
   const [sortOption, setSortOption] = useState<string>("");
   const [sortedProducts, setSortedProducts] = useState<Product[]>([]);
-  const [titlePage, setTitlePage] = useState('')
+  const [titlePage, setTitlePage] = useState("");
   const [cursor, setCursor] = useState<string | null>(initialEndCursor);
   const [hasNextPage, setHasNextPage] = useState<boolean>(initialHasNextPage);
-  const [currentCollection, setCurrentCollection] = useState<{title: string, handle: string}>()
+  const [currentCollection, setCurrentCollection] = useState<{
+    title: string;
+    handle: string;
+    image?: { src?: string; altText?: string };
+  }>();
 
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   const loadMoreProducts = async () => {
     if (!hasNextPage || isLoading || !currentCollection?.handle) return;
 
     setIsLoading(true);
-    const newProductsResponse = await fetchCollectionBySlug(currentCollection?.handle, cursor);
-    if(newProductsResponse !== null && newProductsResponse !== undefined){
-      const newProducts = newProductsResponse.collection?.products.edges.map((product) => ({
-        id: product.node.id,
-        title: product.node.title,
-        description: product.node.description,
-        slug: product.node.handle,
-        image: {
-          url: product.node.images.edges[0]?.node.src,
-          altText: product.node.images.edges[0]?.node.src,
-        },
-        normalPrice: +product.node.priceRange.minVariantPrice.amount,
-        isVariable: product.node.variants.edges.length > 0,
-      }));
-  
+    const newProductsResponse = await fetchCollectionBySlug(
+      currentCollection?.handle,
+      cursor
+    );
+    if (newProductsResponse !== null && newProductsResponse !== undefined) {
+      const newProducts = newProductsResponse.collection?.products.edges.map(
+        (product) => ({
+          id: product.node.id,
+          title: product.node.title,
+          description: product.node.description,
+          slug: product.node.handle,
+          image: {
+            url: product.node.images.edges[0]?.node.src,
+            altText: product.node.images.edges[0]?.node.src,
+          },
+          normalPrice: +product.node.priceRange.minVariantPrice.amount,
+          isVariable: product.node.variants.edges.length > 0,
+        })
+      );
+
       if (newProducts && newProducts.length > 0) {
         setProducts((prevProducts) => [...prevProducts, ...newProducts]);
-        setFilteredProducts((prevFiltered) => [...prevFiltered, ...newProducts]);
+        setFilteredProducts((prevFiltered) => [
+          ...prevFiltered,
+          ...newProducts,
+        ]);
       }
-      setCursor(newProductsResponse.collection?.products.pageInfo.endCursor || null);
-      setHasNextPage(newProductsResponse.collection?.products.pageInfo.hasNextPage || false);
+      setCursor(
+        newProductsResponse.collection?.products.pageInfo.endCursor || null
+      );
+      setHasNextPage(
+        newProductsResponse.collection?.products.pageInfo.hasNextPage || false
+      );
       setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    if(collection.collection){
+    if (collection.collection) {
       const dataCurrentCollection = {
         title: collection.collection.title,
-        handle: collection.collection.handle
-      }
-      setCurrentCollection(dataCurrentCollection)
+        handle: collection.collection.handle,
+        image: {
+          src: collection.collection.image?.src,
+          altText: collection.collection.image?.altText,
+        },
+      };
+      setCurrentCollection(dataCurrentCollection);
     }
-  },[collection])
+  }, [collection]);
 
   useEffect(() => {
-    if(contactInfo){
-      dispatch(setContactInfo(contactInfo))
+    if (contactInfo) {
+      dispatch(setContactInfo(contactInfo));
     }
-  }, [contactInfo, dispatch])
+  }, [contactInfo, dispatch]);
 
   useEffect(() => {
-    if(socialMedia){
-      dispatch(setSocialMedia(socialMedia))
+    if (socialMedia) {
+      dispatch(setSocialMedia(socialMedia));
     }
-  }, [socialMedia, dispatch])
+  }, [socialMedia, dispatch]);
 
   // Filter products based on price range
   useEffect(() => {
@@ -144,10 +172,9 @@ export default function CollectionPage({
       }
       setSortedProducts(sorted);
     };
-  
+
     sortProducts();
   }, [filteredProducts, sortOption]);
-  
 
   const handlePriceChange = (range: [number, number]) => {
     setPriceRange(range);
@@ -165,10 +192,10 @@ export default function CollectionPage({
       }}
     >
       <PageHeading
-        title={currentCollection?.title || ''}
+        title={currentCollection?.title || ""}
         backgroundColor="#602BE0"
         textColor="#FFFFFF"
-        floatImage={Astronaut.src}
+        floatImage={currentCollection?.image?.src || ''}
       />
 
       <Container>
@@ -179,7 +206,9 @@ export default function CollectionPage({
           <Link underline="hover" color="inherit" href="/collections">
             Collections
           </Link>
-          <Typography color="text.primary">{currentCollection?.title}</Typography>
+          <Typography color="text.primary">
+            {currentCollection?.title}
+          </Typography>
         </Breadcrumbs>
         <Box margin={3} />
         <FilterBar
@@ -209,7 +238,7 @@ export default function CollectionPage({
                       onClick={loadMoreProducts}
                       disabled={isLoading}
                     >
-                      {isLoading ? 'Loading...' : 'Load More'}
+                      {isLoading ? "Loading..." : "Load More"}
                     </Button>
                   </Box>
                 )}
@@ -236,26 +265,33 @@ export default function CollectionPage({
   );
 }
 
-export async function getServerSideProps({ params }: { params: { slug: string } }) {
+export async function getServerSideProps({
+  params,
+}: {
+  params: { slug: string };
+}) {
   const fetchCollection = await fetchCollectionBySlug(params.slug);
-  const contactInfo = await fetchContactInfo()
-  const socialMedia = await fetchSocialMedia()
+  const contactInfo = await fetchContactInfo();
+  const socialMedia = await fetchSocialMedia();
 
-  const initialProducts = fetchCollection?.collection?.products.edges?.map((product) => ({
-    id: product.node.id,
-    title: product.node.title,
-    description: product.node.description,
-    slug: product.node.handle,
-    image: {
-      url: product.node.images.edges[0]?.node.src || '',
-      altText: product.node.images.edges[0]?.node.altText || '',
-    },
-    normalPrice: product.node.priceRange.minVariantPrice.amount,
-    isVariable: product.node.variants.edges.length > 0,
-  })) || [];
+  const initialProducts =
+    fetchCollection?.collection?.products.edges?.map((product) => ({
+      id: product.node.id,
+      title: product.node.title,
+      description: product.node.description,
+      slug: product.node.handle,
+      image: {
+        url: product.node.images.edges[0]?.node.src || "",
+        altText: product.node.images.edges[0]?.node.altText || "",
+      },
+      normalPrice: product.node.priceRange.minVariantPrice.amount,
+      isVariable: product.node.variants.edges.length > 0,
+    })) || [];
 
-  const initialEndCursor = fetchCollection?.collection?.products.pageInfo.endCursor || null;
-  const initialHasNextPage = fetchCollection?.collection?.products.pageInfo.hasNextPage || false;
+  const initialEndCursor =
+    fetchCollection?.collection?.products.pageInfo.endCursor || null;
+  const initialHasNextPage =
+    fetchCollection?.collection?.products.pageInfo.hasNextPage || false;
 
   return {
     props: {
@@ -265,7 +301,7 @@ export async function getServerSideProps({ params }: { params: { slug: string } 
       initialEndCursor,
       initialHasNextPage,
       contactInfo,
-      socialMedia
+      socialMedia,
     },
   };
 }

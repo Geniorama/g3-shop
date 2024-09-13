@@ -17,8 +17,9 @@ import { GET_LATEST_PRODUCTS } from "@/lib/queries";
 import contentfulClient from "@/lib/contentful";
 import { useDispatch } from "react-redux";
 import { setContactInfo, setSocialMedia } from "@/store/features/generalInfoSlice";
-import { fetchContactInfo, fetchLatestProducts, fetchSocialMedia } from "@/lib/dataFetchers";
+import { fetchContactInfo, fetchLatestProducts, fetchSocialMedia, fetchSliderHome } from "@/lib/dataFetchers";
 import RateUs from "@/components/Home/RateUs/RateUs";
+import type { Slide } from "@/components/Home/SliderHome/SliderHome";
 
 const metadata = {
   title: "Inicio",
@@ -28,12 +29,14 @@ const metadata = {
 type HomeProps = {
   products: Product[];
   contactInfo: ContactInfo;
-  socialMedia: SocialMediaItem[]
+  socialMedia: SocialMediaItem[];
+  slidersHome: []
 };
 
-export default function Home({ products, contactInfo, socialMedia }: HomeProps) {
+export default function Home({ products, contactInfo, socialMedia, slidersHome }: HomeProps) {
   const [isCommingSoon, setIsCommingSoon] = useState(false);
   const [listProducts, setListProducts] = useState<Product[]>();
+  const [slides, setSlides] = useState<Slide[]>()
 
   const dispatch = useDispatch()
 
@@ -43,6 +46,25 @@ export default function Home({ products, contactInfo, socialMedia }: HomeProps) 
     }
     AOS.init();
   }, [products]);
+
+  useEffect(() => {
+    if(slidersHome){
+      const transformData:Slide[] = slidersHome.map((slide:any) => ({
+        title: slide.fields.title,
+        titleSmall: slide.fields.titleSmall,
+        titleLarge: slide.fields.titleLarge,
+        description: slide.fields.description,
+        buttonText: slide.fields.buttonText,
+        buttonUrl: slide.fields.buttonUrl,
+        backgroundColor: slide.fields.backgroundColor,
+        imageUrl: slide.fields.imageUrl,
+        imageAlignment: slide.fields.imageAlignment,
+        iconUrl: slide.fields.iconUrl
+      }))
+
+      setSlides(transformData)
+    }
+  },[slidersHome])
 
   useEffect(() => {
     if(contactInfo){
@@ -64,7 +86,7 @@ export default function Home({ products, contactInfo, socialMedia }: HomeProps) 
     <Layout 
       metadata={metadata}
       >
-      <SliderHome />
+      {slides && <SliderHome slides={slides} />}
       <Features />
       {listProducts && <ExploreOurProducts products={listProducts} />}
       <ProductCategories />
@@ -88,12 +110,14 @@ export async function getServerSideProps() {
   const products = await fetchLatestProducts()
   const contactInfo = await fetchContactInfo()
   const socialMedia = await fetchSocialMedia()
+  const slidersHome = await fetchSliderHome()
 
   return {
     props: {
       products,
       contactInfo,
-      socialMedia
+      socialMedia,
+      slidersHome
     }
   }
 }

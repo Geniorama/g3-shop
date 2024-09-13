@@ -70,6 +70,10 @@ export const GET_COLLECTION_BY_SLUG = gql`
       id
       title
       handle
+      image {
+        src
+        altText
+      }
       products(first: 9, after: $cursor) {
         edges {
           node {
@@ -120,6 +124,10 @@ export const GET_ALL_PRODUCTS = gql`
           title
           description
           handle
+          image {
+            src
+            altText
+          }
           images(first: 5) {
             edges {
               node {
@@ -152,4 +160,3 @@ export const GET_ALL_PRODUCTS = gql`
     }
   }
 `;
-

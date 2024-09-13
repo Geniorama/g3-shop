@@ -157,6 +157,10 @@ export interface ShopifyProductsPageInfo {
 export interface ShopifyCollection {
   title: string;
   handle: string;
+  image?: {
+    src: string;
+    altText: string;
+  }
   products: {
     edges: {
       node: ShopifyProduct;
