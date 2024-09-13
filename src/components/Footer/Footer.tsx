@@ -19,7 +19,9 @@ import socialMediaIcons from "@/utils/socialMediaIcons";
 export default function Footer() {
   const [menuCollection, setMenuCollection] = useState<MenuCollection[]>([]);
   const theme = useTheme();
-  const {contactInfo, socialMedia} = useSelector((state:RootState) => state.general)
+  const { contactInfo, socialMedia } = useSelector(
+    (state: RootState) => state.general
+  );
 
   async function fetchMenuItems() {
     try {
@@ -43,39 +45,71 @@ export default function Footer() {
       component={"footer"}
       sx={{ padding: "2rem", backgroundColor: "#252B42" }}
     >
-      {contactInfo?.whatsAppLink && (
-        <IconButton
-          href={contactInfo.whatsAppLink}
-          target="_blank"
-          size="large"
-          sx={{
-            background: `#25D366`,
-            color: "white",
-            position: "fixed",
-            bottom: "80px",
-            right: "20px",
-            "&:hover": {
-              backgroundColor: "#128c7e",
-            },
-          }}
-        >
-          <WhatsAppIcon />
-        </IconButton>
-      )}
-
-      <IconButton
-        href="#top"
-        size="large"
+      <Stack
         sx={{
-          background: `${theme.palette.secondary.light}`,
-          color: "white",
           position: "fixed",
           bottom: "20px",
           right: "20px",
+          gap: 1,
         }}
       >
-        <ArrowUpwardIcon />
-      </IconButton>
+        {socialMedia &&
+          socialMedia.map((item, i) => {
+            const findItem = socialMediaIcons.find(
+              (subItem) => subItem.name === item.name
+            );
+            if (findItem) {
+              return (
+                <IconButton
+                  href={item.url}
+                  target="_blank"
+                  size="large"
+                  sx={{
+                    backgroundColor: theme.palette.primary.main,
+                    color: "white",
+                    aspectRatio: '1',
+                    ":hover": { backgroundColor: theme.palette.primary.dark },
+                  }}
+                  key={i}
+                >
+                  {findItem.icon}
+                </IconButton>
+              );
+            }
+          })}
+        {contactInfo?.whatsAppLink && (
+          <IconButton
+            href={contactInfo.whatsAppLink}
+            target="_blank"
+            size="large"
+            sx={{
+              background: `#25D366`,
+              color: "white",
+              aspectRatio: '1',
+              "&:hover": {
+                backgroundColor: "#128c7e",
+              },
+            }}
+          >
+            <WhatsAppIcon />
+          </IconButton>
+        )}
+
+        <IconButton
+          href="#top"
+          size="large"
+          sx={{
+            backgroundColor: theme.palette.secondary.light,
+            color: "white",
+            aspectRatio: '1',
+            '&:hover':{
+              backgroundColor: theme.palette.secondary.dark
+            }
+          }}
+        >
+          <ArrowUpwardIcon />
+        </IconButton>
+      </Stack>
 
       <Container>
         <Grid
@@ -250,7 +284,14 @@ export default function Footer() {
                   (subItem) => subItem.name === item.name
                 );
                 return (
-                  <IconButton href={item.url} target="_blank" title={item.name} aria-label={item.name} key={item.name} color="secondary">
+                  <IconButton
+                    href={item.url}
+                    target="_blank"
+                    title={item.name}
+                    aria-label={item.name}
+                    key={item.name}
+                    color="secondary"
+                  >
                     {iconItem ? iconItem.icon : null}
                   </IconButton>
                 );

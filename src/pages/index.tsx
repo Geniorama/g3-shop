@@ -12,15 +12,14 @@ import "aos/dist/aos.css";
 import { useEffect, useState } from "react";
 import CommingSoon from "@/components/CommingSoon/CommingSoon";
 import type { ContactInfo, Product, SocialMediaItem } from "@/types";
-import { GraphQLClient, gql } from "graphql-request";
-import { GET_LATEST_PRODUCTS } from "@/lib/queries";
-import contentfulClient from "@/lib/contentful";
+import { GraphQLClient } from "graphql-request";
 import { useDispatch } from "react-redux";
 import { setContactInfo, setSocialMedia } from "@/store/features/generalInfoSlice";
-import { fetchContactInfo, fetchLatestProducts, fetchSocialMedia, fetchSliderHome, fetchFeatures } from "@/lib/dataFetchers";
+import { fetchContactInfo, fetchLatestProducts, fetchSocialMedia, fetchSliderHome, fetchFeatures, fetchTechniques } from "@/lib/dataFetchers";
 import RateUs from "@/components/Home/RateUs/RateUs";
 import type { Slide } from "@/components/Home/SliderHome/SliderHome";
-import { Feature } from "@/components/Home/Features/Features";
+import type { Feature } from "@/components/Home/Features/Features";
+import type {CircleTechniqueProps} from "@/components/CircleTechnique/CircleTechnique";
 
 const metadata = {
   title: "Inicio",
@@ -32,14 +31,16 @@ type HomeProps = {
   contactInfo: ContactInfo;
   socialMedia: SocialMediaItem[];
   slidersHome: [];
-  features:[]
+  features:[];
+  techniques:[];
 };
 
-export default function Home({ products, contactInfo, socialMedia, slidersHome, features }: HomeProps) {
+export default function Home({ products, contactInfo, socialMedia, slidersHome, features, techniques }: HomeProps) {
   const [isCommingSoon, setIsCommingSoon] = useState(false);
   const [listProducts, setListProducts] = useState<Product[]>();
   const [slides, setSlides] = useState<Slide[]>()
   const [listFeatures, setListFeatures] = useState<Feature[]>()
+  const [listTechniques, setListTechniques] = useState<CircleTechniqueProps[]>()
 
   const dispatch = useDispatch()
 
@@ -81,6 +82,21 @@ export default function Home({ products, contactInfo, socialMedia, slidersHome, 
   },[features])
 
   useEffect(() => {
+    if(techniques){
+      const transformData:CircleTechniqueProps[] = techniques.map((tech:any) => ({
+        title: tech.fields.title,
+        color: '',
+        image: {
+          src: tech.fields.imageUrl,
+          altText: tech.fields.altText
+        }
+      }))  
+      
+      setListTechniques(transformData)
+    }
+  },[techniques])
+
+  useEffect(() => {
     if(contactInfo){
       dispatch(setContactInfo(contactInfo))
     }
@@ -105,7 +121,7 @@ export default function Home({ products, contactInfo, socialMedia, slidersHome, 
       {listProducts && <ExploreOurProducts products={listProducts} />}
       <ProductCategories />
       <MostPopular />
-      <Techniques />
+      {listTechniques && listTechniques.length > 0 && <Techniques techniques={listTechniques} />}
       <BannerPromo />
       <FAQ />
       <RateUs />
@@ -126,6 +142,7 @@ export async function getServerSideProps() {
   const socialMedia = await fetchSocialMedia()
   const slidersHome = await fetchSliderHome()
   const features = await fetchFeatures()
+  const techniques = await fetchTechniques()
 
   return {
     props: {
@@ -133,7 +150,8 @@ export async function getServerSideProps() {
       contactInfo,
       socialMedia,
       slidersHome,
-      features
+      features,
+      techniques
     }
   }
 }
