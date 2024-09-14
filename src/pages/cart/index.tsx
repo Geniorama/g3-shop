@@ -8,6 +8,7 @@ import {
   Button,
   Breadcrumbs,
   Link,
+  Stack
 } from "@mui/material";
 import ProductionQuantityLimitsIcon from "@mui/icons-material/ProductionQuantityLimits";
 import CartTable from "../../components/Cart/CartTable/CartTable";
@@ -23,6 +24,7 @@ import {
   setContactInfo,
   setSocialMedia,
 } from "@/store/features/generalInfoSlice";
+import Loader from "@/components/Loader/Loader";
 
 type CartProps = {
   contactInfo?: ContactInfo;
@@ -33,6 +35,7 @@ export default function Cart({ contactInfo, socialMedia }: CartProps) {
   const [isEmpty, setIsEmpty] = useState<Boolean | null>(null);
   const [checkoutUrl, setCheckoutUrl] = useState("");
   const { checkoutId, items } = useSelector((state: RootState) => state.cart);
+  const [loading, setLoading] = useState(true)
 
   const cartItems = useSelector((state: RootState) => state.cart.items);
   const cartTotal = useSelector((state: RootState) => state.cart.totalAmount);
@@ -86,6 +89,7 @@ export default function Cart({ contactInfo, socialMedia }: CartProps) {
   }, [items, dispatch]);
 
   useEffect(() => {
+    setLoading(false)
     if (cartItems.length > 0 && checkoutId) {
       setIsEmpty(false);
     } else {
@@ -101,6 +105,23 @@ export default function Cart({ contactInfo, socialMedia }: CartProps) {
   const handleRemoveFromCart = (itemId: ItemCart["id"]) => {
     dispatch(removeItem(itemId));
   };
+
+  if (loading) {
+    return (
+      <Layout metadata={metadata}>
+        <Stack
+          alignItems={"center"}
+          justifyContent={"center"}
+          sx={{ height: "calc(100vh - 100px)" }}
+        >
+          <Box sx={{ width: "70px" }}>
+            <Loader />
+            <Typography>Loading...</Typography>
+          </Box>
+        </Stack>
+      </Layout>
+    );
+  }
 
   return (
     <Layout metadata={metadata}>
