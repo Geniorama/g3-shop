@@ -12,17 +12,25 @@ import {
 import FilterBar from "@/components/Shop/FilterBar/FilterBar";
 import SidebarShop from "@/components/Shop/SidebarShop/SidebarShop";
 import GridProducts from "@/components/GridProducts/GridProducts";
-import type { Product, ShopifyCollectionResponse, ContactInfo, SocialMediaItem, ShopifyProductsResponse } from "@/types";
+import type {
+  Product,
+  ShopifyCollectionResponse,
+  ContactInfo,
+  SocialMediaItem,
+  ShopifyProductsResponse,
+} from "@/types";
 import Astronaut from "@/assets/img/g3-1Recurso 1.svg";
 import {
   fetchContactInfo,
   fetchSocialMedia,
-  fetchCollectionBySlug,
-  fetchAllProducts
+  fetchAllProducts,
 } from "@/lib/dataFetchers";
 import { useDispatch } from "react-redux";
-import {Button} from "@mui/material";
-import { setSocialMedia, setContactInfo } from "@/store/features/generalInfoSlice";
+import { Button } from "@mui/material";
+import {
+  setSocialMedia,
+  setContactInfo,
+} from "@/store/features/generalInfoSlice";
 
 const PRODUCTS_PER_PAGE = 9;
 
@@ -32,18 +40,17 @@ type ShopPageProps = {
   totalProducts?: number;
   initialEndCursor: string;
   initialHasNextPage: boolean;
-  contactInfo?: ContactInfo,
-  socialMedia?: SocialMediaItem[]
+  contactInfo?: ContactInfo;
+  socialMedia?: SocialMediaItem[];
 };
 
 export default function ShopPage({
-  allProducts,
   initialProducts,
   totalProducts,
   initialEndCursor,
   initialHasNextPage,
   contactInfo,
-  socialMedia
+  socialMedia,
 }: ShopPageProps) {
   const [products, setProducts] = useState<Product[]>(initialProducts);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
@@ -52,73 +59,38 @@ export default function ShopPage({
   const [isLoading, setIsLoading] = useState(false);
   const [sortOption, setSortOption] = useState<string>("");
   const [sortedProducts, setSortedProducts] = useState<Product[]>([]);
-  const [titlePage, setTitlePage] = useState('')
+  const [titlePage, setTitlePage] = useState("");
   const [cursor, setCursor] = useState<string | undefined>(initialEndCursor);
   const [hasNextPage, setHasNextPage] = useState<boolean>(initialHasNextPage);
 
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
-  const loadMoreProducts = async () => {
-    if (!hasNextPage || isLoading) return;
-
-    setIsLoading(true);
-
-    try {
-      const newProductsResponse = await fetchAllProducts(cursor);
-
-      if(newProductsResponse){
-        const newProducts = newProductsResponse.products.edges.map((product: any) => ({
-          id: product.node.id,
-          title: product.node.title,
-          slug: product.node.handle,
-          description: product.node.description || '',
-          image: {
-            url: product.node.images.edges[0]?.node.src || '',
-            altText: product.node.images.edges[0]?.node.altText || '',
-          },
-          normalPrice: parseFloat(product.node.priceRange.minVariantPrice.amount),
-          isVariable: product.node.variants.edges.length > 0,
-        }));
-  
-        setProducts((prevProducts) => [
-          ...prevProducts,
-          ...newProducts,
-        ]);
-  
-        setCursor(newProductsResponse.products.pageInfo.endCursor);
-        setHasNextPage(newProductsResponse.products.pageInfo.hasNextPage);
-        setIsLoading(false);
-      }
-    } catch (error) {
-      console.error('Error fetching more products:', error);
-      setIsLoading(false);
-    }
-  };
+  console.log(products);
 
   useEffect(() => {
-    if(contactInfo){
-      dispatch(setContactInfo(contactInfo))
+    if (contactInfo) {
+      dispatch(setContactInfo(contactInfo));
     }
-  }, [contactInfo, dispatch])
+  }, [contactInfo, dispatch]);
 
   useEffect(() => {
-    if(socialMedia){
-      dispatch(setSocialMedia(socialMedia))
+    if (socialMedia) {
+      dispatch(setSocialMedia(socialMedia));
     }
-  }, [socialMedia, dispatch])
+  }, [socialMedia, dispatch]);
 
   // Filter products based on price range
   useEffect(() => {
     const filterProducts = () => {
       const filtered = products.filter((product) => {
-        const price = product.normalPrice;
+        const price = Number(product.normalPrice); // Convertir a número
         return price >= priceRange[0] && price <= priceRange[1];
       });
       setFilteredProducts(filtered);
     };
 
     filterProducts();
-  }, [priceRange, products]);
+  }, [products, priceRange]);
 
   // Sort products based on selected option
   useEffect(() => {
@@ -132,20 +104,19 @@ export default function ShopPage({
           sorted.sort((a, b) => b.title.localeCompare(a.title));
           break;
         case "price-asc":
-          sorted.sort((a, b) => a.normalPrice - b.normalPrice); // Asegúrate de que normalPrice es un número
+          sorted.sort((a, b) => Number(a.normalPrice) - Number(b.normalPrice));
           break;
         case "price-desc":
-          sorted.sort((a, b) => b.normalPrice - a.normalPrice); // Asegúrate de que normalPrice es un número
+          sorted.sort((a, b) => Number(b.normalPrice) - Number(a.normalPrice));
           break;
         default:
           break;
       }
       setSortedProducts(sorted);
     };
-  
+
     sortProducts();
   }, [filteredProducts, sortOption]);
-  
 
   const handlePriceChange = (range: [number, number]) => {
     setPriceRange(range);
@@ -153,6 +124,43 @@ export default function ShopPage({
 
   const handleSortChange = (option: string) => {
     setSortOption(option);
+  };
+
+  const loadMoreProducts = async () => {
+    if (!cursor || isLoading) return; // Evitar cargar si no hay cursor o ya está cargando
+
+    setIsLoading(true);
+
+    try {
+      // Fetch más productos usando el cursor actual
+      const result = await fetchAllProducts(cursor, PRODUCTS_PER_PAGE);
+
+      const newProducts = result?.products.edges.map((product) => ({
+        id: product.node.id,
+        title: product.node.title,
+        description: product.node.description,
+        slug: product.node.handle,
+        image: {
+          url: product.node.images.edges[0]?.node.src || "",
+          altText: product.node.images.edges[0]?.node.altText || "",
+        },
+        normalPrice: product.node.priceRange.minVariantPrice.amount,
+        isVariable: product.node.variants.edges.length > 0,
+      }));
+
+      // Actualiza la lista de productos agregando los nuevos
+      if (newProducts && result) {
+        setProducts((prevProducts) => [...prevProducts, ...newProducts]);
+
+        // Actualizar el cursor y el estado hasNextPage
+        setCursor(result.products.pageInfo.endCursor);
+        setHasNextPage(result.products.pageInfo.hasNextPage);
+      }
+    } catch (error) {
+      console.error("Error loading more products:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -163,7 +171,7 @@ export default function ShopPage({
       }}
     >
       <PageHeading
-        title={'Shop'}
+        title={"Shop"}
         backgroundColor="#602BE0"
         textColor="#FFFFFF"
         floatImage={Astronaut.src}
@@ -196,18 +204,20 @@ export default function ShopPage({
             {sortedProducts.length > 0 ? (
               <>
                 <GridProducts products={sortedProducts} pagination={false} />
-                {hasNextPage && (
-                  <Box display="flex" justifyContent="center" marginY={4}>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={loadMoreProducts}
-                      disabled={isLoading}
-                    >
-                      {isLoading ? 'Loading...' : 'Load More'}
-                    </Button>
-                  </Box>
-                )}
+                {hasNextPage &&
+                  !isLoading &&
+                  filteredProducts.length >= PRODUCTS_PER_PAGE && (
+                    <Box display="flex" justifyContent="center" marginY={4}>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        disabled={isLoading}
+                        onClick={loadMoreProducts}
+                      >
+                        {isLoading ? "Loading..." : "Load More"}
+                      </Button>
+                    </Box>
+                  )}
               </>
             ) : (
               <Box
@@ -231,36 +241,37 @@ export default function ShopPage({
   );
 }
 
-export async function getServerSideProps({ params }: { params: { slug: string } }) {
-  const allProducts = await fetchAllProducts();
-  const contactInfo = await fetchContactInfo()
-  const socialMedia = await fetchSocialMedia()
+export async function getServerSideProps() {
+  const allProducts = await fetchAllProducts(null, 9);
+  const contactInfo = await fetchContactInfo();
+  const socialMedia = await fetchSocialMedia();
 
-  const initialProducts = allProducts?.products.edges?.map((product) => ({
-    id: product.node.id,
-    title: product.node.title,
-    description: product.node.description,
-    slug: product.node.handle,
-    image: {
-      url: product.node.images.edges[0]?.node.src || '',
-      altText: product.node.images.edges[0]?.node.altText || '',
-    },
-    normalPrice: product.node.priceRange.minVariantPrice.amount,
-    isVariable: product.node.variants.edges.length > 0,
-  })) || [];
+  const initialProducts =
+    allProducts?.products.edges?.map((product) => ({
+      id: product.node.id,
+      title: product.node.title,
+      description: product.node.description,
+      slug: product.node.handle,
+      image: {
+        url: product.node.images.edges[0]?.node.src || "",
+        altText: product.node.images.edges[0]?.node.altText || "",
+      },
+      normalPrice: product.node.priceRange.minVariantPrice.amount,
+      isVariable: product.node.variants.edges.length > 0,
+    })) || [];
 
   const initialEndCursor = allProducts?.products.pageInfo.endCursor || null;
-  const initialHasNextPage = allProducts?.products.pageInfo.hasNextPage || false;
+  const initialHasNextPage =
+    allProducts?.products.pageInfo.hasNextPage || false;
 
   return {
     props: {
-      allProducts,
       initialProducts,
       totalProducts: initialProducts.length || 0,
       initialEndCursor,
       initialHasNextPage,
       contactInfo,
-      socialMedia
+      socialMedia,
     },
   };
 }

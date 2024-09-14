@@ -124,10 +124,6 @@ export const GET_ALL_PRODUCTS = gql`
           title
           description
           handle
-          image {
-            src
-            altText
-          }
           images(first: 5) {
             edges {
               node {
