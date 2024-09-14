@@ -150,7 +150,7 @@ export default function ShopPage({
 
       // Actualiza la lista de productos agregando los nuevos
       if (newProducts && result) {
-        setProducts((prevProducts) => [...prevProducts, ...newProducts]);
+        setProducts((prevProducts:any) => [...prevProducts, ...newProducts]);
 
         // Actualizar el cursor y el estado hasNextPage
         setCursor(result.products.pageInfo.endCursor);
