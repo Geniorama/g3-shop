@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { Typography, Container, Box, Stack, Button } from "@mui/material";
 import { useRouter } from "next/router";
 import Loader from "@/components/Loader/Loader";
-import Astronaut from "@/assets/img/lindo-astronauta-confundir-dibujos-animados-vector-icono-ilustracion-ciencia-tecnologia-icono-concepto-aislado.png"
+import Astronaut from "@/assets/img/lindo-astronauta-confundir-dibujos-animados-vector-icono-ilustracion-ciencia-tecnologia-icono-concepto-aislado.png";
 
 const metadata = {
   title: "",
@@ -19,8 +19,8 @@ type SearchResultsProps = {
 };
 
 export default function SearchResults({ allProducts }: SearchResultsProps) {
-  const [resultProducts, setResultProducts] = useState<Product[]>();
-  const [searchTerm, setSearchTerm] = useState<string | string[] | null>(null)
+  const [resultProducts, setResultProducts] = useState<Product[]>([]);
+  const [searchTerm, setSearchTerm] = useState<string | string[] | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
@@ -28,10 +28,21 @@ export default function SearchResults({ allProducts }: SearchResultsProps) {
     if (!router.query.q) {
       router.push("/");
     } else {
-      setSearchTerm(router.query.q)
+      const term = router.query.q as string;
+      setSearchTerm(term);
+
+      console.log(allProducts)
+      // Filtrar productos basados en el término de búsqueda (coincidencia parcial)
+      const filteredProducts = allProducts.filter((product) =>
+        product.title.toLowerCase().includes(term.toLowerCase())
+      );
+
+      console.log(filteredProducts)
+
+      setResultProducts(filteredProducts);
       setLoading(false);
     }
-  }, [router]);
+  }, [router, allProducts]);
 
   if (loading) {
     return (
@@ -54,27 +65,36 @@ export default function SearchResults({ allProducts }: SearchResultsProps) {
     <Layout metadata={metadata}>
       <PageHeading title={`Results for: "${searchTerm}"`} />
       <Container>
-        {resultProducts ? (
-          <GridProducts products={resultProducts} />
+        {resultProducts.length > 0 ? (
+          <Box sx={{mb: 8}}>
+            <GridProducts products={resultProducts} />
+          </Box>
         ) : (
-          <Box sx={{textAlign: 'center'}}>
+          <Box sx={{ textAlign: "center" }}>
             <Typography
-                color={'primary'}
-                sx={{
-                    fontSize: {xs: '20px'},
-                    fontWeight: 'bold'
-                }}    
-            >Sorry, no results were found for your search</Typography>
-            <Box sx={{width:{xs: '300px', lg: '400px'}, mx: 'auto'}}>
-                <img style={{width: '100%'}} src={Astronaut.src} alt="" />
+              color={"primary"}
+              sx={{
+                fontSize: { xs: "20px" },
+                fontWeight: "bold",
+              }}
+            >
+              Sorry, no results were found for your search
+            </Typography>
+            <Box sx={{ width: { xs: "300px", lg: "400px" }, mx: "auto" }}>
+              <img style={{ width: "100%" }} src={Astronaut.src} alt="" />
             </Box>
-            <Stack direction={'row'} justifyContent={'center'} gap={1} sx={{mb: 8}}>
-                <Button href="/" variant="outlined">
-                    GO TO HOME
-                </Button>
-                <Button href="/shop" color="secondary" variant="contained">
-                    GO TO SHOP
-                </Button>
+            <Stack
+              direction={"row"}
+              justifyContent={"center"}
+              gap={1}
+              sx={{ mb: 8 }}
+            >
+              <Button href="/" variant="outlined">
+                GO TO HOME
+              </Button>
+              <Button href="/shop" color="secondary" variant="contained">
+                GO TO SHOP
+              </Button>
             </Stack>
           </Box>
         )}
@@ -84,7 +104,7 @@ export default function SearchResults({ allProducts }: SearchResultsProps) {
 }
 
 export async function getServerSideProps() {
-  const res = await fetchAllProducts(undefined, 12);
+  const res = await fetchAllProducts(null, 250);
   const allProducts = res?.products.edges.map((product) => ({
     id: product.node.id,
     title: product.node.title,

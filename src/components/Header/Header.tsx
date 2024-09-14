@@ -32,6 +32,7 @@ import { MouseEventHandler } from "react";
 import type { MenuCollection } from "@/types";
 import socialMediaIcons from "@/utils/socialMediaIcons";
 import { fetchCustomMenu } from "@/lib/dataFetchers";
+import { useCallback } from "react";
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
@@ -46,6 +47,7 @@ function ResponsiveAppBar() {
   const [anchorElUser, setAnchorElUser] = useState(null);
   const [openSearch, setOpenSearch] = useState(false);
   const [menuCollection, setMenuCollection] = useState<MenuCollection[]>([]);
+  const [searchText, setSearchText] = useState('')
 
   const cartItems = useSelector((state: RootState) => state.cart.items);
   const { socialMedia } = useSelector((state: RootState) => state.general);
@@ -112,20 +114,33 @@ function ResponsiveAppBar() {
   const handleOpenNavMenu = (event: any) => {
     setAnchorElNav(event.currentTarget);
   };
-  const handleOpenUserMenu = (event: any) => {
-    setAnchorElUser(event.currentTarget);
-  };
-
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
   };
 
-  const handleCloseUserMenu = () => {
-    setAnchorElUser(null);
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const value = e.target.value;
+    setSearchText(value);
   };
 
-  const handleOpenSearch = () => setOpenSearch(true);
-  const handleCloseSearch = () => setOpenSearch(false);
+  const handleSearch = () => {
+    if (searchText !== "") {
+      router.push(`/search?q=${searchText}`);
+      handleCloseSearch()
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === "Enter") {
+      handleSearch()
+    }
+  };
+
+  const handleOpenSearch = useCallback(() => setOpenSearch(true), []);
+  const handleCloseSearch = useCallback(() => setOpenSearch(false), []);
+
   const handleGoToCart = () => router.push("/cart");
 
   type AuxMenuItemsProps = {
@@ -217,6 +232,8 @@ function ResponsiveAppBar() {
             }}
           >
             <TextField
+              onChange={(e) => handleChange(e)}
+              onKeyDown={(e) => handleKeyDown(e)}
               fullWidth
               placeholder="Search for ..."
               variant="standard"
