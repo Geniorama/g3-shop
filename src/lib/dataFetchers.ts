@@ -96,6 +96,19 @@ export const fetchFeatures = async () => {
   }
 };
 
+export const fetchFaq = async () => {
+  try {
+    const res = await contentfulClient.getEntries({
+      content_type: "faq",
+    });
+
+    return res.items;
+  } catch (error) {
+    console.error("Error fetching contact info:", error);
+    return {};
+  }
+};
+
 export const fetchTechniques = async () => {
   try {
     const res = await contentfulClient.getEntries({

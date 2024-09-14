@@ -26,12 +26,14 @@ import {
   fetchFeatures,
   fetchTechniques,
   fetchPromoDay,
+  fetchFaq
 } from "@/lib/dataFetchers";
 import RateUs from "@/components/Home/RateUs/RateUs";
 import type { Slide } from "@/components/Home/SliderHome/SliderHome";
 import type { Feature } from "@/components/Home/Features/Features";
 import type { CircleTechniqueProps } from "@/components/CircleTechnique/CircleTechnique";
 import type { MostPopularProps } from "@/components/Home/MostPopular/MostPopular";
+import type { Faq } from "@/components/Home/FAQ/FAQ";
 
 const metadata = {
   title: "Inicio",
@@ -46,6 +48,7 @@ type HomeProps = {
   features: [];
   techniques: [];
   promoDay: any;
+  faqs: []
 };
 
 export default function Home({
@@ -56,14 +59,15 @@ export default function Home({
   features,
   techniques,
   promoDay,
+  faqs
 }: HomeProps) {
   const [isCommingSoon, setIsCommingSoon] = useState(false);
   const [listProducts, setListProducts] = useState<Product[]>();
   const [slides, setSlides] = useState<Slide[]>();
   const [listFeatures, setListFeatures] = useState<Feature[]>();
-  const [listTechniques, setListTechniques] =
-    useState<CircleTechniqueProps[]>();
+  const [listTechniques, setListTechniques] = useState<CircleTechniqueProps[]>();
   const [itemPromoDay, setItemPromoDay] = useState<MostPopularProps>();
+  const [listFaqs, setListFaqs] = useState<Faq[]>()
 
   const dispatch = useDispatch();
 
@@ -92,6 +96,17 @@ export default function Home({
       setSlides(transformData);
     }
   }, [slidersHome]);
+
+  useEffect(() => {
+    if(faqs){
+      const transformData:Faq[] = faqs.map((faq:any) => ({
+        question: faq.fields.question,
+        answer: faq.fields.answer
+      }))
+
+      setListFaqs(transformData)
+    }
+  },[faqs])
 
   useEffect(() => {
     if (features) {
@@ -172,7 +187,9 @@ export default function Home({
         <Techniques techniques={listTechniques} />
       )}
       <BannerPromo />
-      <FAQ />
+      {listFaqs && listFaqs.length > 0 && (
+        <FAQ faqs={listFaqs} />
+      )}
       <RateUs />
     </Layout>
   );
@@ -186,6 +203,7 @@ export async function getServerSideProps() {
   const features = await fetchFeatures();
   const techniques = await fetchTechniques();
   const promoDay = await fetchPromoDay();
+  const faqs = await fetchFaq();
 
   return {
     props: {
@@ -196,6 +214,7 @@ export async function getServerSideProps() {
       features,
       techniques,
       promoDay,
+      faqs
     },
   };
 }
