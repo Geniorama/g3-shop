@@ -19,7 +19,6 @@ export default function SidebarShop({
   const [isSlugPage, setIsSlugPage] = useState(false)
   const router = useRouter()
  
-
   const handleSliderChange = (event: Event, newValue: number | number[]) => {
     const value = newValue as [number, number];
     setPriceRange(value);
@@ -28,8 +27,6 @@ export default function SidebarShop({
 
   useEffect(() => {
     router.query.slug ? setIsSlugPage(true) : setIsSlugPage(false)
-
-    console.log(router)
   },[router])
 
   return (

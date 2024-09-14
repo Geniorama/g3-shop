@@ -7,7 +7,7 @@ import rootReducer from './rootReducer';
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: ['cart', 'general']
+  whitelist: ['cart', 'general', 'search']
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -18,7 +18,6 @@ const makeStore = () => {
     devTools: process.env.NODE_ENV !== 'production',
   });
 
-  // Crear el persistor y asignarlo al store
   (store as any).__persistor = persistStore(store);
 
   return store;
