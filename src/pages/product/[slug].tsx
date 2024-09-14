@@ -1,4 +1,4 @@
-import { GetStaticPaths, GetStaticProps } from 'next';
+import { GetStaticPaths, GetStaticProps } from "next";
 import { Box, Container, Grid, Divider, Typography } from "@mui/material";
 import Layout from "@/components/Layout/Layout";
 import ProductHeading from "../../components/Product/ProductHeading/ProductHeading";
@@ -14,13 +14,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { addItem, setCheckoutId } from "@/store/features/cartSlice";
 import type { ItemCart } from "@/types";
 import { AppDispatch } from "@/store";
-import { useRouter } from "next/router";
-import { RootState } from '@/store';
-
-const metadata = {
-  title: "Producto",
-  description: "Hello world",
-};
 
 type ProductProps = {
   product: Product;
@@ -31,9 +24,11 @@ export default function Product({ product, relatedProductsIds }: ProductProps) {
   const [infoProduct, setInfoProduct] = useState<Product>();
   const [relatedProducts, setRelatedProducts] = useState<Product["id"][]>();
   const dispatch = useDispatch<AppDispatch>();
-  const router = useRouter()
 
-  const {items, checkoutId} = useSelector((state:RootState)=>state.cart)
+  const metadata = {
+    title: `${infoProduct?.title} | G3 Print Shop` || "G3 Product",
+    description: "Hello world",
+  };
 
   useEffect(() => {
     if (product) {
@@ -50,10 +45,10 @@ export default function Product({ product, relatedProductsIds }: ProductProps) {
   }
 
   const handleAddToCart = async (item: ItemCart) => {
-    dispatch(addItem(item))
+    dispatch(addItem(item));
   };
 
-  console.log(infoProduct)
+  console.log(infoProduct);
 
   return (
     <Layout metadata={metadata}>
@@ -61,14 +56,14 @@ export default function Product({ product, relatedProductsIds }: ProductProps) {
 
       <Box component={"section"} pt={{ xs: 10 }}>
         <Container>
-          <Grid container pb={{xs: 5}} spacing={5}>
+          <Grid container pb={{ xs: 5 }} spacing={5}>
             <Grid item xs={12} md={6}>
               <ProductGallery images={infoProduct.gallery} />
             </Grid>
 
             <Grid item xs={12} md={6}>
-              <ProductSummary 
-                dataProduct={infoProduct} 
+              <ProductSummary
+                dataProduct={infoProduct}
                 onAddToCart={handleAddToCart}
               />
             </Grid>
@@ -103,7 +98,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
   return {
     paths,
-    fallback: 'blocking',
+    fallback: "blocking",
   };
 };
 
@@ -118,14 +113,17 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 
   try {
     const productData = await shopifyClient.product.fetchByHandle(slug);
-    const productCollections = await shopifyClient.collection.fetchAllWithProducts();
-    const collections = productCollections.filter(collection => 
-      collection.products.some(p => p.id === productData.id)
-    ).map(collection => ({
-      id: collection.id,
-      title: collection.title,
-      handle: collection.handle
-    }));
+    const productCollections =
+      await shopifyClient.collection.fetchAllWithProducts();
+    const collections = productCollections
+      .filter((collection) =>
+        collection.products.some((p) => p.id === productData.id)
+      )
+      .map((collection) => ({
+        id: collection.id,
+        title: collection.title,
+        handle: collection.handle,
+      }));
 
     const isVariable = (variants: any) => {
       return variants.length > 1;
@@ -153,23 +151,23 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
         })),
       })),
       isVariable: isVariable(productData.variants),
-      variants: productData.variants.map(variant => ({
+      variants: productData.variants.map((variant) => ({
         variantId: variant.id,
         title: variant.title,
         price: variant.price.amount,
-        selectedOptions: variant.selectedOptions.map(selectOption => ({
+        selectedOptions: variant.selectedOptions.map((selectOption) => ({
           name: selectOption.name,
           value: selectOption.value,
         })),
       })),
       type: productData.productType,
-      collections: collections
+      collections: collections,
     };
 
     return {
       props: {
         product,
-        relatedProductsIds: []
+        relatedProductsIds: [],
       },
     };
   } catch (error) {
