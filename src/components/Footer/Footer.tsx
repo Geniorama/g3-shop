@@ -48,8 +48,8 @@ export default function Footer() {
       <Stack
         sx={{
           position: "fixed",
-          bottom: "20px",
-          right: "20px",
+          bottom: {xs: "10px", lg: "20px"},
+          right: {xs: "10px", lg: "20px"},
           gap: 1,
         }}
       >
