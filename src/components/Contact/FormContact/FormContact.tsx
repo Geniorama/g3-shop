@@ -19,6 +19,7 @@ export type DataProps = {
   email: string;
   phone: string;
   message?: string;
+  captchaToken?: string | null
 };
 
 const initialDataForm: DataProps = {
@@ -26,6 +27,7 @@ const initialDataForm: DataProps = {
   email: "",
   phone: "",
   message: "",
+  captchaToken: ""
 };
 
 export default function FormContact() {
@@ -35,13 +37,21 @@ export default function FormContact() {
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
 
   const sendMessage = async () => {
+    let dataWithToken
+    if(data){
+      dataWithToken = {
+        ...data,
+        captchaToken: captchaToken
+      }
+    }
+
     try {
       const res = await fetch("/api/send-email", {
         method: "POST",
         headers: {
           "Content-type": "application/json",
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify(dataWithToken),
       });
       
       if (res.ok) {
@@ -65,7 +75,7 @@ export default function FormContact() {
 
     setData({
       ...data,
-      [name]: value,
+      [name]: value
     });
   };
 

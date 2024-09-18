@@ -6,15 +6,26 @@ sendgrid.setApiKey(process.env.SENDGRID_API_KEY!);
 
 const verifyCaptcha = async (token: string) => {
   const secretKey = process.env.RECAPTCHA_SECRET_KEY;
-  const verifyUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${token}`;
+  const verifyUrl = `https://www.google.com/recaptcha/api/siteverify`;
 
+  // Crear el cuerpo de la solicitud
+  const params = new URLSearchParams();
+  params.append('secret', secretKey!);
+  params.append('response', token);
+
+  // Enviar la solicitud de verificación a Google
   const response = await fetch(verifyUrl, {
     method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: params.toString(), // Enviar el cuerpo con los parámetros
   });
 
   const data = await response.json();
   return data.success;
 };
+
 
 export default async function handler(req:NextApiRequest, res:NextApiResponse) {
   if (req.method === 'POST') {
@@ -31,7 +42,7 @@ export default async function handler(req:NextApiRequest, res:NextApiResponse) {
       await sendgrid.send({
         to: 'info@g3print.com',
         from: {
-          email: 'info@g3print.com',
+          email: 'web@g3print.com',
           name: 'G3 Print Web',
         },
         subject: `G3 Print Web - New message from ${name}`,
