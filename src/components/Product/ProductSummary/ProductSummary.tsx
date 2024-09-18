@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 import { numberToPrice } from "../../../helpers/helpers";
 import type { Product, ItemCart } from "@/types";
-import { useState, useRef, ChangeEvent } from "react";
+import { useState, ChangeEvent } from "react";
 import { ProductVariant } from "@/types";
 import { useRouter } from "next/router";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
@@ -48,8 +48,7 @@ export default function ProductSummary({
     isVariable,
   }: Product = dataProduct;
 
-  const [hasFile, setHasFile] = useState<boolean>(false);
-  const [file, setFile] = useState<File | null>(null);
+  const [file, setFile] = useState<string>('');
   const [fileUrl, setFileUrl] = useState<string | null | undefined>(null);
   const [quantity, setQuantity] = useState<number>(1);
   const [selectedOptions, setSelectedOptions] = useState<{
@@ -58,7 +57,6 @@ export default function ProductSummary({
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(
     null
   );
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const router = useRouter();
 
   const handleAddItem = (item: Product, quantity: number) => {
@@ -75,79 +73,12 @@ export default function ProductSummary({
     router.push("/cart");
   };
 
-  const handleUpload = async () => {
-    if (!file) return;
-
-    const { name, type } = file;
-
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("fileName", name);
-    formData.append("fileType", type);
-
-    try {
-      const response = await fetch("/api/upload", {
-        method: "POST",
-        body: formData,
-      });
-
-      const result = await response.json();
-      console.log("Upload response:", result);
-
-      if (result) {
-        const { uploadURL } = result;
-
-        if (uploadURL) {
-          const uploadResponse = await fetch(uploadURL, {
-            method: "PUT",
-            headers: {
-              "Content-Type": type,
-            },
-            body: file,
-          });
-
-          console.log("up response", uploadResponse);
-
-          if (uploadResponse.ok) {
-            alert("Archivo subido exitosamente");
-          } else {
-            alert("Failed to upload file");
-          }
-        } else {
-          alert("No upload URL received");
-        }
-      }
-    } catch (error) {
-      console.error("Error uploading file:", error);
-      alert("Error uploading file");
-    }
-  };
 
   const handleQuantityChange = (e: ChangeEvent<HTMLInputElement>) => {
     const newQuantity = parseInt(e.target.value); // Parse to number
     setQuantity(newQuantity);
   };
 
-  const handleFileInputClick = () => {
-    fileInputRef.current?.click();
-  };
-
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      console.log(file);
-      setHasFile(true);
-      setFile(file); // Guardar el nombre del archivo para mostrarlo en el UI
-    }
-  };
-
-  const handleRemoveFile = () => {
-    setHasFile(false);
-    setFile(null); // Limpiar el nombre del archivo
-    if (fileInputRef.current) {
-      fileInputRef.current.value = ""; // Limpiar el input de archivo
-    }
-  };
 
   const handleOptionChange = (optionName: string, value: string) => {
     // Actualiza el estado con la nueva opción seleccionada
@@ -187,6 +118,13 @@ export default function ProductSummary({
     },
   ];
 
+  const handleChange = (e:ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const value = e.target.value
+    if(value){
+      setFile(value)
+    }
+  }
+
   return (
     <Box>
       <Typography
@@ -211,78 +149,12 @@ export default function ProductSummary({
 
       {type === "Upload Design" && (
         <Stack mb={3}>
-          <Typography fontSize={"15px"} fontWeight={"600"}>
-            Do you have a design?
-          </Typography>
-
-          <Stack
-            direction={"row"}
-            justifyContent={"center"}
-            alignItems={"center"}
-            onClick={handleFileInputClick}
-            sx={{
-              border: "1px dashed",
-              borderColor: "indigo",
-              padding: 2,
-              textAlign: "center",
-              my: 2,
-              cursor: "pointer",
-              backgroundColor: hasFile ? "indigo" : "white",
-            }}
-          >
-            <AttachFileIcon
-              sx={{
-                color: hasFile ? "white" : "indigo",
-              }}
-            />
-            <Typography
-              fontWeight={"600"}
-              fontSize={"15px"}
-              color={hasFile ? "white" : "indigo"}
-            >
-              {hasFile ? "Change file" : "Click to select your file"}
-            </Typography>
-          </Stack>
-          {hasFile && (
-            <Stack
-              direction={"row"}
-              sx={{
-                textAlign: "center",
-                fontSize: "13px",
-                gap: 1,
-                justifyContent: "center",
-              }}
-            >
-              <Link
-                sx={{
-                  color: "red",
-                  textDecorationColor: "red",
-                  cursor: "pointer",
-                }}
-                onClick={handleRemoveFile}
-              >
-                Remove file
-              </Link>
-
-              <Link
-                sx={{
-                  color: "green",
-                  cursor: "pointer",
-                }}
-                onClick={handleUpload}
-              >
-                Confirm upload file
-              </Link>
-            </Stack>
-          )}
-          <input
-            ref={fileInputRef}
-            onChange={handleFileChange}
-            type="file"
-            name=""
-            id=""
-            style={{ display: "none" }}
-            accept=".jpg,.jpeg,.png,.pdf"
+          <TextField 
+             onChange={(e) => handleChange(e)}
+             label="Do you have a design?"
+             type="text"
+             placeholder="Enter your URL Design"
+             helperText="Paste here your url from cloud. For example: Drive Google, One Drive, Dropbox, Mega, etc"
           />
         </Stack>
       )}
