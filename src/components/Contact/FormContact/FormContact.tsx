@@ -12,25 +12,27 @@ import {
 import { useEffect, useState } from "react";
 import type { ChangeEvent } from "react";
 import { validateEmail, validatePhone } from "@/utils/validation";
+import ReCAPTCHA from "react-google-recaptcha";
 
-type DataProps = {
+export type DataProps = {
   name: string;
   email: string;
   phone: string;
   message?: string;
 };
 
-const initialDataForm:DataProps = {
-  name: '',
-  email: '',
-  phone: '',
-  message: ''
-}
+const initialDataForm: DataProps = {
+  name: "",
+  email: "",
+  phone: "",
+  message: "",
+};
 
 export default function FormContact() {
   const [data, setData] = useState<DataProps>(initialDataForm);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
 
   const sendMessage = async () => {
     try {
@@ -41,12 +43,18 @@ export default function FormContact() {
         },
         body: JSON.stringify(data),
       });
+      
       if (res.ok) {
         console.log("Mensaje enviado");
       }
+      
     } catch (error) {
       console.error("Error", error);
     }
+  };
+
+  const onCaptchaChange = (token: string | null) => {
+    setCaptchaToken(token);
   };
 
   const handleChange = (
@@ -92,10 +100,10 @@ export default function FormContact() {
     await sendMessage();
 
     setSuccess("Your message has been sent successfully");
-    setData(initialDataForm)
-    setTimeout(()=>{
-      setSuccess(null)
-    }, 3000)
+    setData(initialDataForm);
+    setTimeout(() => {
+      setSuccess(null);
+    }, 3000);
   };
 
   return (
@@ -155,6 +163,13 @@ export default function FormContact() {
         .
       </Typography>
 
+      <Box mb={{xs: 2}}>
+        <ReCAPTCHA
+          sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ""}
+          onChange={onCaptchaChange}
+        />
+      </Box>
+
       {success && (
         <Alert severity="success" sx={{ mb: { xs: 2 } }}>
           {success}
@@ -166,7 +181,7 @@ export default function FormContact() {
           {error}
         </Alert>
       )}
-      <Button onClick={handleSubmit} variant="contained" color="secondary">
+      <Button disabled={captchaToken ? false : true} onClick={handleSubmit} variant="contained" color="secondary">
         SEND MESSAGE
       </Button>
     </Box>
