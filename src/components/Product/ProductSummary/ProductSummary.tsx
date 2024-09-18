@@ -1,7 +1,6 @@
 import FacebookOutlinedIcon from "@mui/icons-material/FacebookOutlined";
 import PinterestIcon from "@mui/icons-material/Pinterest";
 import TwitterIcon from "@mui/icons-material/Twitter";
-import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import {
   Box,
   Typography,
@@ -46,11 +45,12 @@ export default function ProductSummary({
     options,
     variants,
     type,
-    isVariable
+    isVariable,
   }: Product = dataProduct;
 
   const [hasFile, setHasFile] = useState<boolean>(false);
-  const [fileName, setFileName] = useState<string>('');
+  const [file, setFile] = useState<File | null>(null);
+  const [fileUrl, setFileUrl] = useState<string | null | undefined>(null);
   const [quantity, setQuantity] = useState<number>(1);
   const [selectedOptions, setSelectedOptions] = useState<{
     [key: string]: string;
@@ -68,10 +68,59 @@ export default function ProductSummary({
       id: selectedVariant?.variantId || item.id,
       normalPrice: selectedVariant?.price || item.normalPrice,
       selectedOptions: selectedVariant?.selectedOptions,
+      mediaUrl: fileUrl,
     };
 
     onAddToCart(itemCart);
-    router.push('/cart')
+    router.push("/cart");
+  };
+
+  const handleUpload = async () => {
+    if (!file) return;
+
+    const { name, type } = file;
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("fileName", name);
+    formData.append("fileType", type);
+
+    try {
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      const result = await response.json();
+      console.log("Upload response:", result);
+
+      if (result) {
+        const { uploadURL } = result;
+
+        if (uploadURL) {
+          const uploadResponse = await fetch(uploadURL, {
+            method: "PUT",
+            headers: {
+              "Content-Type": type,
+            },
+            body: file,
+          });
+
+          console.log("up response", uploadResponse);
+
+          if (uploadResponse.ok) {
+            alert("Archivo subido exitosamente");
+          } else {
+            alert("Failed to upload file");
+          }
+        } else {
+          alert("No upload URL received");
+        }
+      }
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      alert("Error uploading file");
+    }
   };
 
   const handleQuantityChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -86,17 +135,17 @@ export default function ProductSummary({
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      // Aquí puedes manejar el archivo seleccionado
+      console.log(file);
       setHasFile(true);
-      setFileName(file.name); // Guardar el nombre del archivo para mostrarlo en el UI
+      setFile(file); // Guardar el nombre del archivo para mostrarlo en el UI
     }
   };
 
   const handleRemoveFile = () => {
     setHasFile(false);
-    setFileName(''); // Limpiar el nombre del archivo
+    setFile(null); // Limpiar el nombre del archivo
     if (fileInputRef.current) {
-      fileInputRef.current.value = ''; // Limpiar el input de archivo
+      fileInputRef.current.value = ""; // Limpiar el input de archivo
     }
   };
 
@@ -137,8 +186,7 @@ export default function ProductSummary({
       url: `https://twitter.com/share?url=${process.env.NEXT_PUBLIC_SITE_URL}/product/${slug}&text=${title}`,
     },
   ];
-  
-  
+
   return (
     <Box>
       <Typography
@@ -179,24 +227,53 @@ export default function ProductSummary({
               textAlign: "center",
               my: 2,
               cursor: "pointer",
-              backgroundColor: hasFile ? 'indigo' : 'white'
+              backgroundColor: hasFile ? "indigo" : "white",
             }}
           >
             <AttachFileIcon
               sx={{
-                color: hasFile ? "white" : "indigo"
+                color: hasFile ? "white" : "indigo",
               }}
             />
-            <Typography fontWeight={"600"} fontSize={"15px"} color={hasFile ? "white": "indigo"}>
-              {hasFile ? "Change file": "Click to select your file"}
+            <Typography
+              fontWeight={"600"}
+              fontSize={"15px"}
+              color={hasFile ? "white" : "indigo"}
+            >
+              {hasFile ? "Change file" : "Click to select your file"}
             </Typography>
           </Stack>
           {hasFile && (
-            <Box sx={{ textAlign: 'center', fontSize: '13px' }}>
-              <Link sx={{ color: 'red', textDecorationColor: 'red', cursor: 'pointer' }} onClick={handleRemoveFile}>
+            <Stack
+              direction={"row"}
+              sx={{
+                textAlign: "center",
+                fontSize: "13px",
+                gap: 1,
+                justifyContent: "center",
+              }}
+            >
+              <Link
+                sx={{
+                  color: "red",
+                  textDecorationColor: "red",
+                  cursor: "pointer",
+                }}
+                onClick={handleRemoveFile}
+              >
                 Remove file
               </Link>
-            </Box>
+
+              <Link
+                sx={{
+                  color: "green",
+                  cursor: "pointer",
+                }}
+                onClick={handleUpload}
+              >
+                Confirm upload file
+              </Link>
+            </Stack>
           )}
           <input
             ref={fileInputRef}
@@ -204,7 +281,7 @@ export default function ProductSummary({
             type="file"
             name=""
             id=""
-            style={{ display: 'none' }}
+            style={{ display: "none" }}
             accept=".jpg,.jpeg,.png,.pdf"
           />
         </Stack>
@@ -221,7 +298,7 @@ export default function ProductSummary({
               <Select
                 labelId={option.id}
                 label={option.name}
-                value={selectedOptions[option.name] || ''}
+                value={selectedOptions[option.name] || ""}
                 defaultValue={""}
                 onChange={(e) =>
                   handleOptionChange(option.name, e.target.value)
@@ -258,7 +335,7 @@ export default function ProductSummary({
               inputProps: { min: 0 },
             }}
             id="qty"
-            defaultValue={1}
+            // defaultValue={1}
             value={quantity}
             onChange={handleQuantityChange}
             type="number"
@@ -283,11 +360,15 @@ export default function ProductSummary({
           Categories:
         </Typography>
         <Box fontSize={{ xs: "13px" }} ml={{ xs: 1 }}>
-          {dataProduct.collections && dataProduct.collections.map(collection => (
-            <Link key={collection.id} href={`/collections/${collection.handle}`}>
-              {collection.title}
-            </Link>
-          ))}
+          {dataProduct.collections &&
+            dataProduct.collections.map((collection) => (
+              <Link
+                key={collection.id}
+                href={`/collections/${collection.handle}`}
+              >
+                {collection.title}
+              </Link>
+            ))}
         </Box>
       </Stack>
 

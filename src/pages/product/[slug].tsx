@@ -10,8 +10,8 @@ import NewsLetterBar from "../../components/Shop/NewsletterBar/NewsLetterBar";
 import type { Product } from "@/types";
 import shopifyClient from "@/lib/shopify";
 import { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { addItem, setCheckoutId } from "@/store/features/cartSlice";
+import { useDispatch } from "react-redux";
+import { addItem } from "@/store/features/cartSlice";
 import type { ItemCart } from "@/types";
 import { AppDispatch } from "@/store";
 
@@ -47,8 +47,6 @@ export default function Product({ product, relatedProductsIds }: ProductProps) {
   const handleAddToCart = async (item: ItemCart) => {
     dispatch(addItem(item));
   };
-
-  console.log(infoProduct);
 
   return (
     <Layout metadata={metadata}>
@@ -91,7 +89,6 @@ export default function Product({ product, relatedProductsIds }: ProductProps) {
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const products = await shopifyClient.product.fetchAll();
-
   const paths = products.map((product: any) => ({
     params: { slug: product.handle },
   }));

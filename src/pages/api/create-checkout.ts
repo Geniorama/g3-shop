@@ -19,6 +19,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           return {
             variantId,
             quantity: item.quantity,
+            properties: {
+              mediaUrl: item.mediaUrl// Agregar la URL de la imagen a las propiedades del checkout (opcional)
+            }
           };
         });
 

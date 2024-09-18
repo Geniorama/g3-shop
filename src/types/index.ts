@@ -47,6 +47,7 @@ export type ItemCart = Product & {
     name: string;
     value: string;
   }[];
+  mediaUrl?: string | null
 };
 
 export type MenuCollection = {
