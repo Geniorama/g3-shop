@@ -29,7 +29,7 @@ export default async function handler(req:NextApiRequest, res:NextApiResponse) {
     try {
       // Enviar el correo si la verificación de reCAPTCHA es válida
       await sendgrid.send({
-        to: 'angel.burgos@geniorama.co',
+        to: 'info@g3print.com',
         from: {
           email: 'info@g3print.com',
           name: 'G3 Print Web',
