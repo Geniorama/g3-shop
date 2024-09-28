@@ -7,6 +7,7 @@ type InitialProps = {
   projectsLink?: string;
   loading: boolean;
   error: string | null;
+  commingSoon: boolean
 };
 
 const initialState: InitialProps = {
@@ -14,7 +15,8 @@ const initialState: InitialProps = {
   loading: false,
   error: null,
   socialMedia: [],
-  projectsLink: ''
+  projectsLink: '',
+  commingSoon: false
 };
 
 
@@ -38,9 +40,13 @@ const generalInfoSlice = createSlice({
 
     setData:(state, action:PayloadAction<InitialProps>) => {
       state = action.payload
+    },
+
+    setCommingSoon:(state, action:PayloadAction<InitialProps['commingSoon']>) => {
+      state.commingSoon = action.payload
     }
   },
 });
 
-export const { setContactInfo, setSocialMedia, setData } = generalInfoSlice.actions;
+export const { setContactInfo, setSocialMedia, setData, setCommingSoon } = generalInfoSlice.actions;
 export default generalInfoSlice.reducer;

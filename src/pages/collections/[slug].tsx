@@ -23,6 +23,7 @@ import {
   fetchContactInfo,
   fetchSocialMedia,
   fetchCollectionBySlug,
+  fetchGeneralSettings
 } from "@/lib/dataFetchers";
 import { useDispatch } from "react-redux";
 import { Button } from "@mui/material";
@@ -30,6 +31,9 @@ import {
   setSocialMedia,
   setContactInfo,
 } from "@/store/features/generalInfoSlice";
+import type { Entry } from "contentful";
+import LoaderPage from "@/components/Loader/LoaderPage";
+import CommingSoon from "@/components/CommingSoon/CommingSoon";
 
 const PRODUCTS_PER_PAGE = 9;
 
@@ -41,6 +45,7 @@ type CollectionPageProps = {
   initialHasNextPage: boolean;
   contactInfo?: ContactInfo;
   socialMedia?: SocialMediaItem[];
+  commingSoonMode: Entry 
 };
 
 export default function CollectionPage({
@@ -51,6 +56,7 @@ export default function CollectionPage({
   initialHasNextPage,
   contactInfo,
   socialMedia,
+  commingSoonMode
 }: CollectionPageProps) {
   const [products, setProducts] = useState<Product[]>(initialProducts);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
@@ -67,8 +73,18 @@ export default function CollectionPage({
     handle: string;
     image?: { src?: string; altText?: string };
   }>();
+  const [isLoadingPage, setIsLoadingPage] = useState(true)
+  const [isCommingSoon, setIsCommingSoon] = useState(true);
 
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    if(commingSoonMode){
+      const commingSoon = commingSoonMode.fields.maintenanceMode
+      setIsCommingSoon(commingSoon as boolean)
+      setIsLoadingPage(false)
+    }
+  }, [commingSoonMode])
 
   const loadMoreProducts = async () => {
     if (!hasNextPage || isLoading || !currentCollection?.handle) return;
@@ -184,6 +200,14 @@ export default function CollectionPage({
     setSortOption(option);
   };
 
+  if(isLoadingPage){
+    return <LoaderPage />
+  }
+
+  if (isCommingSoon) {
+    return <CommingSoon />;
+  }
+
   return (
     <Layout
       metadata={{
@@ -292,6 +316,7 @@ export async function getServerSideProps({
     fetchCollection?.collection?.products.pageInfo.endCursor || null;
   const initialHasNextPage =
     fetchCollection?.collection?.products.pageInfo.hasNextPage || false;
+  const commingSoonMode = await fetchGeneralSettings()
 
   return {
     props: {
@@ -302,6 +327,7 @@ export async function getServerSideProps({
       initialHasNextPage,
       contactInfo,
       socialMedia,
+      commingSoonMode
     },
   };
 }

@@ -12,7 +12,6 @@ import "aos/dist/aos.css";
 import { useEffect, useState } from "react";
 import CommingSoon from "@/components/CommingSoon/CommingSoon";
 import type { ContactInfo, Product, SocialMediaItem } from "@/types";
-import { GraphQLClient } from "graphql-request";
 import { useDispatch } from "react-redux";
 import {
   setContactInfo,
@@ -26,7 +25,8 @@ import {
   fetchFeatures,
   fetchTechniques,
   fetchPromoDay,
-  fetchFaq
+  fetchFaq,
+  fetchGeneralSettings
 } from "@/lib/dataFetchers";
 import RateUs from "@/components/Home/RateUs/RateUs";
 import type { Slide } from "@/components/Home/SliderHome/SliderHome";
@@ -34,6 +34,8 @@ import type { Feature } from "@/components/Home/Features/Features";
 import type { CircleTechniqueProps } from "@/components/CircleTechnique/CircleTechnique";
 import type { MostPopularProps } from "@/components/Home/MostPopular/MostPopular";
 import type { Faq } from "@/components/Home/FAQ/FAQ";
+import type { Entry } from "contentful";
+import LoaderPage from "@/components/Loader/LoaderPage";
 
 const metadata = {
   title: "Inicio",
@@ -48,7 +50,8 @@ type HomeProps = {
   features: [];
   techniques: [];
   promoDay: any;
-  faqs: []
+  faqs: [],
+  commingSoonMode: Entry 
 };
 
 export default function Home({
@@ -59,17 +62,27 @@ export default function Home({
   features,
   techniques,
   promoDay,
-  faqs
+  faqs,
+  commingSoonMode
 }: HomeProps) {
-  const [isCommingSoon, setIsCommingSoon] = useState(false);
+  const [isCommingSoon, setIsCommingSoon] = useState(true);
   const [listProducts, setListProducts] = useState<Product[]>();
   const [slides, setSlides] = useState<Slide[]>();
   const [listFeatures, setListFeatures] = useState<Feature[]>();
   const [listTechniques, setListTechniques] = useState<CircleTechniqueProps[]>();
   const [itemPromoDay, setItemPromoDay] = useState<MostPopularProps>();
   const [listFaqs, setListFaqs] = useState<Faq[]>()
+  const [isLoading, setIsLoading] = useState(true)
 
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    if(commingSoonMode){
+      const commingSoon = commingSoonMode.fields.maintenanceMode
+      setIsCommingSoon(commingSoon as boolean)
+      setIsLoading(false)
+    }
+  }, [commingSoonMode])
 
   useEffect(() => {
     if (products) {
@@ -162,6 +175,10 @@ export default function Home({
     }
   }, [socialMedia, dispatch]);
 
+  if(isLoading){
+    return <LoaderPage />
+  }
+
   if (isCommingSoon) {
     return <CommingSoon />;
   }
@@ -204,6 +221,7 @@ export async function getServerSideProps() {
   const techniques = await fetchTechniques();
   const promoDay = await fetchPromoDay();
   const faqs = await fetchFaq();
+  const commingSoonMode = await fetchGeneralSettings()
 
   return {
     props: {
@@ -214,7 +232,8 @@ export async function getServerSideProps() {
       features,
       techniques,
       promoDay,
-      faqs
+      faqs,
+      commingSoonMode
     },
   };
 }

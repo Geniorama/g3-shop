@@ -122,6 +122,21 @@ export const fetchTechniques = async () => {
   }
 };
 
+export const fetchGeneralSettings = async () => {
+  try {
+    const res = await contentfulClient.getEntries({
+      content_type: "generalSettings",
+    });
+
+    const commingSoonMode = res.items[0]
+
+    return commingSoonMode;
+  } catch (error) {
+    console.error("Error fetching contact info:", error);
+    return {};
+  }
+};
+
 export const fetchPromoDay = async () => {
   try {
     const res = await contentfulClient.getEntries({

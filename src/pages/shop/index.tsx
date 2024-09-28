@@ -14,7 +14,6 @@ import SidebarShop from "@/components/Shop/SidebarShop/SidebarShop";
 import GridProducts from "@/components/GridProducts/GridProducts";
 import type {
   Product,
-  ShopifyCollectionResponse,
   ContactInfo,
   SocialMediaItem,
   ShopifyProductsResponse,
@@ -24,6 +23,7 @@ import {
   fetchContactInfo,
   fetchSocialMedia,
   fetchAllProducts,
+  fetchGeneralSettings,
 } from "@/lib/dataFetchers";
 import { useDispatch } from "react-redux";
 import { Button } from "@mui/material";
@@ -31,6 +31,9 @@ import {
   setSocialMedia,
   setContactInfo,
 } from "@/store/features/generalInfoSlice";
+import type { Entry } from "contentful";
+import CommingSoon from "@/components/CommingSoon/CommingSoon";
+import LoaderPage from "@/components/Loader/LoaderPage";
 
 const PRODUCTS_PER_PAGE = 9;
 
@@ -42,6 +45,7 @@ type ShopPageProps = {
   initialHasNextPage: boolean;
   contactInfo?: ContactInfo;
   socialMedia?: SocialMediaItem[];
+  commingSoonMode: Entry;
 };
 
 export default function ShopPage({
@@ -51,6 +55,7 @@ export default function ShopPage({
   initialHasNextPage,
   contactInfo,
   socialMedia,
+  commingSoonMode,
 }: ShopPageProps) {
   const [products, setProducts] = useState<Product[]>(initialProducts);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
@@ -62,10 +67,18 @@ export default function ShopPage({
   const [titlePage, setTitlePage] = useState("");
   const [cursor, setCursor] = useState<string | undefined>(initialEndCursor);
   const [hasNextPage, setHasNextPage] = useState<boolean>(initialHasNextPage);
+  const [isLoadingPage, setIsLoadingPage] = useState(false);
+  const [isCommingSoon, setIsCommingSoon] = useState(true);
 
   const dispatch = useDispatch();
 
-  console.log(products);
+  useEffect(() => {
+    if (commingSoonMode) {
+      const commingSoon = commingSoonMode.fields.maintenanceMode;
+      setIsCommingSoon(commingSoon as boolean);
+      setIsLoading(false);
+    }
+  }, [commingSoonMode]);
 
   useEffect(() => {
     if (contactInfo) {
@@ -150,7 +163,7 @@ export default function ShopPage({
 
       // Actualiza la lista de productos agregando los nuevos
       if (newProducts && result) {
-        setProducts((prevProducts:any) => [...prevProducts, ...newProducts]);
+        setProducts((prevProducts: any) => [...prevProducts, ...newProducts]);
 
         // Actualizar el cursor y el estado hasNextPage
         setCursor(result.products.pageInfo.endCursor);
@@ -162,6 +175,14 @@ export default function ShopPage({
       setIsLoading(false);
     }
   };
+
+  if (isLoadingPage) {
+    return <LoaderPage />;
+  }
+
+  if (isCommingSoon) {
+    return <CommingSoon />;
+  }
 
   return (
     <Layout
@@ -245,6 +266,7 @@ export async function getServerSideProps() {
   const allProducts = await fetchAllProducts(null, 9);
   const contactInfo = await fetchContactInfo();
   const socialMedia = await fetchSocialMedia();
+  const commingSoonMode = await fetchGeneralSettings();
 
   const initialProducts =
     allProducts?.products.edges?.map((product) => ({
@@ -272,6 +294,7 @@ export async function getServerSideProps() {
       initialHasNextPage,
       contactInfo,
       socialMedia,
+      commingSoonMode,
     },
   };
 }

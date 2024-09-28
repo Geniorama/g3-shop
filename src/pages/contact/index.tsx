@@ -1,17 +1,17 @@
 import PageHeading from "@/components/PageHeading/PageHeading";
 import Layout from "@/components/Layout/Layout";
 import { Container, Box, Typography, Grid, Stack, Link, IconButton } from "@mui/material";
-import FacebookOutlinedIcon from '@mui/icons-material/FacebookOutlined';
-import InstagramIcon from '@mui/icons-material/Instagram';
 import FormContact from "@/components/Contact/FormContact/FormContact";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/store";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { setContactInfo, setSocialMedia } from "@/store/features/generalInfoSlice";
 import type { ContactInfo, SocialMediaItem } from "@/types";
 import socialMediaIcons from "@/utils/socialMediaIcons";
-import contentfulClient from "@/lib/contentful";
-import { fetchContactInfo, fetchSocialMedia } from "@/lib/dataFetchers";
+import { fetchContactInfo, fetchSocialMedia, fetchGeneralSettings } from "@/lib/dataFetchers";
+import type { Entry } from "contentful";
+import CommingSoon from "@/components/CommingSoon/CommingSoon";
+import LoaderPage from "@/components/Loader/LoaderPage";
 
 const metadata = {
   title: "Contact Us",
@@ -20,13 +20,25 @@ const metadata = {
 
 type ContactProps = {
   infoContact: ContactInfo,
-  socialMediaItems: SocialMediaItem[]
+  socialMediaItems: SocialMediaItem[],
+  commingSoonMode: Entry 
 }
 
-export default function Contact({infoContact, socialMediaItems}: ContactProps) {
+export default function Contact({infoContact, socialMediaItems, commingSoonMode}: ContactProps) {
+  const [isLoading, setIsLoading] = useState(true)
+  const [isCommingSoon, setIsCommingSoon] = useState(true)
+
   const dispatch = useDispatch()
 
   const { contactInfo, socialMedia } = useSelector((state: RootState) => state.general);
+
+  useEffect(() => {
+    if(commingSoonMode){
+      const commingSoon = commingSoonMode.fields.maintenanceMode
+      setIsCommingSoon(commingSoon as boolean)
+      setIsLoading(false)
+    }
+  }, [commingSoonMode])
 
   useEffect(() => {
     if(infoContact){
@@ -39,6 +51,14 @@ export default function Contact({infoContact, socialMediaItems}: ContactProps) {
       dispatch(setSocialMedia(socialMediaItems))
     }
   },[dispatch, socialMediaItems])
+
+  if(isLoading){
+    return <LoaderPage />
+  }
+
+  if (isCommingSoon) {
+    return <CommingSoon />;
+  }
 
   return (
     <Layout metadata={metadata}>
@@ -106,11 +126,13 @@ export default function Contact({infoContact, socialMediaItems}: ContactProps) {
 export async function getServerSideProps() {
   const infoContact = await fetchContactInfo()
   const socialMediaItems = await fetchSocialMedia()
+  const commingSoonMode = await fetchGeneralSettings()
 
   return {
     props: {
       infoContact,
-      socialMediaItems
+      socialMediaItems,
+      commingSoonMode
     }
   }
 }

@@ -18,20 +18,26 @@ import { RootState } from "@/store";
 import { removeItem } from "@/store/features/cartSlice";
 import type { ItemCart } from "@/types";
 import { setCheckoutId } from "@/store/features/cartSlice";
-import { fetchContactInfo, fetchSocialMedia } from "@/lib/dataFetchers";
+import { fetchContactInfo, fetchSocialMedia, fetchGeneralSettings } from "@/lib/dataFetchers";
 import type { ContactInfo, SocialMediaItem } from "@/types";
 import {
   setContactInfo,
   setSocialMedia,
 } from "@/store/features/generalInfoSlice";
 import Loader from "@/components/Loader/Loader";
+import type { Entry } from "contentful";
+import CommingSoon from "@/components/CommingSoon/CommingSoon";
+import LoaderPage from "@/components/Loader/LoaderPage";
 
 type CartProps = {
   contactInfo?: ContactInfo;
   socialMedia?: SocialMediaItem[];
+  commingSoonMode: Entry;
 };
 
-export default function Cart({ contactInfo, socialMedia }: CartProps) {
+export default function Cart({ contactInfo, socialMedia, commingSoonMode }: CartProps) {
+  const [isCommingSoon, setIsCommingSoon] = useState(true);
+  const [isLoading, setIsLoading] = useState(true)
   const [isEmpty, setIsEmpty] = useState<Boolean | null>(null);
   const [checkoutUrl, setCheckoutUrl] = useState("");
   const { checkoutId, items } = useSelector((state: RootState) => state.cart);
@@ -40,6 +46,14 @@ export default function Cart({ contactInfo, socialMedia }: CartProps) {
   const cartItems = useSelector((state: RootState) => state.cart.items);
   const cartTotal = useSelector((state: RootState) => state.cart.totalAmount);
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    if(commingSoonMode){
+      const commingSoon = commingSoonMode.fields.maintenanceMode
+      setIsCommingSoon(commingSoon as boolean)
+      setIsLoading(false)
+    }
+  }, [commingSoonMode])
 
   useEffect(() => {
     if (contactInfo) {
@@ -105,6 +119,14 @@ export default function Cart({ contactInfo, socialMedia }: CartProps) {
   const handleRemoveFromCart = (itemId: ItemCart["id"]) => {
     dispatch(removeItem(itemId));
   };
+
+  if(isLoading){
+    return <LoaderPage />
+  }
+
+  if (isCommingSoon) {
+    return <CommingSoon />;
+  }
 
   if (loading) {
     return (
@@ -185,11 +207,13 @@ export default function Cart({ contactInfo, socialMedia }: CartProps) {
 export async function getServerSideProps() {
   const contactInfo = await fetchContactInfo();
   const socialMedia = await fetchSocialMedia();
+  const commingSoonMode = await fetchGeneralSettings()
 
   return {
     props: {
       contactInfo,
       socialMedia,
+      commingSoonMode
     },
   };
 }
