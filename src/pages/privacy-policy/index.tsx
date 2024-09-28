@@ -10,11 +10,15 @@ import {
   Grid,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { fetchPolicies, fetchContactInfo, fetchSocialMedia } from "@/lib/dataFetchers";
+import { fetchPolicies, fetchContactInfo, fetchSocialMedia, fetchGeneralSettings } from "@/lib/dataFetchers";
 import { documentToReactComponents } from "@contentful/rich-text-react-renderer";
 import type { ContactInfo, SocialMediaItem } from "@/types";
 import { useDispatch } from "react-redux";
 import { setContactInfo, setSocialMedia } from "@/store/features/generalInfoSlice";
+import useCommingSoon from "@/hooks/useCommingSoon";
+import type { Entry } from "contentful";
+import LoaderPage from "@/components/Loader/LoaderPage";
+import CommingSoon from "@/components/CommingSoon/CommingSoon";
 
 const metadata = {
   title: "Privacy policy",
@@ -24,16 +28,22 @@ const metadata = {
 type PrivacyPolicyProps = {
   content: any;
   contactInfo?: ContactInfo,
-  socialMedia?: SocialMediaItem[]
+  socialMedia?: SocialMediaItem[],
+  commingSoonMode: Entry
 };
 
 export default function PrivacyPolicy({
   content,
   contactInfo,
-  socialMedia
+  socialMedia,
+  commingSoonMode
 }:PrivacyPolicyProps) {
   const [documentPrivacy, setDocumentPrivacy] = useState();
   const dispatch = useDispatch()
+
+  const { isCommingSoon, isLoadingPage } = useCommingSoon(
+    commingSoonMode?.fields?.maintenanceMode as boolean
+  );
 
   useEffect(() => {
     if (content) {
@@ -52,6 +62,14 @@ export default function PrivacyPolicy({
       dispatch(setSocialMedia(socialMedia))
     }
   }, [socialMedia, dispatch])
+
+  if (isLoadingPage) {
+    return <LoaderPage />;
+  }
+
+  if (isCommingSoon) {
+    return <CommingSoon />;
+  }
 
 
   return (
@@ -96,6 +114,7 @@ export async function getServerSideProps() {
   const res = await fetchPolicies();
   const contactInfo = await fetchContactInfo()
   const socialMedia = await fetchSocialMedia()
+  const commingSoonMode = await fetchGeneralSettings();
 
   const content = res.privacyPolicy;
 
@@ -103,7 +122,8 @@ export async function getServerSideProps() {
     props: {
       content,
       contactInfo,
-      socialMedia
+      socialMedia,
+      commingSoonMode
     },
   };
 }

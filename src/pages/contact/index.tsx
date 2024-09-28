@@ -4,7 +4,7 @@ import { Container, Box, Typography, Grid, Stack, Link, IconButton } from "@mui/
 import FormContact from "@/components/Contact/FormContact/FormContact";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/store";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { setContactInfo, setSocialMedia } from "@/store/features/generalInfoSlice";
 import type { ContactInfo, SocialMediaItem } from "@/types";
 import socialMediaIcons from "@/utils/socialMediaIcons";
@@ -12,6 +12,7 @@ import { fetchContactInfo, fetchSocialMedia, fetchGeneralSettings } from "@/lib/
 import type { Entry } from "contentful";
 import CommingSoon from "@/components/CommingSoon/CommingSoon";
 import LoaderPage from "@/components/Loader/LoaderPage";
+import useCommingSoon from "@/hooks/useCommingSoon";
 
 const metadata = {
   title: "Contact Us",
@@ -25,20 +26,13 @@ type ContactProps = {
 }
 
 export default function Contact({infoContact, socialMediaItems, commingSoonMode}: ContactProps) {
-  const [isLoading, setIsLoading] = useState(true)
-  const [isCommingSoon, setIsCommingSoon] = useState(true)
+  const { isCommingSoon, isLoadingPage } = useCommingSoon(
+    commingSoonMode?.fields?.maintenanceMode as boolean
+  );
 
   const dispatch = useDispatch()
 
   const { contactInfo, socialMedia } = useSelector((state: RootState) => state.general);
-
-  useEffect(() => {
-    if(commingSoonMode){
-      const commingSoon = commingSoonMode.fields.maintenanceMode
-      setIsCommingSoon(commingSoon as boolean)
-      setIsLoading(false)
-    }
-  }, [commingSoonMode])
 
   useEffect(() => {
     if(infoContact){
@@ -52,7 +46,7 @@ export default function Contact({infoContact, socialMediaItems, commingSoonMode}
     }
   },[dispatch, socialMediaItems])
 
-  if(isLoading){
+  if(isLoadingPage){
     return <LoaderPage />
   }
 

@@ -2,6 +2,7 @@ import contentfulClient from "./contentful";
 import { GraphQLClient, gql } from "graphql-request";
 import { GET_LATEST_PRODUCTS, GET_COLLECTION_BY_SLUG, GET_ALL_PRODUCTS } from "./queries";
 import type { ShopifyCollectionResponse, ShopifyProductsResponse } from "@/types";
+import type { Entry } from "contentful";
 
 const shopifyClient = new GraphQLClient(
   `${process.env.NEXT_PUBLIC_SHOPIFY_API_URL}`,
@@ -130,7 +131,7 @@ export const fetchGeneralSettings = async () => {
 
     const commingSoonMode = res.items[0]
 
-    return commingSoonMode;
+    return commingSoonMode as Entry;
   } catch (error) {
     console.error("Error fetching contact info:", error);
     return {};

@@ -1,10 +1,9 @@
 import { GetStaticPaths, GetStaticProps } from "next";
-import { Box, Container, Grid, Divider, Typography } from "@mui/material";
+import { Box, Container, Grid, Divider } from "@mui/material";
 import Layout from "@/components/Layout/Layout";
 import ProductHeading from "../../components/Product/ProductHeading/ProductHeading";
 import ProductGallery from "../../components/Product/ProductGallery/ProductGallery";
 import ProductSummary from "@/components/Product/ProductSummary/ProductSummary";
-import ProductTabs from "../../components/Product/ProductTabs/ProductTabs";
 import RelatedProducts from "../../components/Product/RelatedProducts/RelatedProducts";
 import NewsLetterBar from "../../components/Shop/NewsletterBar/NewsLetterBar";
 import type { Product } from "@/types";
@@ -14,13 +13,19 @@ import { useDispatch } from "react-redux";
 import { addItem } from "@/store/features/cartSlice";
 import type { ItemCart } from "@/types";
 import { AppDispatch } from "@/store";
+import type { Entry } from "contentful";
+import CommingSoon from "@/components/CommingSoon/CommingSoon";
+import LoaderPage from "@/components/Loader/LoaderPage";
+import useCommingSoon from "@/hooks/useCommingSoon";
+import { fetchGeneralSettings } from "@/lib/dataFetchers";
 
 type ProductProps = {
   product: Product;
   relatedProductsIds: Product["id"][];
+  commingSoonMode: Entry
 };
 
-export default function Product({ product, relatedProductsIds }: ProductProps) {
+export default function Product({ product, relatedProductsIds, commingSoonMode }: ProductProps) {
   const [infoProduct, setInfoProduct] = useState<Product>();
   const [relatedProducts, setRelatedProducts] = useState<Product["id"][]>();
   const dispatch = useDispatch<AppDispatch>();
@@ -29,6 +34,10 @@ export default function Product({ product, relatedProductsIds }: ProductProps) {
     title: `${infoProduct?.title} | G3 Print Shop` || "G3 Product",
     description: "Hello world",
   };
+
+  const { isCommingSoon, isLoadingPage } = useCommingSoon(
+    commingSoonMode?.fields?.maintenanceMode as boolean
+  );
 
   useEffect(() => {
     if (product) {
@@ -47,6 +56,14 @@ export default function Product({ product, relatedProductsIds }: ProductProps) {
   const handleAddToCart = async (item: ItemCart) => {
     dispatch(addItem(item));
   };
+
+  if(isLoadingPage){
+    return <LoaderPage />
+  }
+
+  if (isCommingSoon) {
+    return <CommingSoon />;
+  }
 
   return (
     <Layout metadata={metadata}>
@@ -101,6 +118,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   const slug = params?.slug;
+  let infoProduct
 
   if (!slug || Array.isArray(slug)) {
     return {
@@ -161,16 +179,21 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
       collections: collections,
     };
 
-    return {
-      props: {
-        product,
-        relatedProductsIds: [],
-      },
-    };
+    infoProduct = product
   } catch (error) {
     console.log(error);
     return {
       notFound: true,
     };
   }
+
+  const commingSoonMode = await fetchGeneralSettings()
+
+  return {
+    props: {
+      product: infoProduct,
+      relatedProductsIds: [],
+      commingSoonMode
+    },
+  };
 };

@@ -34,6 +34,7 @@ import {
 import type { Entry } from "contentful";
 import LoaderPage from "@/components/Loader/LoaderPage";
 import CommingSoon from "@/components/CommingSoon/CommingSoon";
+import useCommingSoon from "@/hooks/useCommingSoon";
 
 const PRODUCTS_PER_PAGE = 9;
 
@@ -73,18 +74,12 @@ export default function CollectionPage({
     handle: string;
     image?: { src?: string; altText?: string };
   }>();
-  const [isLoadingPage, setIsLoadingPage] = useState(true)
-  const [isCommingSoon, setIsCommingSoon] = useState(true);
 
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    if(commingSoonMode){
-      const commingSoon = commingSoonMode.fields.maintenanceMode
-      setIsCommingSoon(commingSoon as boolean)
-      setIsLoadingPage(false)
-    }
-  }, [commingSoonMode])
+  const { isCommingSoon, isLoadingPage } = useCommingSoon(
+    commingSoonMode?.fields?.maintenanceMode as boolean
+  );
 
   const loadMoreProducts = async () => {
     if (!hasNextPage || isLoading || !currentCollection?.handle) return;

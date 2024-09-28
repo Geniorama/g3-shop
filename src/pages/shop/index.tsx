@@ -34,6 +34,7 @@ import {
 import type { Entry } from "contentful";
 import CommingSoon from "@/components/CommingSoon/CommingSoon";
 import LoaderPage from "@/components/Loader/LoaderPage";
+import useCommingSoon from "@/hooks/useCommingSoon";
 
 const PRODUCTS_PER_PAGE = 9;
 
@@ -67,18 +68,12 @@ export default function ShopPage({
   const [titlePage, setTitlePage] = useState("");
   const [cursor, setCursor] = useState<string | undefined>(initialEndCursor);
   const [hasNextPage, setHasNextPage] = useState<boolean>(initialHasNextPage);
-  const [isLoadingPage, setIsLoadingPage] = useState(false);
-  const [isCommingSoon, setIsCommingSoon] = useState(true);
 
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    if (commingSoonMode) {
-      const commingSoon = commingSoonMode.fields.maintenanceMode;
-      setIsCommingSoon(commingSoon as boolean);
-      setIsLoading(false);
-    }
-  }, [commingSoonMode]);
+  const { isCommingSoon, isLoadingPage } = useCommingSoon(
+    commingSoonMode?.fields?.maintenanceMode as boolean
+  );
 
   useEffect(() => {
     if (contactInfo) {

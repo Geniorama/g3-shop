@@ -4,17 +4,19 @@ import {
   Typography,
   Box,
   Container,
-  Button,
   Breadcrumbs,
   Link,
-  Grid,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { fetchPolicies, fetchContactInfo, fetchSocialMedia } from "@/lib/dataFetchers";
+import { fetchPolicies, fetchContactInfo, fetchSocialMedia, fetchGeneralSettings } from "@/lib/dataFetchers";
 import { documentToReactComponents } from "@contentful/rich-text-react-renderer";
 import type { ContactInfo, SocialMediaItem } from "@/types";
 import { useDispatch } from "react-redux";
 import { setContactInfo, setSocialMedia } from "@/store/features/generalInfoSlice";
+import CommingSoon from "@/components/CommingSoon/CommingSoon";
+import LoaderPage from "@/components/Loader/LoaderPage";
+import useCommingSoon from "@/hooks/useCommingSoon";
+import type { Entry } from "contentful";
 
 const metadata = {
   title: "Terms and conditions",
@@ -25,15 +27,21 @@ type TermsAndConditionsProps = {
   content: any;
   contactInfo?: ContactInfo,
   socialMedia?: SocialMediaItem[]
+  commingSoonMode: Entry
 };
 
 export default function TermsAndConditions({
   content,
   contactInfo,
-  socialMedia
+  socialMedia,
+  commingSoonMode
 }: TermsAndConditionsProps) {
   const [documentTyC, setDocumentTyC] = useState();
   const dispatch = useDispatch()
+
+  const { isCommingSoon, isLoadingPage } = useCommingSoon(
+    commingSoonMode?.fields?.maintenanceMode as boolean
+  );
 
   useEffect(() => {
     if (content) {
@@ -52,6 +60,14 @@ export default function TermsAndConditions({
       dispatch(setSocialMedia(socialMedia))
     }
   }, [socialMedia, dispatch])
+
+  if (isLoadingPage) {
+    return <LoaderPage />;
+  }
+
+  if (isCommingSoon) {
+    return <CommingSoon />;
+  }
 
   return (
     <Layout metadata={metadata}>
@@ -94,6 +110,7 @@ export async function getServerSideProps() {
   const res = await fetchPolicies();
   const contactInfo = await fetchContactInfo()
   const socialMedia = await fetchSocialMedia()
+  const commingSoonMode = await fetchGeneralSettings()
 
   const content = res.termsAndConditions;
 
@@ -101,7 +118,8 @@ export async function getServerSideProps() {
     props: {
       content,
       contactInfo,
-      socialMedia
+      socialMedia,
+      commingSoonMode
     },
   };
 }

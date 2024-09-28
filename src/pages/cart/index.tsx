@@ -28,6 +28,7 @@ import Loader from "@/components/Loader/Loader";
 import type { Entry } from "contentful";
 import CommingSoon from "@/components/CommingSoon/CommingSoon";
 import LoaderPage from "@/components/Loader/LoaderPage";
+import useCommingSoon from "@/hooks/useCommingSoon";
 
 type CartProps = {
   contactInfo?: ContactInfo;
@@ -36,8 +37,6 @@ type CartProps = {
 };
 
 export default function Cart({ contactInfo, socialMedia, commingSoonMode }: CartProps) {
-  const [isCommingSoon, setIsCommingSoon] = useState(true);
-  const [isLoading, setIsLoading] = useState(true)
   const [isEmpty, setIsEmpty] = useState<Boolean | null>(null);
   const [checkoutUrl, setCheckoutUrl] = useState("");
   const { checkoutId, items } = useSelector((state: RootState) => state.cart);
@@ -47,13 +46,9 @@ export default function Cart({ contactInfo, socialMedia, commingSoonMode }: Cart
   const cartTotal = useSelector((state: RootState) => state.cart.totalAmount);
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    if(commingSoonMode){
-      const commingSoon = commingSoonMode.fields.maintenanceMode
-      setIsCommingSoon(commingSoon as boolean)
-      setIsLoading(false)
-    }
-  }, [commingSoonMode])
+  const { isCommingSoon, isLoadingPage } = useCommingSoon(
+    commingSoonMode?.fields?.maintenanceMode as boolean
+  );
 
   useEffect(() => {
     if (contactInfo) {
@@ -120,7 +115,7 @@ export default function Cart({ contactInfo, socialMedia, commingSoonMode }: Cart
     dispatch(removeItem(itemId));
   };
 
-  if(isLoading){
+  if(isLoadingPage){
     return <LoaderPage />
   }
 
