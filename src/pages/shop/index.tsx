@@ -182,8 +182,8 @@ export default function ShopPage({
   return (
     <Layout
       metadata={{
-        title: titlePage,
-        // description: collection.description,
+        title: 'Shop | G3 Print',
+        description: 'My shop description',
       }}
     >
       <PageHeading

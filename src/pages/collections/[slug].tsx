@@ -206,8 +206,7 @@ export default function CollectionPage({
   return (
     <Layout
       metadata={{
-        title: titlePage,
-        // description: collection.description,
+        title: `${currentCollection?.title} | G3 Print` || 'G3 Collection',
       }}
     >
       <PageHeading

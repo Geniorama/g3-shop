@@ -15,8 +15,7 @@ import LoaderPage from "@/components/Loader/LoaderPage";
 import useCommingSoon from "@/hooks/useCommingSoon";
 
 const metadata = {
-  title: "Contact Us",
-  description: "Hello world",
+  title: "Contact Us | G3 Print",
 };
 
 type ContactProps = {
@@ -56,7 +55,7 @@ export default function Contact({infoContact, socialMediaItems, commingSoonMode}
 
   return (
     <Layout metadata={metadata}>
-      <PageHeading title={metadata.title} />
+      <PageHeading title={'Contact Us'} />
 
       <Container>
         <Box>

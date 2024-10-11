@@ -33,7 +33,7 @@ export default function Product({ product, relatedProductsIds, commingSoonMode }
   const dispatch = useDispatch<AppDispatch>();
 
   const metadata = {
-    title: `${infoProduct?.title} | G3 Print Shop` || "G3 Product",
+    title: `${infoProduct?.title} | G3 Print` || "G3 Product",
     description: "Hello world",
   };
 
