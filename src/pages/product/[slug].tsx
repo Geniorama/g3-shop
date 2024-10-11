@@ -1,4 +1,6 @@
-import { GetStaticPaths, GetStaticProps } from "next";
+// product/[slug].tsx
+
+import { GetServerSideProps } from "next";
 import { Box, Container, Grid, Divider } from "@mui/material";
 import Layout from "@/components/Layout/Layout";
 import ProductHeading from "../../components/Product/ProductHeading/ProductHeading";
@@ -22,7 +24,7 @@ import { fetchGeneralSettings } from "@/lib/dataFetchers";
 type ProductProps = {
   product: Product;
   relatedProductsIds: Product["id"][];
-  commingSoonMode: Entry
+  commingSoonMode: Entry;
 };
 
 export default function Product({ product, relatedProductsIds, commingSoonMode }: ProductProps) {
@@ -57,8 +59,8 @@ export default function Product({ product, relatedProductsIds, commingSoonMode }
     dispatch(addItem(item));
   };
 
-  if(isLoadingPage){
-    return <LoaderPage />
+  if (isLoadingPage) {
+    return <LoaderPage />;
   }
 
   if (isCommingSoon) {
@@ -77,10 +79,7 @@ export default function Product({ product, relatedProductsIds, commingSoonMode }
             </Grid>
 
             <Grid item xs={12} md={6}>
-              <ProductSummary
-                dataProduct={infoProduct}
-                onAddToCart={handleAddToCart}
-              />
+              <ProductSummary dataProduct={infoProduct} onAddToCart={handleAddToCart} />
             </Grid>
 
             {/* <Grid item xs={12}>
@@ -104,21 +103,9 @@ export default function Product({ product, relatedProductsIds, commingSoonMode }
   );
 }
 
-export const getStaticPaths: GetStaticPaths = async () => {
-  const products = await shopifyClient.product.fetchAll();
-  const paths = products.map((product: any) => ({
-    params: { slug: product.handle },
-  }));
-
-  return {
-    paths,
-    fallback: "blocking",
-  };
-};
-
-export const getStaticProps: GetStaticProps = async ({ params }) => {
+export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   const slug = params?.slug;
-  let infoProduct
+  let infoProduct;
 
   if (!slug || Array.isArray(slug)) {
     return {
@@ -128,12 +115,9 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 
   try {
     const productData = await shopifyClient.product.fetchByHandle(slug);
-    const productCollections =
-      await shopifyClient.collection.fetchAllWithProducts();
+    const productCollections = await shopifyClient.collection.fetchAllWithProducts();
     const collections = productCollections
-      .filter((collection) =>
-        collection.products.some((p) => p.id === productData.id)
-      )
+      .filter((collection) => collection.products.some((p) => p.id === productData.id))
       .map((collection) => ({
         id: collection.id,
         title: collection.title,
@@ -179,7 +163,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
       collections: collections,
     };
 
-    infoProduct = product
+    infoProduct = product;
   } catch (error) {
     console.log(error);
     return {
@@ -187,13 +171,13 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     };
   }
 
-  const commingSoonMode = await fetchGeneralSettings()
+  const commingSoonMode = await fetchGeneralSettings();
 
   return {
     props: {
       product: infoProduct,
       relatedProductsIds: [],
-      commingSoonMode
+      commingSoonMode,
     },
   };
 };
