@@ -29,7 +29,7 @@
     "**/*.tsx",
     "src/components/Header/Header.tsx",
     "src/pages/index.tsx",
-    "src/components/Shop/ProductCategories/ProductCategories.jsx"
+    "src/components/Shop/ProductCategories/ProductCategories.tsx"
 , "src/components/Home/SliderHome/SliderHome.tsx"  ],
   "exclude": [
     "node_modules"

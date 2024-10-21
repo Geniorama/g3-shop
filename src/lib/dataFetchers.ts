@@ -84,6 +84,19 @@ export const fetchSliderHome = async () => {
   }
 };
 
+export const fetchProductCategories = async () => {
+  try {
+    const res = await contentfulClient.getEntries({
+      content_type: "productCategories",
+    });
+
+    return res.items;
+  } catch (error) {
+    console.error("Error fetching product categories:", error);
+    return {};
+  }
+};
+
 export const fetchFeatures = async () => {
   try {
     const res = await contentfulClient.getEntries({

@@ -27,6 +27,7 @@ import {
   fetchPromoDay,
   fetchFaq,
   fetchGeneralSettings,
+  fetchProductCategories
 } from "@/lib/dataFetchers";
 import RateUs from "@/components/Home/RateUs/RateUs";
 import type { Slide } from "@/components/Home/SliderHome/SliderHome";
@@ -35,6 +36,7 @@ import type { CircleTechniqueProps } from "@/components/CircleTechnique/CircleTe
 import type { MostPopularProps } from "@/components/Home/MostPopular/MostPopular";
 import type { Faq } from "@/components/Home/FAQ/FAQ";
 import type { Entry } from "contentful";
+import type { CardCategoryProps } from "@/components/Shop/CardCategory/CardCategory";
 import LoaderPage from "@/components/Loader/LoaderPage";
 import useCommingSoon from "@/hooks/useCommingSoon";
 
@@ -53,6 +55,7 @@ type HomeProps = {
   promoDay: any;
   faqs: [];
   commingSoonMode: Entry;
+  bannerCategories: []
 };
 
 export default function Home({
@@ -65,6 +68,7 @@ export default function Home({
   promoDay,
   faqs,
   commingSoonMode,
+  bannerCategories
 }: HomeProps) {
   const [listProducts, setListProducts] = useState<Product[]>();
   const [slides, setSlides] = useState<Slide[]>();
@@ -73,6 +77,7 @@ export default function Home({
     useState<CircleTechniqueProps[]>();
   const [itemPromoDay, setItemPromoDay] = useState<MostPopularProps>();
   const [listFaqs, setListFaqs] = useState<Faq[]>();
+  const [listBannerCategories, setListBannerCategories] = useState<CardCategoryProps[]>()
 
   const { isCommingSoon, isLoadingPage } = useCommingSoon(
     commingSoonMode?.fields?.maintenanceMode as boolean
@@ -105,6 +110,21 @@ export default function Home({
       setSlides(transformData);
     }
   }, [slidersHome]);
+
+  useEffect(() => {
+    if(bannerCategories){
+      console.log(bannerCategories)
+      const transformData = bannerCategories.map((item: any) => ({
+        titleSmall: item.fields.titleSmall,
+        title: item.fields.titleLarge,
+        buttonLink: item.fields.buttonLink,
+        buttonText: item.fields.buttonText,
+        image: item.fields.image
+      }))
+
+      setListBannerCategories(transformData)
+    }
+  },[bannerCategories])
 
   useEffect(() => {
     if (faqs) {
@@ -186,7 +206,10 @@ export default function Home({
         <Features features={listFeatures} />
       )}
       {listProducts && <ExploreOurProducts products={listProducts} />}
-      <ProductCategories />
+      <ProductCategories
+        title="Product categories"
+        categories={listBannerCategories}
+      />
       {itemPromoDay && (
         <MostPopular
           title={itemPromoDay.title}
@@ -216,6 +239,7 @@ export async function getServerSideProps() {
   const promoDay = await fetchPromoDay();
   const faqs = await fetchFaq();
   const commingSoonMode = await fetchGeneralSettings();
+  const bannerCategories = await fetchProductCategories();
 
   return {
     props: {
@@ -228,6 +252,7 @@ export async function getServerSideProps() {
       promoDay,
       faqs,
       commingSoonMode,
+      bannerCategories
     },
   };
 }
