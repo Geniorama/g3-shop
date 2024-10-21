@@ -47,7 +47,8 @@ function ResponsiveAppBar() {
   const [anchorElUser, setAnchorElUser] = useState(null);
   const [openSearch, setOpenSearch] = useState(false);
   const [menuCollection, setMenuCollection] = useState<MenuCollection[]>([]);
-  const [searchText, setSearchText] = useState('')
+  const [searchText, setSearchText] = useState("");
+  const [customMenu, setCustomMenu] = useState<MenuCollection[]>([]);
 
   const cartItems = useSelector((state: RootState) => state.cart.items);
   const { socialMedia } = useSelector((state: RootState) => state.general);
@@ -67,6 +68,33 @@ function ResponsiveAppBar() {
     }
   }
 
+  const getMenuItems = async () => {
+    try {
+      const res = await fetch("/api/customMenuContentful", {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+        },
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        console.log(data);
+        const transformData = data.menuItems.map((item: any) => ({
+          title: item.fields.title,
+          handle: item.fields.url,
+        }));
+
+        console.log("transform data", transformData);
+        setCustomMenu(transformData);
+      }
+    } catch (error) {}
+  };
+
+  useEffect(() => {
+    getMenuItems();
+  }, [router]);
+
   useEffect(() => {
     const bottomHeader = document.getElementById("bottom-header");
     if (bottomHeader) {
@@ -83,18 +111,9 @@ function ResponsiveAppBar() {
     }
   }, []);
 
-  // useEffect(() => {
-  //   const getMenuItems = async () => {
-  //     const res = await fetchCustomMenu()
-  //     console.log(res)
-  //   }
-
-  //   getMenuItems()
-  // },[fetchCustomMenu])
-
   useEffect(() => {
     fetchMenuItems();
-  }, []);
+  }, [router]);
 
   useEffect(() => {
     if (openSearch) {
@@ -128,13 +147,13 @@ function ResponsiveAppBar() {
   const handleSearch = () => {
     if (searchText !== "") {
       router.push(`/search?q=${searchText}`);
-      handleCloseSearch()
+      handleCloseSearch();
     }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === "Enter") {
-      handleSearch()
+      handleSearch();
     }
   };
 
@@ -354,37 +373,40 @@ function ResponsiveAppBar() {
                   </Link>
                 ))}
 
-              <Link
-                href="#"
-                target="_blank"
-                underline="none"
-                sx={{
-                  padding: "1em",
-                  margin: "0 1em",
-                  fontWeight: "600",
-                  position: "relative",
-                  "&:before": {
-                    content: '""',
-                    position: "absolute",
-                    width: "0",
-                    height: "3px",
-                    background: theme.palette.secondary.main,
-                    bottom: "0",
-                    left: "50%",
-                    transition: ".5s",
-                  },
-                  "&:hover:before": {
-                    width: "100%",
-                    left: "0",
-                  },
-                  "&:hover": {
-                    color: theme.palette.secondary.main,
-                  },
-                  fontSize: "13px",
-                }}
-              >
-                Projects
-              </Link>
+              {customMenu.map((item, i) => (
+                <Link
+                  key={i}
+                  href={item.handle}
+                  target="_blank"
+                  underline="none"
+                  sx={{
+                    padding: "1em",
+                    margin: "0 1em",
+                    fontWeight: "600",
+                    position: "relative",
+                    "&:before": {
+                      content: '""',
+                      position: "absolute",
+                      width: "0",
+                      height: "3px",
+                      background: theme.palette.secondary.main,
+                      bottom: "0",
+                      left: "50%",
+                      transition: ".5s",
+                    },
+                    "&:hover:before": {
+                      width: "100%",
+                      left: "0",
+                    },
+                    "&:hover": {
+                      color: theme.palette.secondary.main,
+                    },
+                    fontSize: "13px",
+                  }}
+                >
+                  {item.title}
+                </Link>
+              ))}
 
               <Button variant="contained" color="secondary" href="/contact">
                 Contact Us
