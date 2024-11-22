@@ -159,6 +159,9 @@ export default function Home({
       const transformData: Feature[] = features.map((feature: any) => ({
         icon: feature.fields.iconUrl,
         title: feature.fields.title,
+        backgroundColor: feature.fields.backgroundColor,
+        textColor: feature.fields.textColor,
+        link: feature.fields.link
       }));
 
       setListFeatures(transformData);
