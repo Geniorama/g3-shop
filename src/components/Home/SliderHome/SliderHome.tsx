@@ -16,6 +16,7 @@ import "slick-carousel/slick/slick-theme.css";
 import Image from "next/image";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import { useState, useEffect } from "react";
 
 export type Slide = {
   title?: string;
@@ -35,63 +36,121 @@ export type Slide = {
   iconUrl?: string;
 };
 
-type SliderHomeProps = {
+export type SliderHomeProps = {
+  sliderSettings?: {
+    arrows?: boolean,
+    dots?: boolean,
+    autoplay?: boolean,
+    speed?: number,
+    autoplaySpeed?: number
+  }
   slides: Slide[];
 };
 
+const initialSliderSettings: SliderHomeProps['sliderSettings'] = {
+  arrows: true,
+  dots: true,
+  autoplay: true,
+  speed: 2000,
+  autoplaySpeed: 4000,
+}
 
+export default function SliderHome({ slides, sliderSettings }: SliderHomeProps) {
+  const [settingsSlider, setSettingsSlider] = useState<SliderHomeProps['sliderSettings']>(initialSliderSettings)
+  const theme = useTheme();
 
-export default function SliderHome({ slides }: SliderHomeProps) {
-  const theme = useTheme()
-
-  const arrowsStyles:SxProps = {
+  const arrowsStyles: SxProps = {
     zIndex: 1,
     position: "absolute",
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     backgroundColor: theme.palette.primary.main,
-    width: '50px',
-    height: '50px',
-    border: '2px solid #CCCCCC',
-    bottom: {xs: '0px', lg: 'none'},
-    top: {xs: 'unset', lg: '50%'},
-    "&::before":{
-      display: 'none'
+    width: "50px",
+    height: "50px",
+    bottom: { xs: "0px", lg: "none" },
+    top: { xs: "unset", lg: "50%" },
+    "&::before": {
+      display: "none",
     },
-    "&:hover, &:active":{
+    "&:hover, &:active": {
       backgroundColor: theme.palette.secondary.dark,
-      color: "#FFFFFF"
+      color: "#FFFFFF",
     },
-    "&:focus":{
+    "&:focus": {
       backgroundColor: theme.palette.primary.dark,
-      color: "#FFFFFF"
+      color: "#FFFFFF",
+    },
+  };
+
+  useEffect(() => {
+    if(sliderSettings){
+      setSettingsSlider(sliderSettings)
     }
-  }
+  },[sliderSettings])
 
   const settings = {
-    dots: false,
-    arrows: true,
+    dots: settingsSlider?.dots,
+    arrows: settingsSlider?.arrows,
     infinite: true,
-    speed: 500,
+    autoplay: settingsSlider?.autoplay,
+    speed: settingsSlider?.speed,
+    autoplaySpeed: settingsSlider?.autoplaySpeed,
     slidesToShow: 1,
     slidesToScroll: 1,
+    responsive: [
+      {
+        breakpoint: 600,
+        settings: {
+          dots: false
+        }
+      }
+    ],
+    appendDots: (dots:[]) => (
+      <Box py={5}>
+        <Box
+          sx={{
+            "& .slick-active button": {
+              backgroundColor:  `${theme.palette.secondary.main} !important`,
+            },
+          }}
+        >
+          {dots}
+        </Box>
+      </Box>
+    ),
+    customPaging: () => (
+      <Box
+        component={'button'}
+        sx={{
+          width: "13px !important",
+          height: "13px !important",
+          backgroundColor: "#CCCCCC !important",
+          borderRadius: "50%",
+          '&::before': {
+            display: 'none'
+          }
+        }}
+      ></Box>
+    ),
     prevArrow: (
       <IconButton
-        title="prev" 
+        title="prev"
         sx={{
           ...arrowsStyles,
-          left: {xs: 'calc(50% - 70px)', lg: '25px'}
-        }}>
-        <ChevronLeftIcon sx={{fontSize: '30px'}} />
+          left: { xs: "calc(50% - 70px)", lg: "25px" },
+        }}
+      >
+        <ChevronLeftIcon sx={{ fontSize: "30px" }} />
       </IconButton>
     ),
     nextArrow: (
       <IconButton
-        title="next" 
+        title="next"
         sx={{
           ...arrowsStyles,
-          right: {xs: 'calc(50% - 70px)', lg: '25px'}
-        }}>
-        <ChevronRightIcon sx={{fontSize: '30px'}} />
+          right: { xs: "calc(50% - 70px)", lg: "25px" },
+        }}
+      >
+        <ChevronRightIcon sx={{ fontSize: "30px" }} />
       </IconButton>
     ),
   };

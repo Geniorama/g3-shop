@@ -151,6 +151,21 @@ export const fetchGeneralSettings = async () => {
   }
 };
 
+export const fetchSliderHomeSettings = async () => {
+  try {
+    const res = await contentfulClient.getEntries({
+      content_type: "sliderHomeSetttings",
+    });
+
+    const commingSoonMode = res.items[0]
+
+    return commingSoonMode as Entry;
+  } catch (error) {
+    console.error("Error fetching contact info:", error);
+    return {};
+  }
+};
+
 export const fetchPromoDay = async () => {
   try {
     const res = await contentfulClient.getEntries({

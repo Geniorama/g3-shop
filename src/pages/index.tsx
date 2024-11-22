@@ -27,7 +27,8 @@ import {
   fetchPromoDay,
   fetchFaq,
   fetchGeneralSettings,
-  fetchProductCategories
+  fetchProductCategories,
+  fetchSliderHomeSettings
 } from "@/lib/dataFetchers";
 import RateUs from "@/components/Home/RateUs/RateUs";
 import type { Slide } from "@/components/Home/SliderHome/SliderHome";
@@ -39,6 +40,7 @@ import type { Entry } from "contentful";
 import type { CardCategoryProps } from "@/components/Shop/CardCategory/CardCategory";
 import LoaderPage from "@/components/Loader/LoaderPage";
 import useCommingSoon from "@/hooks/useCommingSoon";
+import type { SliderHomeProps } from "@/components/Home/SliderHome/SliderHome";
 
 const metadata = {
   title: "Inicio",
@@ -50,6 +52,7 @@ type HomeProps = {
   contactInfo: ContactInfo;
   socialMedia: SocialMediaItem[];
   slidersHome: [];
+  sliderSettings: Entry;
   features: [];
   techniques: [];
   promoDay: any;
@@ -68,7 +71,8 @@ export default function Home({
   promoDay,
   faqs,
   commingSoonMode,
-  bannerCategories
+  bannerCategories,
+  sliderSettings
 }: HomeProps) {
   const [listProducts, setListProducts] = useState<Product[]>();
   const [slides, setSlides] = useState<Slide[]>();
@@ -78,6 +82,7 @@ export default function Home({
   const [itemPromoDay, setItemPromoDay] = useState<MostPopularProps>();
   const [listFaqs, setListFaqs] = useState<Faq[]>();
   const [listBannerCategories, setListBannerCategories] = useState<CardCategoryProps[]>()
+  const [configSliderHome, setConfigSliderHome] = useState<SliderHomeProps['sliderSettings']>()
 
   const { isCommingSoon, isLoadingPage } = useCommingSoon(
     commingSoonMode?.fields?.maintenanceMode as boolean
@@ -91,6 +96,14 @@ export default function Home({
     }
     AOS.init();
   }, [products]);
+
+  useEffect(() => {
+    if(sliderSettings){
+      if(sliderSettings.fields){
+        setConfigSliderHome(sliderSettings.fields)
+      }
+    }
+  },[sliderSettings])
 
   useEffect(() => {
     if (slidersHome) {
@@ -118,7 +131,6 @@ export default function Home({
 
   useEffect(() => {
     if(bannerCategories){
-      console.log(bannerCategories)
       const transformData = bannerCategories.map((item: any) => ({
         titleSmall: item.fields.titleSmall,
         title: item.fields.titleLarge,
@@ -206,7 +218,7 @@ export default function Home({
 
   return (
     <Layout metadata={metadata}>
-      {slides && slides.length > 0 && <SliderHome slides={slides} />}
+      {slides && slides.length > 0 && <SliderHome sliderSettings={configSliderHome} slides={slides} />}
       {listFeatures && listFeatures.length > 0 && (
         <Features features={listFeatures} />
       )}
@@ -245,6 +257,7 @@ export async function getServerSideProps() {
   const faqs = await fetchFaq();
   const commingSoonMode = await fetchGeneralSettings();
   const bannerCategories = await fetchProductCategories();
+  const sliderSettings = await fetchSliderHomeSettings();
 
   return {
     props: {
@@ -257,7 +270,8 @@ export async function getServerSideProps() {
       promoDay,
       faqs,
       commingSoonMode,
-      bannerCategories
+      bannerCategories,
+      sliderSettings
     },
   };
 }
