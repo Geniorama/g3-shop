@@ -213,7 +213,8 @@ export default function CollectionPage({
         title={currentCollection?.title || ""}
         backgroundColor="#602BE0"
         textColor="#FFFFFF"
-        floatImage={currentCollection?.image?.src || ''}
+        backgroundImage={currentCollection?.image?.src}
+        floatImage={"https://cdn.shopify.com/s/files/1/0569/0939/8118/collections/g3-1Recurso_1.26bd5a56.svg?v=1726254285"}
       />
 
       <Container>

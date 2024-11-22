@@ -5,6 +5,7 @@ type PageHeadingProps = {
   title: string;
   textAlign?: "right" | "left" | "center";
   backgroundColor?: string;
+  backgroundImage?: string;
   textColor?: string;
   floatImage?: string;
 };
@@ -15,16 +16,21 @@ export default function PageHeading({
   backgroundColor,
   textColor,
   floatImage,
+  backgroundImage
 }: PageHeadingProps) {
   return (
     <Box
       sx={{
         backgroundColor: backgroundColor || "#F8F8F8",
-        minHeight: { lg: "25vh" },
+        minHeight: { lg: "30vh" },
         display: { xs: "flex" },
         justifyContent: "center",
         alignItems: "center",
         position: "relative",
+        backgroundImage: `url(${backgroundImage})`,
+        backgroundSize: 'cover',
+        backgroundRepeat: 'no-repeat',
+        backgroundPosition: 'center'
       }}
       component={"section"}
       mb={{ xs: 5 }}
