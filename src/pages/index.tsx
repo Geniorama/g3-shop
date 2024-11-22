@@ -94,20 +94,25 @@ export default function Home({
 
   useEffect(() => {
     if (slidersHome) {
-      const transformData: Slide[] = slidersHome.map((slide: any) => ({
+      const transformData = slidersHome.map((slide: Entry) => ({
         title: slide.fields.title,
         titleSmall: slide.fields.titleSmall,
+        titleSmallColor: slide.fields.titleSmallColor,
         titleLarge: slide.fields.titleLarge,
+        titleLargeColor: slide.fields.titleLargeColor,
         description: slide.fields.description,
+        descriptionColor: slide.fields.descriptionColor,
         buttonText: slide.fields.buttonText,
         buttonUrl: slide.fields.buttonUrl,
         backgroundColor: slide.fields.backgroundColor,
+        backgroundImage: slide.fields.backgroundImage,
+        backgroundImageMobile: slide.fields.backgroundImageMobile,
         imageUrl: slide.fields.imageUrl,
         imageAlignment: slide.fields.imageAlignment,
         iconUrl: slide.fields.iconUrl,
       }));
 
-      setSlides(transformData);
+      setSlides(transformData as Slide[]);
     }
   }, [slidersHome]);
 

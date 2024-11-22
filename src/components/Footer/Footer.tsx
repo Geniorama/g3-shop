@@ -51,6 +51,7 @@ export default function Footer() {
           bottom: {xs: "10px", lg: "20px"},
           right: {xs: "10px", lg: "20px"},
           gap: 1,
+          zIndex: 1
         }}
       >
         {socialMedia &&
