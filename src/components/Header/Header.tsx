@@ -51,7 +51,9 @@ function ResponsiveAppBar() {
   const [customMenu, setCustomMenu] = useState<MenuCollection[]>([]);
 
   const cartItems = useSelector((state: RootState) => state.cart.items);
-  const { socialMedia } = useSelector((state: RootState) => state.general);
+  const { socialMedia, contactInfo } = useSelector(
+    (state: RootState) => state.general
+  );
   const router = useRouter();
   const theme = useTheme();
 
@@ -190,35 +192,79 @@ function ResponsiveAppBar() {
         >
           <Container maxWidth="xl">
             <Stack
-              direction={"row"}
+              direction={{lg: "row"}}
               alignItems={"center"}
               justifyContent={"center"}
-              gap={{ xs: 1 }}
+              gap={4}
+              py={{xs: 1, lg: 0}}
             >
-              <Typography
-                sx={{ color: "white", fontSize: { xs: "15px" } }}
-                fontWeight={"bold"}
+              <Stack
+                sx={{ color: "white", textAlign: {xs: 'center'} }}
+                direction={{lg: "row"}}
+                alignItems={"center"}
+                gap={1}
               >
-                Follow Us:{" "}
-              </Typography>
-              <Stack direction={"row"}>
-                {socialMedia?.map((item) => {
-                  const iconItem = socialMediaIcons.find(
-                    (subItem) => subItem.name === item.name
-                  );
-                  return (
-                    <IconButton
-                      href={item.url}
-                      target="_blank"
-                      title={item.name}
-                      aria-label={item.name}
-                      key={item.name}
-                      sx={{ color: "white", fontSize: { xs: "16px" } }}
-                    >
-                      {iconItem ? iconItem.icon : null}
-                    </IconButton>
-                  );
-                })}
+                <Typography
+                  sx={{ color: "white", fontSize: { xs: "15px" } }}
+                  fontWeight={"bold"}
+                >
+                  Contact Us:{" "}
+                </Typography>
+                <Link
+                  target="_blank"
+                  href={contactInfo?.whatsAppLink}
+                  sx={{
+                    fontSize: "15px",
+                    color: "white",
+                    textDecorationColor: "white",
+                  }}
+                >
+                  {contactInfo?.whatsAppNumber}
+                </Link>{" "}
+                -{" "}
+                <Link
+                  target="_blank"
+                  href={contactInfo?.locationLink}
+                  sx={{
+                    fontSize: "15px",
+                    color: "white",
+                    textDecorationColor: "white",
+                  }}
+                >
+                  {contactInfo?.address}
+                </Link>
+              </Stack>
+              <Stack
+                direction={"row"}
+                alignItems={"center"}
+                justifyContent={"center"}
+                gap={{ xs: 1 }}
+              >
+                <Typography
+                  sx={{ color: "white", fontSize: { xs: "15px" } }}
+                  fontWeight={"bold"}
+                >
+                  Follow Us:{" "}
+                </Typography>
+                <Stack direction={"row"}>
+                  {socialMedia?.map((item) => {
+                    const iconItem = socialMediaIcons.find(
+                      (subItem) => subItem.name === item.name
+                    );
+                    return (
+                      <IconButton
+                        href={item.url}
+                        target="_blank"
+                        title={item.name}
+                        aria-label={item.name}
+                        key={item.name}
+                        sx={{ color: "white", fontSize: { xs: "16px" } }}
+                      >
+                        {iconItem ? iconItem.icon : null}
+                      </IconButton>
+                    );
+                  })}
+                </Stack>
               </Stack>
             </Stack>
           </Container>
