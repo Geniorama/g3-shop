@@ -29,7 +29,8 @@ export default function CardProduct({
       <Box
         sx={{
           width: "100%",
-          height: "40vh",
+          // height: "40vh",
+          aspectRatio: "1",
           position: "relative",
           borderRadius: "10px",
           overflow: "hidden",

@@ -81,13 +81,10 @@ function ResponsiveAppBar() {
 
       const data = await res.json();
       if (res.ok) {
-        console.log(data);
         const transformData = data.menuItems.map((item: any) => ({
           title: item.fields.title,
           handle: item.fields.url,
         }));
-
-        console.log("transform data", transformData);
         setCustomMenu(transformData);
       }
     } catch (error) {}
