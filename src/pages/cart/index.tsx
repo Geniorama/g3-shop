@@ -87,7 +87,7 @@ export default function Cart({ contactInfo, socialMedia, commingSoonMode }: Cart
           }
         }
       } catch (error) {
-        console.log(error);
+        console.log('error create checkout', error);
       }
     }
 
@@ -139,6 +139,8 @@ export default function Cart({ contactInfo, socialMedia, commingSoonMode }: Cart
       </Layout>
     );
   }
+
+  console.log(isEmpty)
 
   return (
     <Layout metadata={metadata}>

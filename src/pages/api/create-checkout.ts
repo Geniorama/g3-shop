@@ -7,6 +7,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (req.method === 'POST') {
     try {
       const { items } = req.body;
+
+      if (!items || !Array.isArray(items) || items.length === 0) {
+        return res.status(400).json({ message: 'No items received or invalid format' });
+      }
+      
       const checkout = await shopifyClient.checkout.create();
       if (items.length > 0) {
         const lineItemsToAdd = items.map((item: ItemCart) => {
@@ -19,9 +24,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           return {
             variantId,
             quantity: item.quantity,
-            properties: {
-              mediaUrl: item.mediaUrl// Agregar la URL de la imagen a las propiedades del checkout (opcional)
-            }
+            customAttributes: [
+              {
+                key: "mediaUrl",
+                value: item.mediaUrl || "", // Asegúrate de manejar el caso cuando no haya mediaUrl
+              },
+            ],
           };
         });
 
