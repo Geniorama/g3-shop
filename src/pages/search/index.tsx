@@ -105,12 +105,15 @@ export default function SearchResults({ allProducts }: SearchResultsProps) {
 
 export async function getServerSideProps() {
   const res = await fetchAllProducts(null, 250);
+
+  console.log(res)
+
   const allProducts = res?.products.edges.map((product) => ({
     id: product.node.id,
     title: product.node.title,
     image: {
-      url: product.node.images.edges[0].node.src,
-      altText: product.node.images.edges[0].node.altText,
+      url: product.node.images.edges[0]?.node.src || "",
+      altText: product.node.images.edges[0]?.node.altText || "",
     },
     slug: product.node.handle,
   }));
