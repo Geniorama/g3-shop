@@ -1,6 +1,6 @@
 import { Box, Typography, Container, Button, Stack } from "@mui/material"
 import StarIcon from '@mui/icons-material/Star';
-import Image from '@/assets/img/icon-rate-us.svg'
+import Image from '@/assets/img/rb_2151880552.png'
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
 
@@ -10,7 +10,7 @@ export default function RateUs() {
   return (
     <Box sx={{backgroundColor: '#F8F8F8', textAlign: 'center', py: {xs: 5}}}>
         <Container sx={{position: 'relative'}}>
-            <Box data-aos="fade-up" sx={{maxWidth: {xs: '150px', lg: '280px'}, mx: {xs: 'auto', lg: 'unset'}, position: {lg: 'absolute'}, top: '0', left: '80px'}}>
+            <Box data-aos="fade-up" sx={{maxWidth: {xs: '150px', lg: '320px'}, mx: {xs: 'auto', lg: 'unset'}, position: {lg: 'absolute'}, top: '-80px', left: '120px'}}>
                 <img style={{width: '100%'}} src={Image.src} alt="" />
             </Box>
             <Typography
