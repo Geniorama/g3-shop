@@ -55,20 +55,20 @@ export default function Features({ features }: FeaturesProps) {
                 borderRadius: "10px",
                 gap: 2,
                 width: "100%",
-                maxWidth: "200px",
+                maxWidth: {lg: "200px"},
                 cursor: feature.link ? 'pointer' : 'unset'
                 // border: `2px solid ${theme.palette.secondary.main}`,
               }}
             >
-              <Box sx={{width: {xs: '50px'}}}>
+              <Box sx={{width: {xs: '80%', lg: '50px'}}}>
                 <img style={{width: '100%', height: 'auto'}} src={feature.icon} alt="" />
               </Box>
               <Typography
                 color={feature.textColor || "#ffffff"}
                 component={"p"}
                 variant="h6"
-                sx={{ fontWeight: "500" }}
-                fontSize={{ xs: "12px", md: "15px" }}
+                sx={{ fontWeight: "700" }}
+                fontSize={{ xs: "20px", md: "15px" }}
               >
                 {feature.title}
               </Typography>
