@@ -26,7 +26,7 @@ export default function CardCategory({titleSmall, title, buttonLink, buttonText,
                    {buttonText}
                 </Link>
             </Box>
-            <Box sx={{width: '50%', height: '200px', position: 'relative'}}>
+            <Box mb={{xs: 2, lg: 0}} sx={{width: {xs: '100%', lg: '50%'}, height: {xs: '200px', lg: '200px'}, position: 'relative'}}>
                 {image && (
                     <Image unoptimized style={{objectFit: 'contain'}} fill src={image} alt='' />
                 )}
