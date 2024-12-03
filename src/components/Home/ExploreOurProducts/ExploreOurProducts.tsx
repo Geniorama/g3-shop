@@ -59,7 +59,7 @@ export default function ExploreOurProducts({
           <Box sx={{ width: "100%", marginTop: "3em" }}>
             <GridProducts products={products} />
 
-            <Box sx={{textAlign: 'center'}}>
+            <Box mt={{xs: 2}} sx={{textAlign: 'center'}}>
               <Button href="/shop" variant="contained" color="secondary">
                 View All Products
               </Button>

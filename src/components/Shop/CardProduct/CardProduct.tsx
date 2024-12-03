@@ -63,13 +63,13 @@ export default function CardProduct({
           </Link>
         )}
       </Box>
-      <Box sx={{ textAlign: "center", padding: "1.5em" }}>
+      <Box sx={{ textAlign: "center", padding: {xs: 1} }}>
         <Link
           href={`/product/${slug}`}
           style={{ textDecoration: "none", color: "unset" }}
         >
           <Typography
-            sx={{ fontWeight: "bold", fontSize: "20px" }}
+            sx={{ fontWeight: "bold", fontSize: {xs: "16px", lg: "20px"}, lineHeight: {xs: 1.2, lg: 1.5} }}
             component={"h3"}
           >
             {title}
@@ -81,7 +81,7 @@ export default function CardProduct({
           </Typography>
         )}
 
-        <Stack direction={"row"} spacing={1} justifyContent={"center"}>
+        <Stack direction={"row"} mt={{xs: 1}} spacing={1} justifyContent={"center"}>
           {/* Sale price */}
           {salePrice && (
             <Typography

@@ -12,7 +12,7 @@ export default function GridProducts({products, pagination}:GridProductsProps) {
 
   return (
     <>
-    <Box display={'grid'} gridTemplateColumns={"repeat(auto-fill, minmax(min(250px, 100%), 1fr))"} gap={3}>
+    <Box display={'grid'} gridTemplateColumns={{xs: "repeat(auto-fill, minmax(min(150px, 100%), 1fr))", lg: "repeat(auto-fill, minmax(min(250px, 100%), 1fr))"}} gap={3}>
         {products.map((product, i:number) => (
           <Box key={i}>
             <CardProduct
