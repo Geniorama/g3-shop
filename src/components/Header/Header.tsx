@@ -33,6 +33,8 @@ import type { MenuCollection } from "@/types";
 import socialMediaIcons from "@/utils/socialMediaIcons";
 import { fetchCustomMenu } from "@/lib/dataFetchers";
 import { useCallback } from "react";
+import WhatsAppIcon from '@mui/icons-material/WhatsApp';
+import FmdGoodIcon from '@mui/icons-material/FmdGood';
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
@@ -192,14 +194,14 @@ function ResponsiveAppBar() {
               direction={{lg: "row"}}
               alignItems={"center"}
               justifyContent={"center"}
-              gap={4}
+              gap={{xs: 1, lg: 4}}
               py={{xs: 1, lg: 0}}
             >
               <Stack
                 sx={{ color: "white", textAlign: {xs: 'center'} }}
-                direction={{lg: "row"}}
+                direction={{xs: "row"}}
                 alignItems={"center"}
-                gap={1}
+                gap={{xs: 2, lg: 1}}
               >
                 <Typography
                   sx={{ color: "white", fontSize: { xs: "15px" } }}
@@ -211,14 +213,14 @@ function ResponsiveAppBar() {
                   target="_blank"
                   href={contactInfo?.whatsAppLink}
                   sx={{
-                    fontSize: "15px",
                     color: "white",
                     textDecorationColor: "white",
                   }}
                 >
-                  {contactInfo?.whatsAppNumber}
+                  <Typography display={{xs: "none", lg: "block"}} fontSize={{xs: "15px"}}>{contactInfo?.whatsAppNumber}</Typography>
+                  <WhatsAppIcon sx={{fontSize: {xs: "17px"}, display: {lg: "none"}}} />
                 </Link>{" "}
-                -{" "}
+                <Typography display={{xs: "none", lg: "block"}}>-{" "}</Typography>
                 <Link
                   target="_blank"
                   href={contactInfo?.locationLink}
@@ -228,7 +230,8 @@ function ResponsiveAppBar() {
                     textDecorationColor: "white",
                   }}
                 >
-                  {contactInfo?.address}
+                  <Typography display={{xs: "none", lg: "block"}} fontSize={{xs: "15px"}}>{contactInfo?.address}</Typography>
+                  <FmdGoodIcon sx={{fontSize: {xs: "17px"}, display: {lg: "none"}}} />
                 </Link>
               </Stack>
               <Stack
