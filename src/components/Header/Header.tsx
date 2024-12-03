@@ -460,7 +460,7 @@ function ResponsiveAppBar() {
             </Box>
 
             {/* Menu icons desktop */}
-            <Box display={{ xs: "none", md: "flex" }} sx={{ flexGrow: 0 }}>
+            <Box display={{ xs: "flex", md: "flex" }} sx={{ flexGrow: 0 }}>
               {auxMenuItems.map((item, index) => {
                 return (
                   <IconButton
