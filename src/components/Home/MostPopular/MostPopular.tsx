@@ -24,7 +24,7 @@ export default function MostPopular({title, description, imageUrl, iconUrl, butt
             sm={8}
             sx={{
               backgroundImage: `url('${imageUrl}')`,
-              minHeight: "20vh",
+              minHeight: {xs: "250px", lg: "20vh"},
               backgroundSize: "cover",
               backgroundRepeat: "no-repeat",
               backgroundPosition: "center",
@@ -40,7 +40,17 @@ export default function MostPopular({title, description, imageUrl, iconUrl, butt
             sm={4}
             sx={{ textAlign: "center", padding: "2rem" }}
           >
-            <Image width={130} height={100} alt="" src={HeadIcon} />
+            <Box
+              sx={{
+                width: {xs: '130px'},
+                height: {xs: '100px'},
+                mx:{xs: 'auto'},
+                position: 'relative',
+                display: {xs: 'none', lg: 'block'}
+              }}
+              >
+              <Image unoptimized layout="fill" objectFit="contain" alt="" src={HeadIcon} />
+            </Box>
             <Typography
               component={"h4"}
               variant="h5"
