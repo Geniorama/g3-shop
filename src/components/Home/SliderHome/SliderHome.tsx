@@ -156,7 +156,7 @@ export default function SliderHome({ slides, sliderSettings }: SliderHomeProps) 
   };
 
   return (
-    <Box sx={{ overflow: "visible" }}>
+    <Box sx={{ overflow: "visible", position: "relative", zIndex: {xs: 2, lg: 1} }}>
       <Slider {...settings}>
         {slides.map((slide, i) => (
           <Box

@@ -64,7 +64,7 @@ export default function Footer() {
                 <IconButton
                   href={item.url}
                   target="_blank"
-                  size="large"
+                  size="medium"
                   sx={{
                     backgroundColor: theme.palette.primary.main,
                     color: "white",
@@ -82,7 +82,7 @@ export default function Footer() {
           <IconButton
             href={contactInfo.whatsAppLink}
             target="_blank"
-            size="large"
+            size="medium"
             sx={{
               background: `#25D366`,
               color: "white",
@@ -98,7 +98,7 @@ export default function Footer() {
 
         <IconButton
           href="#top"
-          size="large"
+          size="medium"
           sx={{
             backgroundColor: theme.palette.secondary.light,
             color: "white",
