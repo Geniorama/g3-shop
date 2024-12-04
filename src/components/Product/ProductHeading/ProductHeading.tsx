@@ -18,7 +18,6 @@ export default function ProductHeading({title, cover}:ProductHeadingProps) {
     <Box
       sx={{
         backgroundImage: `url(${cover ? cover : defaultImage})`,
-        minHeight: "20vh",
         backgroundSize: "cover",
         backgroundRepeat: "no-repeat",
         position: "relative",
@@ -37,8 +36,8 @@ export default function ProductHeading({title, cover}:ProductHeadingProps) {
       <Container sx={{ position: "relative" }}>
         <Box
           sx={{
-            pt: { xs: 22},
-            pb: { xs: 12},
+            pt: { xs: 6, lg: 22},
+            pb: { xs: 4, lg: 12},
             textAlign: "center",
           }}
         >
