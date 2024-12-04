@@ -71,7 +71,7 @@ export default function Product({ product, relatedProductsIds, commingSoonMode }
     <Layout metadata={metadata}>
       <ProductHeading title={infoProduct.title} />
 
-      <Box component={"section"} pt={{ xs: 10 }}>
+      <Box component={"section"} pt={{ xs: 2, lg: 10 }}>
         <Container>
           <Grid container pb={{ xs: 5 }} spacing={5}>
             <Grid item xs={12} md={6}>
