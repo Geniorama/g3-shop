@@ -21,12 +21,12 @@ export default function Techniques({ techniques }: TechniquesProps) {
       sx={{ padding: "3rem 1rem", backgroundColor: "#fafafa" }}
     >
       <Container>
-        <Grid spacing={6} container justifyContent={"center"}>
+        <Grid spacing={{xs: 3, lg: 6}} container justifyContent={"center"}>
           <Grid item xs={12}>
             <TitleSection title={"Techniques"} />
           </Grid>
           {techniques.map((tech, i) => (
-            <Grid key={i} item xs={6} md={3}>
+            <Grid key={i} item xs={4} md={3}>
               <CircleTechnique
                 title={tech.title}
                 color={theme.palette.secondary.main}
