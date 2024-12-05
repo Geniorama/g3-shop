@@ -24,10 +24,11 @@ import { fetchGeneralSettings } from "@/lib/dataFetchers";
 type ProductProps = {
   product: Product;
   relatedProductsIds: Product["id"][];
-  commingSoonMode: Entry;
+  commingSoonMode: boolean;
+  imageCover?: string;
 };
 
-export default function Product({ product, relatedProductsIds, commingSoonMode }: ProductProps) {
+export default function Product({ product, relatedProductsIds, commingSoonMode, imageCover }: ProductProps) {
   const [infoProduct, setInfoProduct] = useState<Product>();
   const [relatedProducts, setRelatedProducts] = useState<Product["id"][]>();
   const dispatch = useDispatch<AppDispatch>();
@@ -37,9 +38,7 @@ export default function Product({ product, relatedProductsIds, commingSoonMode }
     description: "Hello world",
   };
 
-  const { isCommingSoon, isLoadingPage } = useCommingSoon(
-    commingSoonMode?.fields?.maintenanceMode as boolean
-  );
+  const { isCommingSoon, isLoadingPage } = useCommingSoon(commingSoonMode);
 
   useEffect(() => {
     if (product) {
@@ -69,7 +68,7 @@ export default function Product({ product, relatedProductsIds, commingSoonMode }
 
   return (
     <Layout metadata={metadata}>
-      <ProductHeading title={infoProduct.title} />
+      <ProductHeading cover={imageCover}  title={infoProduct.title} />
 
       <Box component={"section"} pt={{ xs: 2, lg: 10 }}>
         <Container>
@@ -171,13 +170,14 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     };
   }
 
-  const commingSoonMode = await fetchGeneralSettings();
+  const generalSettings = await fetchGeneralSettings() as Entry;
 
   return {
     props: {
       product: infoProduct,
       relatedProductsIds: [],
-      commingSoonMode,
+      commingSoonMode: generalSettings.fields.maintenanceMode,
+      imageCover: generalSettings.fields.coverProduct
     },
   };
 };

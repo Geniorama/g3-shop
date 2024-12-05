@@ -142,9 +142,13 @@ export const fetchGeneralSettings = async () => {
       content_type: "generalSettings",
     });
 
-    const commingSoonMode = res.items[0]
+    if(res.items){
+      const generalSettings = res.items[0]
 
-    return commingSoonMode as Entry;
+      console.log(generalSettings)
+
+      return generalSettings as Entry;
+    }
   } catch (error) {
     console.error("Error fetching contact info:", error);
     return {};

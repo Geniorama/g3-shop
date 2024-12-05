@@ -46,7 +46,8 @@ type ShopPageProps = {
   initialHasNextPage: boolean;
   contactInfo?: ContactInfo;
   socialMedia?: SocialMediaItem[];
-  commingSoonMode: Entry;
+  commingSoonMode: boolean;
+  imageCover?: string;
 };
 
 export default function ShopPage({
@@ -57,6 +58,7 @@ export default function ShopPage({
   contactInfo,
   socialMedia,
   commingSoonMode,
+  imageCover
 }: ShopPageProps) {
   const [products, setProducts] = useState<Product[]>(initialProducts);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
@@ -71,9 +73,7 @@ export default function ShopPage({
 
   const dispatch = useDispatch();
 
-  const { isCommingSoon, isLoadingPage } = useCommingSoon(
-    commingSoonMode?.fields?.maintenanceMode as boolean
-  );
+  const { isCommingSoon, isLoadingPage } = useCommingSoon(commingSoonMode);
 
   useEffect(() => {
     if (contactInfo) {
@@ -190,7 +190,8 @@ export default function ShopPage({
         title={"Shop"}
         backgroundColor="#602BE0"
         textColor="#FFFFFF"
-        floatImage={Astronaut.src}
+        backgroundImage={imageCover}
+        // floatImage={Astronaut.src}
       />
 
       <Container>
@@ -261,7 +262,7 @@ export async function getServerSideProps() {
   const allProducts = await fetchAllProducts(null, 9);
   const contactInfo = await fetchContactInfo();
   const socialMedia = await fetchSocialMedia();
-  const commingSoonMode = await fetchGeneralSettings();
+  const generalSettings = await fetchGeneralSettings() as Entry;
 
   const initialProducts =
     allProducts?.products.edges?.map((product) => ({
@@ -281,6 +282,8 @@ export async function getServerSideProps() {
   const initialHasNextPage =
     allProducts?.products.pageInfo.hasNextPage || false;
 
+  console.log(generalSettings)
+
   return {
     props: {
       initialProducts,
@@ -289,7 +292,8 @@ export async function getServerSideProps() {
       initialHasNextPage,
       contactInfo,
       socialMedia,
-      commingSoonMode,
+      commingSoonMode: generalSettings.fields.maintenanceMode,
+      imageCover: generalSettings.fields.coverShop || undefined
     },
   };
 }

@@ -25,7 +25,7 @@ export default function ProductHeading({title, cover}:ProductHeadingProps) {
           content: '""',
           position: "absolute",
           background: "black",
-          opacity: "60%",
+          opacity: "30%",
           width: "100%",
           height: "100%",
           left: "0",
