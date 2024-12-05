@@ -33,10 +33,11 @@ import useCommingSoon from "@/hooks/useCommingSoon";
 type CartProps = {
   contactInfo?: ContactInfo;
   socialMedia?: SocialMediaItem[];
-  commingSoonMode: Entry;
+  commingSoonMode: boolean;
+  imageCover?: string;
 };
 
-export default function Cart({ contactInfo, socialMedia, commingSoonMode }: CartProps) {
+export default function Cart({ contactInfo, socialMedia, commingSoonMode, imageCover }: CartProps) {
   const [isEmpty, setIsEmpty] = useState<Boolean | null>(null);
   const [checkoutUrl, setCheckoutUrl] = useState("");
   const { checkoutId, items } = useSelector((state: RootState) => state.cart);
@@ -46,9 +47,7 @@ export default function Cart({ contactInfo, socialMedia, commingSoonMode }: Cart
   const cartTotal = useSelector((state: RootState) => state.cart.totalAmount);
   const dispatch = useDispatch();
 
-  const { isCommingSoon, isLoadingPage } = useCommingSoon(
-    commingSoonMode?.fields?.maintenanceMode as boolean
-  );
+  const { isCommingSoon, isLoadingPage } = useCommingSoon(commingSoonMode);
 
   useEffect(() => {
     if (contactInfo) {
@@ -146,7 +145,7 @@ export default function Cart({ contactInfo, socialMedia, commingSoonMode }: Cart
     <Layout metadata={metadata}>
       {!isEmpty && (
         <>
-          <PageHeading title={metadata.title} />
+          <PageHeading backgroundImage={imageCover} title={metadata.title} textColor="#FFFFFF" />
           <Container>
             <Breadcrumbs aria-label="breadcrumb">
               <Link underline="hover" color="inherit" href="/">
@@ -204,13 +203,14 @@ export default function Cart({ contactInfo, socialMedia, commingSoonMode }: Cart
 export async function getServerSideProps() {
   const contactInfo = await fetchContactInfo();
   const socialMedia = await fetchSocialMedia();
-  const commingSoonMode = await fetchGeneralSettings()
+  const generalSettings = await fetchGeneralSettings() as Entry
 
   return {
     props: {
       contactInfo,
       socialMedia,
-      commingSoonMode
+      commingSoonMode: generalSettings.fields.maintenanceMode,
+      imageCover: generalSettings.fields.coverCart || undefined
     },
   };
 }
