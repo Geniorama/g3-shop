@@ -32,12 +32,12 @@ export default function SidebarShop({
   return (
     <Box mb={3}>
       <SearchBar />
-      {categories && !isSlugPage && (
+      {/* {categories && !isSlugPage && (
         <>
           <Divider sx={{ margin: "20px 0px" }} />
           <ProductCategories categories={categories} />
         </>
-      )}
+      )} */}
       <Divider sx={{ margin: "20px 0px" }} />
       <Box>
         <Typography fontWeight={"600"} component={"h5"} variant="h6">
