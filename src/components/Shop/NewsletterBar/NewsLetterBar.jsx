@@ -13,14 +13,14 @@ import MailOutlineIcon from "@mui/icons-material/MailOutline";
 
 export default function NewsLetterBar() {
   return (
-    <Box component={"section"} sx={{ background: "#ffe4f2" }} py={{ xs: 7 }}>
+    <Box component={"section"} sx={{ background: "#ffe4f2" }} py={{ xs: 4, lg: 7 }}>
       <Container>
         <Stack direction={{xs: "column", md: "row"}} justifyContent={"space-between"}>
-          <Stack direction={"row"} alignItems={"center"} mb={{xs: 3, md: 0}}>
+          <Stack justifyContent={{xs: "center", lg: "unset"}} direction={"row"} alignItems={"center"} mb={{xs: 3, md: 0}}>
             <MailOutlineIcon sx={{ fontSize: "30px" }} />
             <Typography
               ml={{ xs: 1 }}
-              fontSize={{ xs: "26px" }}
+              fontSize={{ xs: "20px", lg: "26px" }}
               fontWeight={"bold"}
             >
               Subscribe to Our Newsletter
